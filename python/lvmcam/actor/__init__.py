@@ -1,1 +1,1 @@
-from .actor import lvmagp
+from .actor import lvmcam
