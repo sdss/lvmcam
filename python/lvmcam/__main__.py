@@ -10,7 +10,7 @@
 import sys
 import os
 import asyncio
-.pyenv/versions/lvmagp-test/binimport click
+import click
 from click_default_group import DefaultGroup
 from clu.tools import cli_coro as cli_coro_lvm
 
@@ -48,7 +48,7 @@ async def actor(ctx):
     default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvmcam.yml")
     config_file = ctx.obj["config_file"] or default_config_file
 
-    lvmagp_obj = lvmagpInstance.from_config(config_file)
+    lvmcam_obj = lvmcamInstance.from_config(config_file)
     if ctx.obj["verbose"]:
         lvmcam_obj.log.fh.setLevel(0)
         lvmcam_obj.log.sh.setLevel(0)

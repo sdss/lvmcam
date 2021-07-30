@@ -10,6 +10,7 @@ from clu.actor import AMQPActor
 
 #from scpactor import __version__
 
+from .commands import parser as lvm_command_parser
 
 __all__ = ["lvmcam"]
 
@@ -22,6 +23,7 @@ class lvmcam(AMQPActor):
     controllers
         The list of `.agp_Controller` instances to manage.
     """
+    parser = lvm_command_parser
 
     def __init__(
         self,
