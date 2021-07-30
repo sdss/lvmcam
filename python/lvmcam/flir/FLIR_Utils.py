@@ -13,12 +13,15 @@
 '''
 
 import sys
-import gi           # To ensure correct Aravis version
-import cv2          # To (optionally) write png files
+
+import cv2  # To (optionally) write png files
+import gi  # To ensure correct Aravis version
 import numpy as np
 
+
 gi.require_version('Aravis', '0.8')     # Version check
-from gi.repository import Aravis        # Aravis package
+from gi.repository import Aravis  # Aravis package
+
 
 #--------------------------------------------------------------------------------------------
 
@@ -120,7 +123,7 @@ def FLIR2numpy(buf,verbose):
             Returns:  img - a numpy array of the frame
     '''
 
-    import ctypes     # Allows access to C data types (to read FLIR buffer)
+    import ctypes  # Allows access to C data types (to read FLIR buffer)
 
     if not buf:       # Nothing there. Return nothing
         return None
@@ -240,7 +243,7 @@ def Acquire_Frames(cam,nFrames,frameWait=1.0,verbose=False):
         doing statistics "down the cube" easier.
 
     '''
-    import time     # To sleep between frames
+    import time  # To sleep between frames
 
     if verbose:
         print("  Starting acquisition of ",nFrames," frame(s)...")

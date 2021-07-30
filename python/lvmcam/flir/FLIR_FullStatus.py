@@ -6,7 +6,7 @@ import ctypes
 import sys
 
 import cv2
-import FLIR_Utils as FU  # All the camera interface stuff
+import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
 import gi
 import numpy as np
 
@@ -25,7 +25,6 @@ def fullstat():
 
     gi.require_version('Aravis', '0.8')
     from gi.repository import Aravis
-
 
     ###--- Set up camera
 
