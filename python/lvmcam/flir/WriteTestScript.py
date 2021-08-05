@@ -48,6 +48,7 @@
 
 import numpy as np
 
+
 scNm = "FLIR_Darks_1.txt"      # Name of script file to write
 outFile = open(scNm, "w")   # Open file to write text
 

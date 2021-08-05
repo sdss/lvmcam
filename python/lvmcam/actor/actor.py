@@ -1,5 +1,5 @@
 
-from __future__ import annotations, print_function, division, absolute_import
+from __future__ import absolute_import, annotations, division, print_function
 
 import asyncio
 import os
@@ -8,9 +8,11 @@ from contextlib import suppress
 
 from clu.actor import AMQPActor
 
+from .commands import parser as lvm_command_parser
+
+
 #from scpactor import __version__
 
-from .commands import parser as lvm_command_parser
 
 __all__ = ["lvmcam"]
 

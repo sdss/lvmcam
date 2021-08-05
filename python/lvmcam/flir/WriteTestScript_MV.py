@@ -58,6 +58,7 @@
 
 import numpy as np
 
+
 scNm = "MV_Feb13.txt"       # Name of script file to write
 outFile = open(scNm, "w")   # Open file to write text
 

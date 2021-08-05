@@ -6,9 +6,10 @@ import ctypes
 import sys
 
 import cv2
-import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
 import gi
 import numpy as np
+
+import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
 
 
 #--------------------------------------------------------------------------------------------

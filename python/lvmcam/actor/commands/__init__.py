@@ -14,6 +14,7 @@ import warnings
 import click
 from clu.parsers.click import CluGroup, help_, ping, version
 
+
 @click.group(cls=CluGroup)
 def parser(*args):
     pass

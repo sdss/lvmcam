@@ -5,12 +5,15 @@
 
 '''
 
-import sys,time
-import gi 
-import cv2
 import ctypes
-import numpy as np
+import sys
+import time
+
+import cv2
+import gi
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def printStatus(cam):
     dev = cam.get_device()    # Allows access to "deeper" features
@@ -47,6 +50,7 @@ verbose = True    # How wordy to be
 
 gi.require_version('Aravis', '0.8')
 from gi.repository import Aravis
+
 
 def resetcam():
     Aravis.update_device_list()

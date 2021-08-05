@@ -18,9 +18,11 @@
 
 '''
 
+import time  # To measure how long this takes
+
+import FLIR_Utils as FU  # All the camera interface stuff
 import numpy as np
-import time                  # To measure how long this takes
-import FLIR_Utils as FU      # All the camera interface stuff
+
 
 start_time = time.time()     # And we're off...
 

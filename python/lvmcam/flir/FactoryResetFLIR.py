@@ -7,14 +7,16 @@
     
 '''
 
-import sys,time
-import gi 
-import cv2
 import ctypes
-import numpy as np
-import matplotlib.pyplot as plt
+import sys
+import time
 
-import FLIR_Utils as FU           # All the camera interface stuff
+import cv2
+import FLIR_Utils as FU  # All the camera interface stuff
+import gi
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 def printStatus(cam):
     dev = cam.get_device()    # Allows access to "deeper" features
@@ -51,6 +53,7 @@ print ("-----")
 
 gi.require_version('Aravis', '0.8')
 from gi.repository import Aravis
+
 
 ###--- Set up camera 
 

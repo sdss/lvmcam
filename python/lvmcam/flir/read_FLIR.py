@@ -20,17 +20,20 @@
 
 '''
 
-import sys
-import gi 
 import ctypes
-import numpy as np
+import sys
+
+import gi
 import matplotlib.pyplot as plt
-from astropy.io import fits       # To read and write FITS files (for diagnostics)
+import numpy as np
+from astropy.io import fits  # To read and write FITS files (for diagnostics)
+
 
 gi.require_version('Aravis', '0.8')
 from gi.repository import Aravis
 
-import lvmcam.flir.FLIR_Utils as FU           # All the camera interface stuff
+import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
+
 
 def readflir():
     #--------------------------------------------------------------------------------------------
