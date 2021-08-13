@@ -14,36 +14,28 @@ from lvmcam.exceptions import LvmcamError
 
 from . import parser
 
-
 __all__ = ["expose"]
-
-
-
-
-
-
 
 
 @parser.group()
 def expose(*args):
     """expose function of araviscam module. internal returns buffer file
     and external returns fits file"""
-
-    pass
+    print(args)
 
 
 @expose.command()
-@click.argument("EXPT", type=float)#
+@click.argument("EXPT", type=float)
 async def expsingle(command: Command, expt: float):
 
     try:
-        print("before : ", blc)#BlackflyCamera
+        print("before : ", blc)  # BlackflyCamera
         await blc._connect_internal(self=blc)
-        print("after : ",blc)
+        print("after : ", blc)
 
-        print(blc.device)
-        expflir=Exposure(blc)
-        expflir.exptime=expt
+        # print(blc.device)
+        expflir = Exposure(blc)
+        expflir.exptime = expt
         print(expflir)
         print(expflir.exptime)
         await blc._expose_grabFrame(self=blc, exposure=expflir)
@@ -54,41 +46,37 @@ async def expsingle(command: Command, expt: float):
 
     except LvmcamError as err:
         command.fail(f"error is {err}")
-  #return command.finish()
-
-
+        # return command.finish()
 
 
 @expose.command()
 @click.argument("EXPTIME", type=float)
 async def expfits(command: Command, expt: float):
-    try:
-        #connect independently
-        await blc._connect_internal(self=blc)
+    # try:
+    #     # connect independently
+    #     await blc._connect_internal(self=blc)
 
+    #     # check connection
+    #     # command.info(str(blc.device))
+    #     expflir = Exposure(blc)
+    #     expflir.exptime = expt
 
-        #check connection
-        command.info(str(blc.device))
-        expflir = Exposure(blc)
-        expflir.exptime = expt
+    #     # exopse
+    #     reg = await blc.expose(exposure=expflir)
+    #     command.info("FLIR exposing FITS...")
+    #     path = ImageNamer
+    #     await reg.write(path)
 
-        #exopse
-        reg = await blc.expose(exposure=expflir)
-        command.info("FLIR exposing FITS...")
-        path=ImageNamer
-        await reg.write(path)
+    #     # disconnect independently
+    #     await blc._disconnect_internal(self=blc)
 
-        #disconnect independently
-        await blc._disconnect_internal(self=blc)
+    # except LvmcamError as err:
+    #     command.fail(f"error is {err}")
 
-    except LvmcamError as err:
-        command.fail(f"error is {err}")
+    # return command.finish(path=str(path))
+    pass
 
-    return command.finish(path=str(path))
-
-
-#expose and make fits image and return path of fits image. (09/08/21 SML)
-
+# expose and make fits image and return path of fits image. (09/08/21 SML)
 
 
 @expose.command()
@@ -98,7 +86,7 @@ async def exptest(command: Command, expt: float):
     cam = await cs.add_camera(uid="19283193")
     # print("cameras", cs.cameras)
     # print("config" ,config)
-    exp = await cam.expose(expt,"LAB TEST")
+    exp = await cam.expose(expt, "LAB TEST")
     print(exp.data)
     command.info("FLIR exposing...")
-   #return command.finish()
+    # return command.finish()

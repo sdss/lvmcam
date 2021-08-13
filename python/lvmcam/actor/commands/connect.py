@@ -21,7 +21,6 @@ __all__ = ["connect"]
 def connect(*args):
     """connection via BlackflyCameraSystem Class. Changing .Yaml file of
     aravicam module is neeeded when changing the camera"""
-
     pass
 
 
@@ -34,8 +33,8 @@ def connect(*args):
 #   help="all, right, or left",
 # )
 async def listcams(command: Command):
-  command.info(str(blcs.list_available_cameras(self=blcs)))
-  command.info("Available cameras")
+    command.info(str(blcs.list_available_cameras(self=blcs)))
+    command.info("Available cameras")
 
 @connect.command()
 async def con(command: Command):

@@ -1,0 +1,101 @@
+---
+
+# sdss/araviscam configuration for the 7 auto-guiders of LVMi-South
+cameras:
+    # the sole existing MPIA test camera Blackfly GigE of 2020-12-11
+    sci.agw:
+        name: "sci.agw"
+        # Note that the base camera system uses strings, not integers, here.
+        # Note that the serial number must be provided even if the ip-spec is present!
+        uid: "19283193"
+        serial: 19283193
+        # if the ip-address is nameserver-resolved, also strings like agw.lvmt... may appear
+        ip: "192.168.70.50"
+        connection:
+            uid: "19283193"
+            # gain factor; a value =0 is interpreted to set autogain
+            # a value <0 is interpreted to not to set any gain but leave it as is.
+            gain: 1.0
+
+            # horizontal and vertical binning factors (must be 1,2 or 4 for the BlackFly)
+            binning: [1, 1]
+
+            autoconnect: True
+
+            # The following 4 dict must follow exactly the
+            # name structure and types as in the araviscam/etc/*.xml file
+            bool:
+                # flip vertically (reverse Y) so image in numpy is ordered according to
+                # FITS standards, where the bottom line is sequentialized first, and
+                ReverseY: True
+                ReverseX: False
+
+                # No blacklevel clamping, added 2021-02-18
+                # Disabled for support of astrometry in dark sky exposures
+                BlackLevelClampingEnable: False
+            
+                # No gamma correction, added 2021-02-18
+                GammaEnable: False
+            
+                # sharpeningEnable is not writable on the FLIR (!)
+                # SharpeningEnable: False
+
+            int:
+                # the binning modes are enumerations: 0 = mean, 1=sum
+                # The sum is what most astronomers would expect...
+                BinningHorizontalMode: 1
+                BinningVerticalMode: 1
+
+            float:
+
+            string:
+    
+        shutter: false
+
+    # autoguider east of sci telescope
+    # Due to the restrictions of the __init__ function in the sdss/basecam,
+    # all cameras, even if absent, must have a uid field, and all
+    # these uid's must be different (even if they are fake...)
+    sci.age:
+        name: "sci.age"
+        uid: "-1"
+        serial: 0
+
+    # autoguider west of sky-west telescope
+    skyw.agw:
+        name: "skyw.agw"
+        uid: "-2"
+        serial: 0
+
+    # autoguider east of sky-west telescope
+    skyw.age:
+        name: "skyw.age"
+        uid: "-3"
+        serial: 0
+
+    # autoguider west of sky-east telescope
+    skye.agw:
+        name: "skye.agw"
+        uid: "-4"
+        serial: 0
+
+    # autoguider east of sky-east telescope
+    skye.age:
+        name: "skye.age"
+        uid: "-5"
+        serial: 0
+
+    # autoguider west of spectrophotometric telescope
+    # Note that only one of the two auto-guiders for the
+    # spectroscopic telelescopes exist: The configuration
+    # of one of either spec.agw or spec.age should be empty!
+    spec.agw:
+        name: "spec.agw"
+        uid: "-6"
+        serial: 0
+
+    # autoguider east of spectrophotometric telescope
+    spec.age:
+        name: "spec.age"
+        uid: "-7"
+        serial: 0
