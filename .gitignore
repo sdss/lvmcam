@@ -105,7 +105,7 @@ ENV/
 # mypy
 .mypy_cache/
 
-.vscode
+.vscode/
 
 .pytest_cache
 
@@ -113,3 +113,7 @@ ENV/
 *~
 *.swp
 *.swo
+
+**/.vscode/
+**/__pycache__/
+*.fits
