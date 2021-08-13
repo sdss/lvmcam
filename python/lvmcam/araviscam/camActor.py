@@ -7,9 +7,9 @@ import os
 
 async def singleFrame(config, verbose, name, exptime):
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config, verbose=verbose)
-    cam = await cs.add_camera(name=name, uid="1")
+    cam = await cs.add_camera(name=name, uid=cs._config['sci.agw']['uid'])
     exp = await cam.expose(exptime, "LAB TEST")
-    await cs.remove_camera(name=name, uid="1")
+    await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
     filename = f'{name}_{exp.filename}'
     await exp.write(filename=filename)
     return filename
