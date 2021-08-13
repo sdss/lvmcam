@@ -2,7 +2,7 @@
 name = "sdss-lvmcam"
 version = "0.1.0-alpha.0"
 description = "package for lvmagp"
-authors = ["Sumin Lee <lxmark888@khu.ac.kr>"]
+authors = ["Mingyu Jeon <mgjeon@khu.ac.kr>", "Sumin Lee <lxmark888@khu.ac.kr>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 homepage = "https://github.com/sdss/lvmcam"

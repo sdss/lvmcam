@@ -70,8 +70,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'lvmcam'
-copyright = '{0}, {1}'.format('2021', 'Sumin Lee')
-author = 'Sumin Lee'
+copyright = '{0}, {1}'.format('2021', 'Mingyu Jeon, Sumin Lee')
+author = 'Mingyu Jeon, Sumin Lee'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

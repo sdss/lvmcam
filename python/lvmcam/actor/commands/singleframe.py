@@ -1,3 +1,7 @@
+# @Author: Mingyu Jeon (mgjeon@khu.ac.kr)
+# @Date: 2021-08-13
+# @Filename: singleframe.py
+
 from __future__ import absolute_import, annotations, division, print_function
 
 import asyncio
