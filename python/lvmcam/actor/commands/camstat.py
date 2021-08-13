@@ -6,7 +6,7 @@ import click
 from clu.command import Command
 
 from lvmcam.flir import (read_FLIR)  # auto run when actor started (30/07/21 Sumin)
-from lvmcam.flir import FLIR_FullStatus, ResetFLIR
+from lvmcam.flir import FLIR_FullStatus, ResetFLIR, FLIR_Utils
 
 from . import parser
 
@@ -47,5 +47,10 @@ async def fullstat(command: Command):
     FLIR_FullStatus.fullstat()
     command.info("full status of FLIR camera")
 
+@camstat.command()
+async def acquire(command: Command):
+    camt,devt = FLIR_Utils.Setup_Camera(False)
+    command.info(str(FLIR_Utils.Acquire_Frames(cam=camt,nFrames=1)))
+    command.info("exposing single frame for test")
 
 

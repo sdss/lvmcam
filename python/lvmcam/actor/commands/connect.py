@@ -43,7 +43,6 @@ async def con(command: Command):
     command.info("FLIR connecting")
 
 
-
 @connect.command()
 async def discon(command: Command):
     await blc._disconnect_internal(self=blc)

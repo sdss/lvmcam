@@ -57,7 +57,7 @@ def Setup_Camera(verbose, fakeCam = False):
 
     dev = cam.get_device()        # Allows access to "deeper" features
 
-    return cam,dev          # Send back camera, device
+    return cam, dev          # Send back camera, device
 
 #--------------------------------------------------------------------------------------------
 
