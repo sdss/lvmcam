@@ -6,6 +6,7 @@
 # @global-owner1 and @global-owner2 will be requested for
 # review when someone opens a pull request.
 *       @sdss
+*       mgjeon@khu.ac.kr
 *       lxmark888@khu.ac.kr
 
 # Order is important; the last matching pattern takes the most
