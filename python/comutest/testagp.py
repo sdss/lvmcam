@@ -4,8 +4,11 @@ from clu import AMQPActor, command_parser
 
 
 @command_parser.command()
+@click.argument("EXPTIME", type=float)
+@click.argument('NAME', type=str)
+@click.argument('NUM', type=int)
 @click.option('--overwrite', type=bool, default=False)
-async def expose(command, overwrite):
+async def expose(command, overwrite, exptime, name, num):
     """Exposes the camera."""
 
     command.info(text='Starting the exposure.')
@@ -14,7 +17,10 @@ async def expose(command, overwrite):
         'lvmcam',
         'singleframe',
         'singleexpose',
-        f'--overwrite {overwrite}'
+        f'--overwrite {overwrite}',
+        f'{exptime}',
+        f'{name}',
+        f'{num}'
     )
     await lvmcam_cmd
     if lvmcam_cmd.status.did_fail:
@@ -24,7 +30,7 @@ async def expose(command, overwrite):
     fits_path = replies[-1].body["path"]
 
     if (fits_path == "OSError"):
-        return command.fail(error="File Already Exists")
+        return command.fail(error=replies[-1].body["info"])
 
     command.info(f"File created in {fits_path!r}.")
     return command.finish(text='Exposure done!')
