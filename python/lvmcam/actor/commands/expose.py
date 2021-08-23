@@ -15,37 +15,22 @@ from araviscam.araviscam import BlackflyCam as blc
 async def exposure(exptime, name, num, filepath, config, overwrite):
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     cam = await cs.add_camera(name=name, uid=cs._config['sci.agw']['uid'])
+    filepath = os.path.abspath(filepath)
+    exps = []
     paths = []
     for i in range(num):
         exp = await cam.expose(exptime=exptime)
-        filepath = os.path.abspath(filepath)
         exp.filename = f'{name}_{exp.filename}'
+        exps.append(exp)
         paths.append(os.path.join(filepath, exp.filename))
+    for i in range(num):
         try:
-            await exp.write(filename=paths[i], overwrite=overwrite)
+            await exps[i].write(filename=paths[i], overwrite=overwrite)
         except OSError:
             await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
             return "Error"
     await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
     return paths
-
-# plot fits file funciton
-import matplotlib.pyplot as plt
-from astropy.visualization import astropy_mpl_style
-from astropy.io import fits
-plt.style.use(astropy_mpl_style)
-def plot_fits(file):
-    data, header = fits.getdata(file, header=True)
-    fits_inf = fits.open(file)
-    print(fits_inf.info())
-    image_data = fits_inf[0].data[0]
-    plt.figure()
-    plt.imshow(image_data, cmap='gray')
-    # plt.axis('off')
-    # plt.grid(b=None)
-    plt.colorbar()
-    plt.show()
-    plt.close()
 
 # actor
 __all__ = ["expose"]
@@ -62,7 +47,6 @@ def expose(*args):
 @click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
 @click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
 @click.option('--overwrite', type=bool, default=False)
-@click.option('--plot', type=bool, default=False)
 async def start(
     command: Command,
     exptime: float,
@@ -70,8 +54,7 @@ async def start(
     num: int,
     filepath: str,
     config: str,
-    overwrite: bool,
-    plot: bool,
+    overwrite: bool
 ):
     paths = []
 
@@ -91,10 +74,7 @@ async def start(
         return
 
     if (paths != "Error"):
-        # command.info(f"Created {paths}")
         command.finish(path=paths)
-        if plot:
-            plot_fits(paths[-1])
         return
     else:
         command.finish(path="File already exists")
