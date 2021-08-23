@@ -19,7 +19,7 @@ __all__ = ["connect"]
 
 @parser.group()
 def connect(*args):
-    """connection via BlackflyCameraSystem Class. Changing .Yaml file of
+    """[TEST]connection via BlackflyCameraSystem Class. Changing .Yaml file of
     aravicam module is neeeded when changing the camera"""
     pass
 

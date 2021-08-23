@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from astropy.visualization import astropy_mpl_style
-plt.style.use(astropy_mpl_style)
-
 from astropy.io import fits
+plt.style.use(astropy_mpl_style)
 
 file = "../lvmcam/assets/test_19283193-0001.fits"
 
