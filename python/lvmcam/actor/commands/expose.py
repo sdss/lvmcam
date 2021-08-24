@@ -12,24 +12,28 @@ from . import parser
 import asyncio
 import os
 from araviscam.araviscam import BlackflyCam as blc
-async def exposure(exptime, name, num, filepath, config, overwrite):
+from basecam.exposure import ImageNamer
+image_namer = ImageNamer(
+    "{camera.name}-{num:04d}.fits",
+    dirname=".",
+    overwrite=False,
+)
+async def exposure(exptime, name, num, filepath, config):
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    cam = await cs.add_camera(name=name, uid=cs._config['sci.agw']['uid'])
+    uid = cs._config['sci.agw']['uid']
     filepath = os.path.abspath(filepath)
-    exps = []
+    cam = await cs.add_camera(name=name, uid=uid)
     paths = []
     for i in range(num):
-        exp = await cam.expose(exptime=exptime)
-        exp.filename = f'{name}_{exp.filename}'
-        exps.append(exp)
-        paths.append(os.path.join(filepath, exp.filename))
+        filename = f'{name}-{image_namer(cam)}'
+        paths.append(os.path.join(filepath, filename))
     for i in range(num):
         try:
-            await exps[i].write(filename=paths[i], overwrite=overwrite)
+            await cam.expose(exptime=exptime, filename=paths[i], write=True)
         except OSError:
-            await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
-            return "Error"
-    await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
+            await cs.remove_camera(name=name, uid=uid)
+            return "OSError"
+    await cs.remove_camera(name=name, uid=uid)
     return paths
 
 # actor
@@ -46,7 +50,6 @@ def expose(*args):
 @click.argument('NUM', type=int)
 @click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
 @click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
-@click.option('--overwrite', type=bool, default=False)
 async def start(
     command: Command,
     exptime: float,
@@ -54,7 +57,6 @@ async def start(
     num: int,
     filepath: str,
     config: str,
-    overwrite: bool
 ):
     paths = []
 
@@ -65,17 +67,14 @@ async def start(
             num=num,
             filepath=filepath,
             config=config,
-            overwrite=overwrite
         )
     except OSError:
-        command.info("File alreday exists. See traceback in the log for more information.")
-        command.info("If you want to overwrite the file, set --overwrite True.")
-        command.finish(path="OSError", info="File alreday exists. See traceback in the log for more information.")
+        command.error(path="OSError", info="File alreday exists.")
         return
 
-    if (paths != "Error"):
+    if (paths != "OSError"):
         command.finish(path=paths)
         return
     else:
-        command.finish(path="File already exists")
+        command.error(path="OSError", info="File alreday exists.")
         return
