@@ -6,147 +6,88 @@ from __future__ import absolute_import, annotations, division, print_function
 import click
 from click.decorators import command
 from clu.command import Command
-from . import parser
+from lvmcam.actor.commands import parser
 
-# actor
+from lvmcam.actor.commands.connection import camdict
+import lvmcam.actor.commands.camstatus as camstatus
+
 __all__ = ["expose"]
-
-@parser.group()
-def expose(*args):
-    """[TEST] expose function of araviscam module."""
-    pass
 
 import asyncio
 import os
 from araviscam.araviscam import BlackflyCam as blc
-from basecam.exposure import ImageNamer
-image_namer = ImageNamer(
-    "{camera.name}-{num:04d}.fits",
-    dirname=".",
-    overwrite=False,
-)
-@expose.command()
+# from basecam.exposure import ImageNamer
+# image_namer = ImageNamer(
+#     "{camera.name}-{num:04d}.fits",
+#     dirname=".",
+#     overwrite=False,
+# )
+@parser.command()
 @click.argument("EXPTIME", type=float)
-@click.argument('NAME', type=str)
 @click.argument('NUM', type=int)
+@click.argument('CAMNAME', type=str)
 @click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
-async def start(
+async def expose(
     command: Command,
     exptime: float,
-    name: str,
     num: int,
-    filepath: str,
-    config: str,
-):
-
-    command.info("Actor started")
-
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    uid = cs._config['sci.agw']['uid']
-    cam = await cs.add_camera(name=name, uid=uid)
-    command.info("Camera Added")
-
-    command.info("Start making filenames")
-    paths = []
-    filepath = os.path.abspath(filepath)
-    for i in range(num):
-        filename = f'{name}-{image_namer(cam)}'
-        paths.append(os.path.join(filepath, filename))
-        command.info(f"Ready for {paths[i]}")
-    for i in range(num):
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Exposure Start")
-        try:
-            await cam.expose(exptime=exptime, filename=paths[i], write=True)
-        except OSError:
-            await cs.remove_camera(name=name, uid=uid)
-            command.error(path="OSError", info="File alreday exists.")
-            return
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Exposure Stop")
-    await cs.remove_camera(name=name, uid=uid)
-    command.finish(path=paths)
-
-cs = ""
-cam = ""
-
-@expose.command()
-@click.argument('NAME', type=str)
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
-async def addcam(
-    command: Command,
-    name: str,
-    config: str,
-):
-    global cs
-    global cam
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    uid = cs._config['sci.agw']['uid']
-    cam = await cs.add_camera(name=name, uid=uid)
-    command.info("Camera Added")
-    return
-    
-@expose.command()
-async def showcam(
-    command: Command,
-):
-    global cam
-    if(cam):
-        command.info(f"Connected: {cam.uid}")
-        return
-    else:
-        command.error("Nothing connected")
-        return
-
-
-@expose.command()
-@click.argument("EXPTIME", type=float)
-@click.argument('PREFIX', type=str)
-@click.argument('NUM', type=int)
-@click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
-async def main(
-    command: Command,
-    exptime: float,
-    prefix: str,
-    num: int,
+    camname: str,
     filepath: str,
 ):
-    global cs
-    global cam
-    if(not cam):
-        command.error("Camera doesn't exist")
+    if(not camdict):
+        command.error(error="There are no cameras connected")
         return
+    cam = camdict[camname]
+    camera, device = camstatus.get_camera()
     exps = []
+    status = []
     for i in range(num):
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Exposure Start")
+        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Expose Start")
         exps.append(await cam.expose(exptime=exptime))
+        status.append(await camstatus.custom_status(camera, device))
         # await cam.expose(exptime=exptime, filename=paths[i], write=True)
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Exposure Done")
+        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Expose Done")
     
+    # print(status)
+    hdus = []
+    dates = []
+    for i in range(num):
+        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Make HDUlist Start")
+        hdu = exps[i].to_hdu()[0]
+
+        # hdus.append(hdu)
+        dates.append(hdu.header['DATE-OBS'])
+        # hdu.header['TEST'] = "TEST"
+        for item in list(status[i].items()):
+            hdr = item[0] 
+            val = item[1]
+            # print(hdr, len(val))
+            if len(val) > 70:
+                continue
+            _hdr = hdr.replace(" ", "")
+            _hdr = _hdr.replace(".", "")
+            _hdr = _hdr.upper()[:8]
+            hdu.header[_hdr] = (val, hdr)
+        hdus.append(hdu)
+        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Make HDUlist Done")
+
+    # for hdu in hdus: print(repr(hdu.header))
+
     command.info("Start making filenames")
     filepath = os.path.abspath(filepath)
     paths = []
     for i in range(num):
-        filename = f'{prefix}-{image_namer(cam)}'
+        filename = f'{cam.name}-{dates[i]}.fits'
         paths.append(os.path.join(filepath, filename))
         command.info(f"Ready for {paths[i]}")
-    hdus = []
-    for i in range(num):
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Save Start")
-        hdus.append(exps[i].to_hdu())
-        command.info(f"FITS NUMBER={i+1}, EXPTIME={exptime}, Save Done")
-    print(hdus)
+        command.info(f"Write start")
+        hdus[i].writeto(paths[i])
+        command.info(f" Write done")
+
+    # print(con.cam.name)
+    # date_obs = hdus[0].header['DATE-OBS']
+    # print(date_obs)
+    # for i in range(num)
     # await cs.remove_camera(uid=cam.name)
     command.finish(path=paths)
     return
-
-@expose.command()
-async def removecam(
-    command: Command,
-):
-    if(cam):
-        await cs.remove_camera(uid=cam.name)
-        command.finish("Camera hvae been removed")
-        return
-    else:
-        command.error("Nothing to remove")
-        return

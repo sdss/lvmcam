@@ -19,7 +19,6 @@ from clu.parsers.click import CluGroup, help_, ping, version
 def parser(*args):
     pass
 
-
 parser.add_command(ping)
 parser.add_command(version)
 parser.add_command(help_)

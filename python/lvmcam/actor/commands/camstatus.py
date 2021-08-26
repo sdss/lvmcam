@@ -5,26 +5,28 @@ import asyncio
 import click
 from clu.command import Command
 
-from lvmcam.flir import (read_FLIR)  # auto run when actor started (30/07/21 Sumin)
-from lvmcam.flir import FLIR_FullStatus, ResetFLIR, FLIR_Utils
+# from lvmcam.flir import (read_FLIR)  # auto run when actor started (30/07/21 Sumin)
+# from lvmcam.flir import FLIR_FullStatus, ResetFLIR
+# from lvmcam.flir import FLIR_Utils
 
 from . import parser
 
+from lvmcam.actor.commands.connection import cams
 
 #from lvmieb.controller.controller import IebController
 #from lvmieb.exceptions import LvmIebError
 
-__all__ = ["camstat"]
+__all__ = ["status"]
 
 
 # currently not working due to problem of flir_utils
-@parser.group()
-def camstat(*args):
-    """[TEST]control status of FLIR camera"""
-    pass
+# @parser.group()
+# def camstat(*args):
+#     """[TEST]control status of FLIR camera"""
+#     pass
 
 
-@camstat.command()
+# @camstat.command()
 # @click.option(
 #    "-s",
 #    "--side",
@@ -32,34 +34,34 @@ def camstat(*args):
 #    default = "all",
 #    help="all, right, or left",
 # )
-async def readstat(command: Command):
-    read_FLIR.readflir()
-    command.info("test image and status of FLIR camera")
+# async def readstat(command: Command):
+#     read_FLIR.readflir()
+#     command.info("test image and status of FLIR camera")
 
 
-@camstat.command()
-async def reset(command: Command):
-    ResetFLIR.resetcam()
-    command.info("FLIR reset")
+# @camstat.command()
+# async def reset(command: Command):
+#     ResetFLIR.resetcam()
+#     command.info("FLIR reset")
 
 
-@camstat.command()
-async def fullstat(command: Command):
-    FLIR_FullStatus.fullstat()
-    command.info("full status of FLIR camera")
+# @camstat.command()
+# async def fullstat(command: Command):
+#     FLIR_FullStatus.fullstat()
+#     command.info("full status of FLIR camera")
 
 
-@camstat.command()
-async def acquire(command: Command):
-    camt, devt = FLIR_Utils.Setup_Camera(False)
-    command.info(str(FLIR_Utils.Acquire_Frames(cam=camt, nFrames=1)))
-    command.info("exposing single frame for test")
+# @camstat.command()
+# async def acquire(command: Command):
+#     camt, devt = FLIR_Utils.Setup_Camera(False)
+#     command.info(str(FLIR_Utils.Acquire_Frames(cam=camt, nFrames=1)))
+#     command.info("exposing single frame for test")
 
 
 import gi  # To ensure correct Aravis version
 gi.require_version('Aravis', '0.8')     # Version check
 from gi.repository import Aravis  # Aravis package
-async def custom_status(command, cam, dev):
+async def custom_status(cam, dev):
     [fullWidth,fullHeight] = cam.get_sensor_size()    # Full frame size
     [x,y,width,height] = cam.get_region()             # Get RoI details
     payload = cam.get_payload()                       # Get "payload", the size of in bytes
@@ -87,17 +89,28 @@ async def custom_status(command, cam, dev):
         "Total Dissiapted Power":f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
         "Camera Temperature":f"{dev.get_float_feature_value('DeviceTemperature')} C"
     }
+    return stat
 
-    command.info(status=stat)
+import gi  # To ensure correct Aravis version
+gi.require_version('Aravis', '0.8')     # Version check
+from gi.repository import Aravis  # Aravis package
+
+def get_camera():
+    Aravis.update_device_list()  
+    camera = Aravis.Camera.new(Aravis.get_device_id(0))
+    device = camera.get_device()
+    return camera, device
 
 
-@camstat.command()
+@parser.command()
 @click.option('--verbose', type=bool, default=False)
 async def status(command: Command, verbose):
     """
     Show status of camera
     """
-    cam,dev = FLIR_Utils.Setup_Camera(verbose,False)    
+    # print(Aravis.get_device_id(0))
+    cam, dev = get_camera()
+    # cam,dev = FLIR_Utils.Setup_Camera(verbose,False)    
     # FLIR_Utils.Standard_Settings(cam,dev,verbose) 
-    await custom_status(command,cam,dev)
+    command.info(status=await custom_status(command, cam, dev))
     return
