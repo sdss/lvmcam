@@ -112,5 +112,5 @@ async def status(command: Command, verbose):
     cam, dev = get_camera()
     # cam,dev = FLIR_Utils.Setup_Camera(verbose,False)    
     # FLIR_Utils.Standard_Settings(cam,dev,verbose) 
-    command.info(status=await custom_status(command, cam, dev))
+    command.info(status=await custom_status(cam, dev))
     return

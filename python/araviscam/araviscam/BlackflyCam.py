@@ -21,6 +21,30 @@ import gi
 gi.require_version('Aravis', '0.8')
 from gi.repository import Aravis
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+# import basecam
+
+# from basecam.exposure import ImageNamer
+# image_namer = ImageNamer(
+#     "{camera.name}-{num:04d}.fits",
+#     dirname=".",
+#     overwrite=False,
+# )
+
+import datetime
+
+def pretty(time):
+    return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 # https://pypi.org/project/sdss-basecam/
 # https://githum.com/sdss/basecam/
@@ -280,26 +304,28 @@ class BlackflyCamera(BaseCamera):
                           arranged in FITS order (i.e., the data of the bottom row appear first...)
         :return: The dictionary with the window location and size (x=,y=,width=,height=)
         """
-
+ 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame function start")
         # To avoid being left over by other programs with no change
         # to set the exposure time, we switch the auto=0=off first
         self.device.set_exposure_time_auto(0)
         # Aravis assumes exptime in micro second integers
         exptime_ms = int(0.5 + exposure.exptime * 1e6)
         self.device.set_exposure_time(exptime_ms)
-
+        
         # timeout (factor 2: assuming there may be two frames in auto mode taken
         #   internally)
         #   And 5 seconds margin for any sort of transmission overhead over PoE
         tout_ms = int(1.0e6 * (2.*exposure.exptime+5))
         self.notify(CameraEvent.EXPOSURE_INTEGRATING)
-
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | await self.loop.run_in_executor(None, self.device.acquisition, tout_ms) start")
         # the buffer allocated/created within the acquisition()
         buf = await self.loop.run_in_executor(None, self.device.acquisition, tout_ms)
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | await self.loop.run_in_executor(None, self.device.acquisition, tout_ms) done")
+        # print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Buffer: {buf}")
         if buf is None:
             raise ExposureError("Exposing for " + str(exposure.exptime) +
                                 " sec failed. Timout " + str(tout_ms/1.0e6))
-
         # Decipher which methods this aravis buffer has...
         # print(dir(buf))
 
@@ -314,6 +340,7 @@ class BlackflyCamera(BaseCamera):
                                       shape=(1, reg.height, reg.width))
         # print("exposure data shape", exposure.data.shape)
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame function done")
         return reg
 
     async def _expose_internal(self, exposure):
@@ -326,16 +353,19 @@ class BlackflyCamera(BaseCamera):
         # fill exposure.data with the frame's 16bit data
         # reg becomes a x=, y=, width= height= dictionary
         # these are in standard X11 coordinates where upper left =(0,0)
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_internal function start")
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame start")
         reg = await self._expose_grabFrame(exposure)
         # print('region',reg)
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame done")
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders start")
         binxy = {}
         try:
             # becomes a dictionary with dx=... dy=... for the 2 horiz/vert binn fact
             binxy = self.device.get_binning()
         except Exception as ex:
             binxy = None
-
         # append FITS header cards
         # For the x/y coordinates transform from X11 to FITS coordinates
         # Todo: reports the camera y-flipped reg.y if ReversY=true above??
@@ -352,14 +382,12 @@ class BlackflyCamera(BaseCamera):
 
         dev = self.device.get_device()
         # print(dir(dev))
-
         try:
             gain = dev.get_float_feature_value("Gain")
             addHeaders.append(("Gain", gain, "Gain"))
         except Exception as ex:
             # print("failed to read gain" + str(ex))
             pass
-
         imgrev = [False, False]
         try:
             imgrev[0] = self.device.get_boolean("ReverseX")
@@ -411,12 +439,21 @@ class BlackflyCamera(BaseCamera):
         except:
             pass
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders done")
+        # return addHeaders
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header start")
         for header in addHeaders:
+            # exposure.fits_model[0].header[header[0]] = header[1]
+            # exposure.to_hdu()[0].header[header[0]] = header[1]
+            print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | {header}")
             exposure.fits_model[0].header_model.append(models.Card(header))
-
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
+        # hdu = exposure.to_hdu()[0].header
+        # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")    
         # unref() is currently usupported in this GObject library.
         # Hope that this does not lead to any memory leak....
         # buf.unref()
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_internal function done")
         return
 
 

@@ -26,12 +26,15 @@ def show_connected_camera(command, cs):
             command.info(connect={"name":cam.name, "uid":cam.uid})
         return
     else:
-        command.error(error="There are no cameras connected")
+        command.error(error="There are no connected cameras")
         return
 
 
 @parser.group()
 def show(*args):
+    """
+    all / connection
+    """
     pass
 
 @show.command()
@@ -40,9 +43,11 @@ async def all(
     command: Command,
     config: str,
 ):
+    """
+    Show all cameras in configuration file.
+    """
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     show_available_camera(command, cs)
-    show_connected_camera(command, cs)
     return
 
 @show.command()
@@ -51,6 +56,9 @@ async def connection(
     command: Command,
     config: str,
 ):
+    """
+    Show all connected cameras.
+    """
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     show_connected_camera(command, cs)
     return
