@@ -163,6 +163,25 @@ class BlackflyCamera(BaseCamera):
     So this is not done in this python code but by the camera.
     """
 
+    def __init__(
+        self,
+        uid,
+        camera_system,
+        name = None,
+        force = False,
+        image_namer = None,
+        camera_params = {},
+    ):
+        super().__init__(
+            uid = uid,
+            camera_system = camera_system,
+            name = name,
+            force = force,
+            image_namer = image_namer,
+            camera_params = camera_params,
+        )
+        self.header = []
+
     async def _connect_internal(self, **kwargs):
         """Connect to a camera and upload basic binning and ROI parameters.
         :param kwargs:  recognizes the key uid with integer value, the serial number
@@ -442,11 +461,16 @@ class BlackflyCamera(BaseCamera):
         print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders done")
         # return addHeaders
         print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header start")
-        for header in addHeaders:
-            # exposure.fits_model[0].header[header[0]] = header[1]
-            # exposure.to_hdu()[0].header[header[0]] = header[1]
-            print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | {header}")
-            exposure.fits_model[0].header_model.append(models.Card(header))
+        # for header in addHeaders:
+        #     # exposure.fits_model[0].header[header[0]] = header[1]
+        #     # exposure.to_hdu()[0].header[header[0]] = header[1]
+
+        #     print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | {header}")
+        #     exposure.fits_model[0].header_model.append(models.Card(header))
+        #     # exposure.to_hdu()[0].header[header[0]] = 
+        #     # print(exposure.fits_model[0].header_model)
+        #     # print(models.Card(header))
+        self.header = addHeaders
         print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
         # hdu = exposure.to_hdu()[0].header
         # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")    
@@ -454,7 +478,31 @@ class BlackflyCamera(BaseCamera):
         # Hope that this does not lead to any memory leak....
         # buf.unref()
         print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_internal function done")
+        # self.returnhdr(addHeaders)
         return
+
+    # async def expose(
+    #     self,
+    #     exptime: float,
+    #     image_type: str = "object",
+    #     stack: int = 1,
+    #     stack_function: Callable[..., numpy.ndarray] = numpy.median,
+    #     fits_model: Optional[FITSModel] = None,
+    #     filename: Optional[str] = None,
+    #     write: bool = False,
+    #     postprocess: bool = True,
+    #     **kwargs,
+    # ) -> Exposure:
+    #     super().expose(
+    #         exptime=exptime,
+    #         image_type=image_type,
+    #         stack=stack,
+    #         stack_function=stack_function,
+    #         fits_model=fits_model,
+    #         filename=filename,
+    #         write=write,
+    #         postprocess=postprocess,
+    #     )
 
 
 class BlackflyImageAreaMixIn(ImageAreaMixIn):

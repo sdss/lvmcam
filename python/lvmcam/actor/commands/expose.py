@@ -66,11 +66,15 @@ async def expose(
     cam = camdict[camname]
     camera, device = camstatus.get_camera()
     exps = []
+    hdrs = []
     status = []
     for i in range(num):
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose start")
         exps.append(await cam.expose(exptime=exptime, image_type="object"))
         status.append(await camstatus.custom_status(camera, device))
+        hdrs.append(cam.header)
+        # hdr = exp[0].
+        # hdrs.append(hdr)
         # await cam.expose(exptime=exptime, filename=paths[i], write=True)
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose done")
     
@@ -80,6 +84,7 @@ async def expose(
     for i in range(num):
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Setting header start")
         hdu = exps[i].to_hdu()[0]
+        # print(hdu.header)
         # print(hdu.header['DATE-OBS'])
         # hdus.append(hdu)
         # print(repr(hdu.header))
@@ -88,6 +93,14 @@ async def expose(
         # hdu.header['TEST'] = "TEST"
         # print(repr(hdu.header))
         # print("")
+        # print(hdrs[i])
+        # print(hdu)
+        for item in hdrs[i]:
+            hdr = item[0]
+            val = item[1]
+            com = item[2]
+            hdu.header[hdr] = (val, com)
+        # print(list(status[i].items()))
         for item in list(status[i].items()):
             hdr = item[0] 
             val = item[1]
@@ -99,6 +112,7 @@ async def expose(
             _hdr = _hdr.upper()[:8]
             hdu.header[_hdr] = (val, hdr)
         # print(repr(hdu.header))
+
         hdus.append(hdu)
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Setting header done")
 
