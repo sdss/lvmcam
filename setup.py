@@ -30,7 +30,7 @@ entry_points = \
 
 setup_kwargs = {
     'name': 'sdss-lvmcam',
-    'version': '0.1.0a0',
+    'version': '0.1.0',
     'description': 'package for lvmagp',
     'long_description': '# lvmcam\n\n![Versions](https://img.shields.io/badge/python->3.7-blue)\n[![Documentation Status](https://readthedocs.org/projects/sdss-lvmcam/badge/?version=latest)](https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest)\n[![Travis (.org)](https://img.shields.io/travis/sdss/lvmcam)](https://travis-ci.org/sdss/lvmcam)\n[![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)\n\npackage for lvmagp\n',
     'author': 'Mingyu Jeon, Sumin Lee',

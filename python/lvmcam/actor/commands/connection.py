@@ -6,7 +6,7 @@ from lvmcam.actor.commands import parser
 
 import asyncio
 import os
-from araviscam.araviscam import BlackflyCam as blc
+from lvmcam.araviscam import BlackflyCam as blc
 
 import gi
 

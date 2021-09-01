@@ -1,7 +1,7 @@
 #/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr),Sumin Lee(lxmark888@khu.ac.kr)
+# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr), Sumin Lee(lxmark888@khu.ac.kr)
 # @Date: 2021-07-14
 # @Filename: __init__.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
@@ -13,7 +13,6 @@ import warnings
 
 import click
 from clu.parsers.click import CluGroup, help_, ping, version
-
 
 @click.group(cls=CluGroup)
 def parser(*args):

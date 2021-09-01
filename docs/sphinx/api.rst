@@ -9,7 +9,15 @@ lvmcam Reference
 Main
 ----------------
 
-.. automodule:: lvmcam.__main__
+.. automodule:: lvmcam.actor.actor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+TEST
+----------------
+
+.. automodule:: lvmcam.actor.commands.expose
    :members:
    :undoc-members:
    :show-inheritance:

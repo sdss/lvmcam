@@ -5,7 +5,7 @@ from clu.command import Command
 from lvmcam.actor.commands import parser
 
 import asyncio
-from araviscam.araviscam import BlackflyCam as blc
+from lvmcam.araviscam import BlackflyCam as blc
 
 from lvmcam.actor.commands.connection import cams
 

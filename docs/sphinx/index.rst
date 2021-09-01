@@ -2,12 +2,7 @@
 lvmcam's documentation
 =============================================
 
-This is the documentation for the SDSS Python product lvmcam. The current version is |lvmcam_version|. You can install the package by doing
-
-.. code-block:: console
-
-  $ pip install sdss-lvmcam
-
+This is the documentation for the SDSS Python product lvmcam. The current version is |lvmcam_version|.
 
 Contents
 --------
