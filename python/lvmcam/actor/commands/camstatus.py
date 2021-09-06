@@ -3,13 +3,13 @@ from __future__ import absolute_import, annotations, division, print_function
 import asyncio
 
 import click
-import gi  # To ensure correct Aravis version
+# import gi  # To ensure correct Aravis version
 from clu.command import Command
 
 from . import parser
 
 
-gi.require_version('Aravis', '0.8')     # Version check
+# gi.require_version('Aravis', '0.8')     # Version check
 from gi.repository import Aravis  # Aravis package
 
 
