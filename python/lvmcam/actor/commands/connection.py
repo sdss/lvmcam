@@ -1,20 +1,23 @@
 from __future__ import absolute_import, annotations, division, print_function
-import click
-from click.decorators import command
-from clu.command import Command
-from lvmcam.actor.commands import parser
 
 import asyncio
+import datetime
 import os
+
+import click
+import gi
+from click.decorators import command
+from clu.command import Command
+
+from lvmcam.actor.commands import parser
 from lvmcam.araviscam import BlackflyCam as blc
 
-import gi
 
 __all__ = ["connect", "disconnect"]
-
 cs = ""
 cams = []
 camdict = {}
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -27,14 +30,13 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-import datetime
 
 def pretty(time):
     return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 
 @parser.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.argument('CONFIG', type=str, default="etc/cameras.yaml")
 async def connect(
     command: Command,
     config: str,
@@ -61,11 +63,12 @@ async def connect(
 
     if cams:
         for cam in cams:
-            command.info(connect={"name":cam.name, "uid":cam.uid})
+            command.info(connect={"name": cam.name, "uid": cam.uid})
         for cam in cams:
-            camdict[cam.name]=cam
+            camdict[cam.name] = cam
             # print(camdict)
     return
+
 
 @parser.command()
 async def disconnect(

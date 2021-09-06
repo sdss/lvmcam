@@ -1,15 +1,18 @@
 from __future__ import absolute_import, annotations, division, print_function
+
+import asyncio
+
 import click
 from click.decorators import command
 from clu.command import Command
-from lvmcam.actor.commands import parser
 
-import asyncio
+from lvmcam.actor.commands import parser
+from lvmcam.actor.commands.connection import cams
 from lvmcam.araviscam import BlackflyCam as blc
 
-from lvmcam.actor.commands.connection import cams
 
 __all__ = ["show"]
+
 
 def show_available_camera(command, cs):
     available_cameras_uid = cs.list_available_cameras()
@@ -20,10 +23,11 @@ def show_available_camera(command, cs):
             command.error(unavailable=f"{item}")
     return
 
+
 def show_connected_camera(command, cs):
     if cams:
         for cam in cams:
-            command.info(connect={"name":cam.name, "uid":cam.uid})
+            command.info(connect={"name": cam.name, "uid": cam.uid})
         return
     else:
         command.error(error="There are no connected cameras")
@@ -37,8 +41,9 @@ def show(*args):
     """
     pass
 
+
 @show.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.argument('CONFIG', type=str, default="etc/cameras.yaml")
 async def all(
     command: Command,
     config: str,
@@ -50,8 +55,9 @@ async def all(
     show_available_camera(command, cs)
     return
 
+
 @show.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.argument('CONFIG', type=str, default="etc/cameras.yaml")
 async def connection(
     command: Command,
     config: str,
@@ -62,5 +68,3 @@ async def connection(
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     show_connected_camera(command, cs)
     return
-
-

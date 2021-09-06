@@ -6,20 +6,24 @@ Python3 class to work with Aravis/GenICam cameras, subclass of sdss-basecam.
 .. moduleauthor:: Richard J. Mathar <mathar@mpia.de>
 """
 
-import sys
 import asyncio
-import numpy
-
-from basecam.mixins import ImageAreaMixIn
-from basecam import CameraSystem, BaseCamera, CameraEvent, CameraConnectionError, models
+import datetime
+import sys
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
 # is using glib2 GObjects to represent cameras and streams, the
 # PyGObject module allows to call the C functions of aravis in python.
 # https://pygobject.readthedocs.io/en/latest/
 import gi
-gi.require_version('Aravis', '0.8')
+import numpy
+from basecam import (BaseCamera, CameraConnectionError,
+                     CameraEvent, CameraSystem, models)
+from basecam.mixins import ImageAreaMixIn
 from gi.repository import Aravis
+
+
+gi.require_version('Aravis', '0.8')
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -41,7 +45,6 @@ class bcolors:
 #     overwrite=False,
 # )
 
-import datetime
 
 def pretty(time):
     return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
@@ -50,6 +53,7 @@ def pretty(time):
 # https://githum.com/sdss/basecam/
 
 # from sdsstools import read_yaml_file
+
 
 __all__ = ['BlackflyCameraSystem', 'BlackflyCamera', 'BlackflyImageAreaMixIn']
 
@@ -138,7 +142,7 @@ class BlackflyCameraSystem(CameraSystem):
                 # If is this was already in the scan: discard, else add
                 if uid not in serialNums:
                     serialNums.append(uid)
-                    addrs.append('@'+ip)
+                    addrs.append('@' + ip)
             except:
                 # apparently no such camera at this address....
                 pass
@@ -146,7 +150,7 @@ class BlackflyCameraSystem(CameraSystem):
         # we zip the two lists to the format 'serialnumber{@ip}'
         ids = []
         for cam in range(len(serialNums)):
-            ids.append(serialNums[cam]+addrs[cam])
+            ids.append(serialNums[cam] + addrs[cam])
 
         return ids
 
@@ -167,18 +171,18 @@ class BlackflyCamera(BaseCamera):
         self,
         uid,
         camera_system,
-        name = None,
-        force = False,
-        image_namer = None,
-        camera_params = {},
+        name=None,
+        force=False,
+        image_namer=None,
+        camera_params={},
     ):
         super().__init__(
-            uid = uid,
-            camera_system = camera_system,
-            name = name,
-            force = force,
-            image_namer = image_namer,
-            camera_params = camera_params,
+            uid=uid,
+            camera_system=camera_system,
+            name=name,
+            force=force,
+            image_namer=image_namer,
+            camera_params=camera_params,
         )
         self.header = []
 
@@ -323,7 +327,7 @@ class BlackflyCamera(BaseCamera):
                           arranged in FITS order (i.e., the data of the bottom row appear first...)
         :return: The dictionary with the window location and size (x=,y=,width=,height=)
         """
- 
+
         print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame function start")
         # To avoid being left over by other programs with no change
         # to set the exposure time, we switch the auto=0=off first
@@ -331,11 +335,11 @@ class BlackflyCamera(BaseCamera):
         # Aravis assumes exptime in micro second integers
         exptime_ms = int(0.5 + exposure.exptime * 1e6)
         self.device.set_exposure_time(exptime_ms)
-        
+
         # timeout (factor 2: assuming there may be two frames in auto mode taken
         #   internally)
         #   And 5 seconds margin for any sort of transmission overhead over PoE
-        tout_ms = int(1.0e6 * (2.*exposure.exptime+5))
+        tout_ms = int(1.0e6 * (2. * exposure.exptime + 5))
         self.notify(CameraEvent.EXPOSURE_INTEGRATING)
         print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | await self.loop.run_in_executor(None, self.device.acquisition, tout_ms) start")
         # the buffer allocated/created within the acquisition()
@@ -344,7 +348,7 @@ class BlackflyCamera(BaseCamera):
         # print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Buffer: {buf}")
         if buf is None:
             raise ExposureError("Exposing for " + str(exposure.exptime) +
-                                " sec failed. Timout " + str(tout_ms/1.0e6))
+                                " sec failed. Timout " + str(tout_ms / 1.0e6))
         # Decipher which methods this aravis buffer has...
         # print(dir(buf))
 
@@ -393,9 +397,9 @@ class BlackflyCamera(BaseCamera):
             ("BinY", binxy.dy, "[ct] Vertical Bin Factor 1, 2 or 4"),
             ("Width", reg.width, "[ct] Pixel Columns"),
             ("Height", reg.height, "[ct] Pixel Rows"),
-            ("RegX", 1+reg.x, "[ct] Pixel Region Horiz start"),
+            ("RegX", 1 + reg.x, "[ct] Pixel Region Horiz start"),
             # The lower left FITS corner is the upper left X11 corner...
-            ("RegY", self.regionBounds[1]-(reg.y+reg.height-1),
+            ("RegY", self.regionBounds[1] - (reg.y + reg.height - 1),
              "[ct] Pixel Region Vert start")
         ]
 
@@ -467,13 +471,13 @@ class BlackflyCamera(BaseCamera):
 
         #     print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | {header}")
         #     exposure.fits_model[0].header_model.append(models.Card(header))
-        #     # exposure.to_hdu()[0].header[header[0]] = 
+        #     # exposure.to_hdu()[0].header[header[0]] =
         #     # print(exposure.fits_model[0].header_model)
         #     # print(models.Card(header))
         self.header = addHeaders
         print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
         # hdu = exposure.to_hdu()[0].header
-        # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")    
+        # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")
         # unref() is currently usupported in this GObject library.
         # Hope that this does not lead to any memory leak....
         # buf.unref()
@@ -585,5 +589,5 @@ if __name__ == "__main__":
     # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
     # bsys.list_available_cameras()
 
-    asyncio.run(singleFrame(args.exptime, args.camname, 
+    asyncio.run(singleFrame(args.exptime, args.camname,
                             verb=args.verbose, ip_add=ip_cmdLine, config=args.cfg))

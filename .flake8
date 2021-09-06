@@ -4,8 +4,14 @@ ignore =
     H101
     N
     W504
+    E501
+    F401
+    F811
+    F403
+    F405
 
 per-file-ignores =
     */__init__.py:E,W
+    */BlackflyCam.py:E,F,W
 
 max-line-length = 99
