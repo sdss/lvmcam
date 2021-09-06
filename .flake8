@@ -9,6 +9,8 @@ ignore =
     F811
     F403
     F405
+    E402
+    W291
 
 per-file-ignores =
     */__init__.py:E,W
