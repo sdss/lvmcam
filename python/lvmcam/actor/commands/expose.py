@@ -115,6 +115,7 @@ async def expose(
     paths = []
     for i in range(num):
         filename = image_namer(cam)
+        print(filename)
         paths.append(os.path.join(filepath, filename))
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
