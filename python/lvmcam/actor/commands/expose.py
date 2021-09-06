@@ -61,9 +61,6 @@ async def expose(
     camname: str,
     filepath: str,
 ):
-    """
-    Do 'EXPTIME' expose 'NUM' times by using 'CAMNAME' camera.
-    """
     print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose function start")
     if(not camdict):
         command.error(error="There are no connected cameras")
@@ -115,7 +112,6 @@ async def expose(
     paths = []
     for i in range(num):
         filename = image_namer(cam)
-        print(filename)
         paths.append(os.path.join(filepath, filename))
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
