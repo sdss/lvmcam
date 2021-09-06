@@ -36,7 +36,7 @@ def pretty(time):
 
 
 @parser.command()
-@click.argument('CONFIG', type=str, default="etc/cameras.yaml")
+@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
 async def connect(
     command: Command,
     config: str,
@@ -46,6 +46,7 @@ async def connect(
     """
     global cs
     config = os.path.abspath(config)
+    # print(config)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     available_cameras_uid = cs.list_available_cameras()
     print(f"{pretty(datetime.datetime.now())} Find all available cameras")

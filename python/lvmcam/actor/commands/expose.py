@@ -51,7 +51,7 @@ __all__ = ["expose"]
 @click.argument("EXPTIME", type=float)
 @click.argument('NUM', type=int)
 @click.argument('CAMNAME', type=str)
-@click.argument("FILEPATH", type=str, default="assets")
+@click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
 async def expose(
     command: Command,
     exptime: float,
@@ -76,7 +76,7 @@ async def expose(
         command.error(error="There are no connected cameras")
         return
     cam = camdict[camname]
-    camera, device = camstatus.get_camera()
+    camera, device = camstatus.Setup_Camera(True)
     exps = []
     hdrs = []
     status = []
