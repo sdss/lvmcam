@@ -3,79 +3,135 @@
 # @Filename: expose.py
 
 from __future__ import absolute_import, annotations, division, print_function
+
+import asyncio
+import datetime
+import functools
+import os
+
 import click
 from click.decorators import command
 from clu.command import Command
-from . import parser
 
-# exposure function
-import asyncio
-import os
-from araviscam.araviscam import BlackflyCam as blc
-async def exposure(exptime, name, num, filepath, config, overwrite):
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    cam = await cs.add_camera(name=name, uid=cs._config['sci.agw']['uid'])
-    filepath = os.path.abspath(filepath)
-    exps = []
-    paths = []
-    for i in range(num):
-        exp = await cam.expose(exptime=exptime)
-        exp.filename = f'{name}_{exp.filename}'
-        exps.append(exp)
-        paths.append(os.path.join(filepath, exp.filename))
-    for i in range(num):
-        try:
-            await exps[i].write(filename=paths[i], overwrite=overwrite)
-        except OSError:
-            await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
-            return "Error"
-    await cs.remove_camera(name=name, uid=cs._config['sci.agw']['uid'])
-    return paths
+import lvmcam.actor.commands.camstatus as camstatus
+from lvmcam.actor.commands import parser
+from lvmcam.actor.commands.connection import camdict
+from lvmcam.araviscam import BlackflyCam as blc
 
-# actor
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+# import basecam
+
+# from basecam.exposure import ImageNamer
+# image_namer = ImageNamer(
+#     "{camera.name}-{num:04d}.fits",
+#     dirname=".",
+#     overwrite=False,
+# )
+
+
+def pretty(time):
+    return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
+
+
 __all__ = ["expose"]
 
-@parser.group()
-def expose(*args):
-    """[TEST] expose function of araviscam module."""
-    pass
 
-@expose.command()
+@parser.command()
 @click.argument("EXPTIME", type=float)
-@click.argument('NAME', type=str)
 @click.argument('NUM', type=int)
-@click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
-@click.option('--overwrite', type=bool, default=False)
-async def start(
+@click.argument('CAMNAME', type=str)
+@click.argument("FILEPATH", type=str, default="assets")
+async def expose(
     command: Command,
     exptime: float,
-    name: str,
     num: int,
+    camname: str,
     filepath: str,
-    config: str,
-    overwrite: bool
 ):
+    """
+    1. Do 'EXPTIME' expose 'NUM' times by using 'CAMNAME' camera.
+    2. Save fits file in 'FILEPATH' 
+        * Default file path = `python/lvmcam/assets`
+        * Fits file name = `CAMNAME`-`DATE-OBS`.fits
+    3. Return list of absolute file paths
+
+    * EXPTIME: Exposure time [s]
+    * NUM: The number of pictures to take
+    * CAMNAME: The name of camera selected to take pictures
+    * FILEPATH: The path to save fits files
+    """
+    print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose function start")
+    if(not camdict):
+        command.error(error="There are no connected cameras")
+        return
+    cam = camdict[camname]
+    camera, device = camstatus.get_camera()
+    exps = []
+    hdrs = []
+    status = []
+    for i in range(num):
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose start")
+        exps.append(await cam.expose(exptime=exptime, image_type="object"))
+        status.append(await camstatus.custom_status(camera, device))
+        hdrs.append(cam.header)
+        # hdr = exp[0].
+        # hdrs.append(hdr)
+        # await cam.expose(exptime=exptime, filename=paths[i], write=True)
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose done")
+
+    # print(status)
+    hdus = []
+    dates = []
+    for i in range(num):
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Setting header start")
+        hdu = exps[i].to_hdu()[0]
+        dates.append(hdu.header['DATE-OBS'])
+        for item in hdrs[i]:
+            hdr = item[0]
+            val = item[1]
+            com = item[2]
+            hdu.header[hdr] = (val, com)
+        for item in list(status[i].items()):
+            hdr = item[0]
+            val = item[1]
+            if len(val) > 70:
+                continue
+            _hdr = hdr.replace(" ", "")
+            _hdr = _hdr.replace(".", "")
+            _hdr = _hdr.upper()[:8]
+            hdu.header[_hdr] = (val, hdr)
+
+        hdus.append(hdu)
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Setting header done")
+
+    # for hdu in hdus: print(repr(hdu.header))
+
+    print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Making filename start")
+    filepath = os.path.abspath(filepath)
     paths = []
-
-    try:
-        paths = await exposure(
-            exptime=exptime,
-            name=name,
-            num=num,
-            filepath=filepath,
-            config=config,
-            overwrite=overwrite
+    for i in range(num):
+        filename = f'{cam.name}-{dates[i]}.fits'
+        paths.append(os.path.join(filepath, filename))
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
+        writeto_partial = functools.partial(
+            hdus[i].writeto, paths[i], checksum=True
         )
-    except OSError:
-        command.info("File alreday exists. See traceback in the log for more information.")
-        command.info("If you want to overwrite the file, set --overwrite True.")
-        command.finish(path="OSError", info="File alreday exists. See traceback in the log for more information.")
-        return
-
-    if (paths != "Error"):
-        command.finish(path=paths)
-        return
-    else:
-        command.finish(path="File already exists")
-        return
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, writeto_partial)
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write done")
+    print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Making filename done")
+    command.finish(path=paths)
+    print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose function done")
+    return

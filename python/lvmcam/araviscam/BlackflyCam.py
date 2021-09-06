@@ -6,26 +6,54 @@ Python3 class to work with Aravis/GenICam cameras, subclass of sdss-basecam.
 .. moduleauthor:: Richard J. Mathar <mathar@mpia.de>
 """
 
-import sys
 import asyncio
-import numpy
-
-from basecam.mixins import ImageAreaMixIn
-from basecam import CameraSystem, BaseCamera, CameraEvent, CameraConnectionError, models
+import datetime
+import sys
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
 # is using glib2 GObjects to represent cameras and streams, the
 # PyGObject module allows to call the C functions of aravis in python.
 # https://pygobject.readthedocs.io/en/latest/
 import gi
-gi.require_version('Aravis', '0.8')
+import numpy
+from basecam import (BaseCamera, CameraConnectionError,
+                     CameraEvent, CameraSystem, models)
+from basecam.mixins import ImageAreaMixIn
 from gi.repository import Aravis
 
+
+gi.require_version('Aravis', '0.8')
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+# import basecam
+
+# from basecam.exposure import ImageNamer
+# image_namer = ImageNamer(
+#     "{camera.name}-{num:04d}.fits",
+#     dirname=".",
+#     overwrite=False,
+# )
+
+
+def pretty(time):
+    return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 # https://pypi.org/project/sdss-basecam/
 # https://githum.com/sdss/basecam/
 
 # from sdsstools import read_yaml_file
+
 
 __all__ = ['BlackflyCameraSystem', 'BlackflyCamera', 'BlackflyImageAreaMixIn']
 
@@ -114,7 +142,7 @@ class BlackflyCameraSystem(CameraSystem):
                 # If is this was already in the scan: discard, else add
                 if uid not in serialNums:
                     serialNums.append(uid)
-                    addrs.append('@'+ip)
+                    addrs.append('@' + ip)
             except:
                 # apparently no such camera at this address....
                 pass
@@ -122,7 +150,7 @@ class BlackflyCameraSystem(CameraSystem):
         # we zip the two lists to the format 'serialnumber{@ip}'
         ids = []
         for cam in range(len(serialNums)):
-            ids.append(serialNums[cam]+addrs[cam])
+            ids.append(serialNums[cam] + addrs[cam])
 
         return ids
 
@@ -138,6 +166,25 @@ class BlackflyCamera(BaseCamera):
     the first values in the sequential data are the bottom row).
     So this is not done in this python code but by the camera.
     """
+
+    def __init__(
+        self,
+        uid,
+        camera_system,
+        name=None,
+        force=False,
+        image_namer=None,
+        camera_params={},
+    ):
+        super().__init__(
+            uid=uid,
+            camera_system=camera_system,
+            name=name,
+            force=force,
+            image_namer=image_namer,
+            camera_params=camera_params,
+        )
+        self.header = []
 
     async def _connect_internal(self, **kwargs):
         """Connect to a camera and upload basic binning and ROI parameters.
@@ -281,6 +328,7 @@ class BlackflyCamera(BaseCamera):
         :return: The dictionary with the window location and size (x=,y=,width=,height=)
         """
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame function start")
         # To avoid being left over by other programs with no change
         # to set the exposure time, we switch the auto=0=off first
         self.device.set_exposure_time_auto(0)
@@ -291,15 +339,16 @@ class BlackflyCamera(BaseCamera):
         # timeout (factor 2: assuming there may be two frames in auto mode taken
         #   internally)
         #   And 5 seconds margin for any sort of transmission overhead over PoE
-        tout_ms = int(1.0e6 * (2.*exposure.exptime+5))
+        tout_ms = int(1.0e6 * (2. * exposure.exptime + 5))
         self.notify(CameraEvent.EXPOSURE_INTEGRATING)
-
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | await self.loop.run_in_executor(None, self.device.acquisition, tout_ms) start")
         # the buffer allocated/created within the acquisition()
         buf = await self.loop.run_in_executor(None, self.device.acquisition, tout_ms)
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | await self.loop.run_in_executor(None, self.device.acquisition, tout_ms) done")
+        # print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Buffer: {buf}")
         if buf is None:
             raise ExposureError("Exposing for " + str(exposure.exptime) +
-                                " sec failed. Timout " + str(tout_ms/1.0e6))
-
+                                " sec failed. Timout " + str(tout_ms / 1.0e6))
         # Decipher which methods this aravis buffer has...
         # print(dir(buf))
 
@@ -314,6 +363,7 @@ class BlackflyCamera(BaseCamera):
                                       shape=(1, reg.height, reg.width))
         # print("exposure data shape", exposure.data.shape)
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame function done")
         return reg
 
     async def _expose_internal(self, exposure):
@@ -326,16 +376,19 @@ class BlackflyCamera(BaseCamera):
         # fill exposure.data with the frame's 16bit data
         # reg becomes a x=, y=, width= height= dictionary
         # these are in standard X11 coordinates where upper left =(0,0)
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_internal function start")
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame start")
         reg = await self._expose_grabFrame(exposure)
         # print('region',reg)
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_grabFrame done")
 
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders start")
         binxy = {}
         try:
             # becomes a dictionary with dx=... dy=... for the 2 horiz/vert binn fact
             binxy = self.device.get_binning()
         except Exception as ex:
             binxy = None
-
         # append FITS header cards
         # For the x/y coordinates transform from X11 to FITS coordinates
         # Todo: reports the camera y-flipped reg.y if ReversY=true above??
@@ -344,22 +397,20 @@ class BlackflyCamera(BaseCamera):
             ("BinY", binxy.dy, "[ct] Vertical Bin Factor 1, 2 or 4"),
             ("Width", reg.width, "[ct] Pixel Columns"),
             ("Height", reg.height, "[ct] Pixel Rows"),
-            ("RegX", 1+reg.x, "[ct] Pixel Region Horiz start"),
+            ("RegX", 1 + reg.x, "[ct] Pixel Region Horiz start"),
             # The lower left FITS corner is the upper left X11 corner...
-            ("RegY", self.regionBounds[1]-(reg.y+reg.height-1),
+            ("RegY", self.regionBounds[1] - (reg.y + reg.height - 1),
              "[ct] Pixel Region Vert start")
         ]
 
         dev = self.device.get_device()
         # print(dir(dev))
-
         try:
             gain = dev.get_float_feature_value("Gain")
             addHeaders.append(("Gain", gain, "Gain"))
         except Exception as ex:
             # print("failed to read gain" + str(ex))
             pass
-
         imgrev = [False, False]
         try:
             imgrev[0] = self.device.get_boolean("ReverseX")
@@ -411,13 +462,51 @@ class BlackflyCamera(BaseCamera):
         except:
             pass
 
-        for header in addHeaders:
-            exposure.fits_model[0].header_model.append(models.Card(header))
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders done")
+        # return addHeaders
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header start")
+        # for header in addHeaders:
+        #     # exposure.fits_model[0].header[header[0]] = header[1]
+        #     # exposure.to_hdu()[0].header[header[0]] = header[1]
 
+        #     print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | {header}")
+        #     exposure.fits_model[0].header_model.append(models.Card(header))
+        #     # exposure.to_hdu()[0].header[header[0]] =
+        #     # print(exposure.fits_model[0].header_model)
+        #     # print(models.Card(header))
+        self.header = addHeaders
+        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
+        # hdu = exposure.to_hdu()[0].header
+        # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")
         # unref() is currently usupported in this GObject library.
         # Hope that this does not lead to any memory leak....
         # buf.unref()
+        print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | _expose_internal function done")
+        # self.returnhdr(addHeaders)
         return
+
+    # async def expose(
+    #     self,
+    #     exptime: float,
+    #     image_type: str = "object",
+    #     stack: int = 1,
+    #     stack_function: Callable[..., numpy.ndarray] = numpy.median,
+    #     fits_model: Optional[FITSModel] = None,
+    #     filename: Optional[str] = None,
+    #     write: bool = False,
+    #     postprocess: bool = True,
+    #     **kwargs,
+    # ) -> Exposure:
+    #     super().expose(
+    #         exptime=exptime,
+    #         image_type=image_type,
+    #         stack=stack,
+    #         stack_function=stack_function,
+    #         fits_model=fits_model,
+    #         filename=filename,
+    #         write=write,
+    #         postprocess=postprocess,
+    #     )
 
 
 class BlackflyImageAreaMixIn(ImageAreaMixIn):
@@ -500,5 +589,5 @@ if __name__ == "__main__":
     # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
     # bsys.list_available_cameras()
 
-    asyncio.run(singleFrame(args.exptime, args.camname, 
+    asyncio.run(singleFrame(args.exptime, args.camname,
                             verb=args.verbose, ip_add=ip_cmdLine, config=args.cfg))

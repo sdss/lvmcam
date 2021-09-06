@@ -1,7 +1,7 @@
-#/usr/bin/env python
+# /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr),Sumin Lee(lxmark888@khu.ac.kr)
+# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr), Sumin Lee(lxmark888@khu.ac.kr)
 # @Date: 2021-07-14
 # @Filename: __init__.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
@@ -9,10 +9,12 @@
 import glob
 import importlib
 import os
-import warnings
 
 import click
 from clu.parsers.click import CluGroup, help_, ping, version
+
+
+# import warnings
 
 
 @click.group(cls=CluGroup)
@@ -37,6 +39,6 @@ files = [
 
 for file_ in files:
     modname = file_[0:-3].replace("/", ".")
-    mod = importlib.import_module("lvmcam.actor.commands." + modname) #changged by CK 2021/03/30
+    mod = importlib.import_module("lvmcam.actor.commands." + modname)  # changged by CK 2021/03/30
 
 os.chdir(cwd)

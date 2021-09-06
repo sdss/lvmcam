@@ -1,36 +1,38 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
+from build import *
+
 
 package_dir = \
-{'': 'python'}
+    {'': 'python'}
 
 packages = \
-['lvmcam', 'lvmcam.actor', 'lvmcam.actor.commands', 'lvmcam.flir']
+    ['lvmcam', 'lvmcam.actor', 'lvmcam.actor.commands', 'lvmcam.flir']
 
 package_data = \
-{'': ['*'], 'lvmcam': ['etc/*']}
+    {'': ['*'], 'lvmcam': ['etc/*']}
 
 install_requires = \
-['PyGObject>=3.40.1,<4.0.0',
- 'astropy>=4.3.post1,<5.0',
- 'click-default-group>=1.2.2,<2.0.0',
- 'click>=8.0.1,<9.0.0',
- 'daemonocle>=1.2.3,<2.0.0',
- 'opencv-python>=4.5.3,<5.0.0',
- 'sdss-access>=0.2.3',
- 'sdss-araviscam>=0.0.5,<0.0.6',
- 'sdss-basecam>=0.5.0,<0.6.0',
- 'sdss-clu>=1.2.1,<2.0.0',
- 'sdss-tree>=2.15.2',
- 'sdsstools>=0.4.0']
+    ['PyGObject>=3.40.1,<4.0.0',
+     'astropy>=4.3.post1,<5.0',
+     'click-default-group>=1.2.2,<2.0.0',
+     'click>=8.0.1,<9.0.0',
+     'daemonocle>=1.2.3,<2.0.0',
+     'opencv-python>=4.5.3,<5.0.0',
+     'sdss-access>=0.2.3',
+     'sdss-araviscam>=0.0.5,<0.0.6',
+     'sdss-basecam>=0.5.0,<0.6.0',
+     'sdss-clu>=1.2.1,<2.0.0',
+     'sdss-tree>=2.15.2',
+     'sdsstools>=0.4.0']
 
 entry_points = \
-{'console_scripts': ['lvmcam = lvmcam.__main__:lvmcam']}
+    {'console_scripts': ['lvmcam = lvmcam.__main__:lvmcam']}
 
 setup_kwargs = {
     'name': 'sdss-lvmcam',
-    'version': '0.1.0a0',
+    'version': '0.1.0',
     'description': 'package for lvmagp',
     'long_description': '# lvmcam\n\n![Versions](https://img.shields.io/badge/python->3.7-blue)\n[![Documentation Status](https://readthedocs.org/projects/sdss-lvmcam/badge/?version=latest)](https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest)\n[![Travis (.org)](https://img.shields.io/travis/sdss/lvmcam)](https://travis-ci.org/sdss/lvmcam)\n[![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)\n\npackage for lvmagp\n',
     'author': 'Mingyu Jeon, Sumin Lee',
@@ -45,7 +47,6 @@ setup_kwargs = {
     'entry_points': entry_points,
     'python_requires': '>=3.7,<4.0',
 }
-from build import *
 
 
 build(setup_kwargs)

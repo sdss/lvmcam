@@ -1,7 +1,7 @@
 
 .. _api:
 
-lvmcam Reference
+API
 =========================
 
 .. _api-main:
@@ -9,7 +9,14 @@ lvmcam Reference
 Main
 ----------------
 
-.. automodule:: lvmcam.__main__
+.. automodule:: lvmcam.actor.actor
    :members:
    :undoc-members:
    :show-inheritance:
+
+Commands
+----------------
+
+.. click:: lvmcam.actor.commands:parser
+   :prog: lvmcam
+   :show-nested:

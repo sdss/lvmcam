@@ -1,35 +1,30 @@
 
 lvmcam's documentation
-=============================================
+======================
 
-This is the documentation for the SDSS Python product lvmcam. The current version is |lvmcam_version|. You can install the package by doing
+This is the documentation for the SDSS Python product lvmcam. The current version is |lvmcam_version|.
 
-.. code-block:: console
+lvmcam is package for lvmagp. 
 
-  $ pip install sdss-lvmcam
-
-
-Contents
+Features
 --------
+- Show status of cameras.
+- Connect/Disconnect cameras.
+- Take exposure pictures by using custom parameters.
+- Save fits files and return absolute file paths in list type.
 
 .. toctree::
-  :maxdepth: 2
+  :caption: Reference
+  :maxdepth: 3
+  :hidden:
 
-  What's new in lvmcam? <CHANGELOG>
-  Introduction to lvmcam <intro>
-
-
-Reference
----------
+  api
 
 .. toctree::
-   :maxdepth: 1
+  :caption: Development
+  :maxdepth: 3
+  :hidden:
 
-   api
-
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
+  Changelog <changelog>
+  GitHub Repository <https://github.com/sdss/lvmcam>
+  Issues  <https://github.com/sdss/lvmcam/issues>
