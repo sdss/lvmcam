@@ -28,6 +28,7 @@ async def custom_status(cam, dev):
     payload = cam.get_payload()                       # Get "payload", the size of in bytes
 
     stat = {
+        "Camera model": f"{cam.get_model_name()}",
         "Camera vendor": f"{cam.get_vendor_name()}",
         "Camera id": f"{cam.get_device_id()}",
         "Pixel format": f"{cam.get_pixel_format_as_string()}",

@@ -30,21 +30,23 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-# import basecam
-
-# from basecam.exposure import ImageNamer
-# image_namer = ImageNamer(
-#     "{camera.name}-{num:04d}.fits",
-#     dirname=".",
-#     overwrite=False,
-# )
-
 
 def pretty(time):
     return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 
 __all__ = ["expose"]
+
+
+
+import basecam
+
+from basecam.exposure import ImageNamer
+image_namer = ImageNamer(
+    "{camera.name}-{num:08d}.fits",
+    dirname=".",
+    overwrite=False,
+)
 
 
 @parser.command()
@@ -112,7 +114,7 @@ async def expose(
     filepath = os.path.abspath(filepath)
     paths = []
     for i in range(num):
-        filename = f'{cam.name}-{dates[i]}.fits'
+        filename = image_namer(cam)
         paths.append(os.path.join(filepath, filename))
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
