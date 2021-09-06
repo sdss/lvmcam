@@ -29,7 +29,6 @@ async def custom_status(cam, dev):
 
     stat = {
         "Camera vendor": f"{cam.get_vendor_name()}",
-        "Camera model": f"{cam.get_model_name()}",
         "Camera id": f"{cam.get_device_id()}",
         "Pixel format": f"{cam.get_pixel_format_as_string()}",
         "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",

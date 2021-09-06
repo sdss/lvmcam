@@ -60,16 +60,7 @@ async def expose(
     filepath: str,
 ):
     """
-    1. Do 'EXPTIME' expose 'NUM' times by using 'CAMNAME' camera.
-    2. Save fits file in 'FILEPATH' 
-        * Default file path = `python/lvmcam/assets`
-        * Fits file name = `CAMNAME`-`DATE-OBS`.fits
-    3. Return list of absolute file paths
-
-    * EXPTIME: Exposure time [s]
-    * NUM: The number of pictures to take
-    * CAMNAME: The name of camera selected to take pictures
-    * FILEPATH: The path to save fits files
+    Do 'EXPTIME' expose 'NUM' times by using 'CAMNAME' camera.
     """
     print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose function start")
     if(not camdict):
