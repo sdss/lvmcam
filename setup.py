@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from build import *
 from setuptools import setup
+
+from build import *
 
 
 package_dir = \

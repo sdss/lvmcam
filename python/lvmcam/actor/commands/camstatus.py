@@ -1,11 +1,14 @@
 from __future__ import absolute_import, annotations, division, print_function
-from . import parser
 
 import asyncio
 
 import click
-from clu.command import Command
 import gi  # To ensure correct Aravis version
+from clu.command import Command
+
+from . import parser
+
+
 gi.require_version('Aravis', '0.8')     # Version check
 from gi.repository import Aravis  # Aravis package
 
