@@ -15,12 +15,12 @@
 import sys
 
 import cv2  # To (optionally) write png files
-import gi  # To ensure correct Aravis version
+# import gi  # To ensure correct Aravis version
 import numpy as np
-from gi.repository import Aravis  # Aravis package
+# from gi.repository import Aravis  # Aravis package
 
 
-gi.require_version('Aravis', '0.8')     # Version check
+# gi.require_version('Aravis', '0.8')     # Version check
 
 
 # --------------------------------------------------------------------------------------------

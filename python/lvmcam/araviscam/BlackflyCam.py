@@ -14,15 +14,14 @@ import sys
 # is using glib2 GObjects to represent cameras and streams, the
 # PyGObject module allows to call the C functions of aravis in python.
 # https://pygobject.readthedocs.io/en/latest/
-import gi
 import numpy
 from basecam import (BaseCamera, CameraConnectionError,
                      CameraEvent, CameraSystem, models)
 from basecam.mixins import ImageAreaMixIn
-from gi.repository import Aravis
 
-
+import gi
 gi.require_version('Aravis', '0.8')
+from gi.repository import Aravis
 
 
 class bcolors:
