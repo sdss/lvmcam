@@ -19,6 +19,34 @@ from lvmcam.actor.commands.connection import camdict
 from lvmcam.araviscam import BlackflyCam as blc
 
 
+def getLastExposure(path):
+    with open(path, "r") as f:
+        return int(f.readline())
+
+def setLastExposure(path,num):
+    with open(path, "w") as f:
+        f.write(str(num))
+
+from astropy.time import Time
+import numpy as np
+
+def time2jd(times):
+    # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
+    t = Time(times, format='isot', scale='utc')
+    jd = np.array(np.floor(t.to_value('jd')), dtype=int)
+    return jd
+
+def jd2folder(path, jd):
+    jd = set(jd)
+    for j in jd:
+        filepath = os.path.abspath(os.path.join(path,str(j)))
+        try: 
+            os.makedirs(filepath)
+        except FileExistsError:
+            pass
+
+
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -34,19 +62,22 @@ class bcolors:
 def pretty(time):
     return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
+def pretty2(time):
+    return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
+
 
 __all__ = ["expose"]
 
 
 
-import basecam
+# import basecam
 
-from basecam.exposure import ImageNamer
-image_namer = ImageNamer(
-    "{camera.name}-{num:08d}.fits",
-    dirname=".",
-    overwrite=False,
-)
+# from basecam.exposure import ImageNamer
+# image_namer = ImageNamer(
+#     "{camera.name}-{num:08d}.fits",
+#     dirname=".",
+#     overwrite=False,
+# )
 
 
 @parser.command()
@@ -71,14 +102,16 @@ async def expose(
     hdrs = []
     status = []
     for i in range(num):
-        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose start")
+        print(f"{pretty2(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose start")
         exps.append(await cam.expose(exptime=exptime, image_type="object"))
+        print(f"{pretty2(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose done")
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Saving camera info start")
         status.append(await camstatus.custom_status(camera, device))
+        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Saving camera info done")
         hdrs.append(cam.header)
         # hdr = exp[0].
         # hdrs.append(hdr)
         # await cam.expose(exptime=exptime, filename=paths[i], write=True)
-        print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | #{i+1}, EXP={exptime}, Expose done")
 
     # print(status)
     hdus = []
@@ -97,6 +130,8 @@ async def expose(
             val = item[1]
             if len(val) > 70:
                 continue
+            if "model" in hdr:
+                continue
             _hdr = hdr.replace(" ", "")
             _hdr = _hdr.replace(".", "")
             _hdr = _hdr.upper()[:8]
@@ -109,9 +144,17 @@ async def expose(
 
     print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Making filename start")
     filepath = os.path.abspath(filepath)
+    
+    configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
+    curNum = getLastExposure(configfile)
+
+    jd = time2jd(dates)
+    jd2folder(filepath, jd)
+
     paths = []
     for i in range(num):
-        filename = image_namer(cam)
+        curNum += 1
+        filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits"
         paths.append(os.path.join(filepath, filename))
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
@@ -120,6 +163,7 @@ async def expose(
         )
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, writeto_partial)
+        setLastExposure(configfile, curNum)
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write done")
     print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Making filename done")
     command.finish(path=paths)

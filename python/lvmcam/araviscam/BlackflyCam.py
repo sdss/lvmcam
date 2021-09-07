@@ -46,7 +46,7 @@ class bcolors:
 
 
 def pretty(time):
-    return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
+    return f"{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 # https://pypi.org/project/sdss-basecam/
 # https://githum.com/sdss/basecam/
@@ -462,8 +462,8 @@ class BlackflyCamera(BaseCamera):
             pass
 
         print(f"{datetime.datetime.now()} | araviscam/BlackflyCam.py | Making addHeaders done")
-        # return addHeaders
-        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header start")
+        # # return addHeaders
+        # print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header start")
         # for header in addHeaders:
         #     # exposure.fits_model[0].header[header[0]] = header[1]
         #     # exposure.to_hdu()[0].header[header[0]] = header[1]
@@ -474,7 +474,7 @@ class BlackflyCamera(BaseCamera):
         #     # print(exposure.fits_model[0].header_model)
         #     # print(models.Card(header))
         self.header = addHeaders
-        print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
+        # print(f"{pretty(datetime.datetime.now())} | araviscam/BlackflyCam.py | Setting header done")
         # hdu = exposure.to_hdu()[0].header
         # print(f"{datetime.datetime.now()} >>>{repr(hdu)}")
         # unref() is currently usupported in this GObject library.

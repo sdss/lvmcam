@@ -13,7 +13,7 @@ packages = \
  'lvmcam.flir']
 
 package_data = \
-{'': ['*'], 'lvmcam': ['assets/.last-exposure.txt', 'etc/*']}
+{'': ['*'], 'lvmcam': ['assets/*', 'etc/*']}
 
 install_requires = \
 ['PyGObject>=3.40.1,<4.0.0',
