@@ -6,10 +6,4 @@
 [![Travis (.org)](https://img.shields.io/travis/sdss/lvmcam)](https://travis-ci.org/sdss/lvmcam)
 [![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)
 
-The package for lvmagp. 
-
-## Features
-- Show status of cameras
-- Connect/Disconnect cameras
-- Take exposure pictures by using custom parameters
-- Save fits files and return the absolute file paths in list type
+The package for lvmagp.
