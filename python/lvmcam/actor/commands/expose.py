@@ -3,6 +3,8 @@
 # @Filename: expose.py
 
 from __future__ import absolute_import, annotations, division, print_function
+from astropy.time import Time
+import numpy as np
 
 import asyncio
 import datetime
@@ -23,12 +25,11 @@ def getLastExposure(path):
     with open(path, "r") as f:
         return int(f.readline())
 
-def setLastExposure(path,num):
+
+def setLastExposure(path, num):
     with open(path, "w") as f:
         f.write(str(num))
 
-from astropy.time import Time
-import numpy as np
 
 def time2jd(times):
     # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
@@ -36,15 +37,15 @@ def time2jd(times):
     jd = np.array(np.floor(t.to_value('jd')), dtype=int)
     return jd
 
+
 def jd2folder(path, jd):
     jd = set(jd)
     for j in jd:
-        filepath = os.path.abspath(os.path.join(path,str(j)))
-        try: 
+        filepath = os.path.abspath(os.path.join(path, str(j)))
+        try:
             os.makedirs(filepath)
         except FileExistsError:
             pass
-
 
 
 class bcolors:
@@ -62,12 +63,12 @@ class bcolors:
 def pretty(time):
     return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
+
 def pretty2(time):
     return f"{bcolors.WARNING}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
 
 __all__ = ["expose"]
-
 
 
 # import basecam
@@ -144,7 +145,7 @@ async def expose(
 
     print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Making filename start")
     filepath = os.path.abspath(filepath)
-    
+
     configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
     curNum = getLastExposure(configfile)
 

@@ -34,6 +34,7 @@ class bcolors:
 def pretty(time):
     return f"{bcolors.OKCYAN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
+
 def pretty2(time):
     return f"{bcolors.OKGREEN}{bcolors.BOLD}{time}{bcolors.ENDC}"
 
@@ -58,9 +59,11 @@ async def connect(
     try:
         for item in list(cs._config.items()):
             if item[1]['uid'] in available_cameras_uid:
-                print(f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
+                print(
+                    f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
                 cams.append(await cs.add_camera(uid=item[1]['uid']))
-                print(f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
+                print(
+                    f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
     except gi.repository.GLib.GError:
         command.error(error="Cameras are already connected")
         return
