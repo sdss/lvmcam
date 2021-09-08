@@ -26,6 +26,8 @@ def getLastExposure(path):
         with open(path, "r") as f:
             return int(f.readline())
     except:
+        dirname = os.path.dirname(path)
+        os.makedirs(dirname, exist_ok=True)
         with open(path, "w") as f:
             f.write("0")
             return 0
