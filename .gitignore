@@ -117,3 +117,4 @@ ENV/
 **/.vscode/
 **/__pycache__/
 *.fits
+**/assets/

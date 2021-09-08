@@ -19,11 +19,16 @@ import lvmcam.actor.commands.camstatus as camstatus
 from lvmcam.actor.commands import parser
 from lvmcam.actor.commands.connection import camdict
 from lvmcam.araviscam import BlackflyCam as blc
-
+from astropy.io import fits
 
 def getLastExposure(path):
-    with open(path, "r") as f:
-        return int(f.readline())
+    try:
+        with open(path, "r") as f:
+            return int(f.readline())
+    except:
+        with open(path, "w") as f:
+            f.write("0")
+            return 0
 
 
 def setLastExposure(path, num):
@@ -158,6 +163,11 @@ async def expose(
         filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits"
         paths.append(os.path.join(filepath, filename))
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
+        # correct fits data/header
+        _hdusheader = hdus[i].header
+        _hdusdata = hdus[i].data[0]
+        primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
+        hdus[i] = fits.HDUList([primary_hdu,])
         print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
         writeto_partial = functools.partial(
             hdus[i].writeto, paths[i], checksum=True
