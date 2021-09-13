@@ -11,6 +11,7 @@ from clu.command import Command
 
 from lvmcam.actor.commands import parser
 from lvmcam.araviscam import BlackflyCam as blc
+import collections
 
 
 __all__ = ["connect", "disconnect"]
@@ -41,32 +42,39 @@ def pretty2(time):
 
 @parser.command()
 @click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.option('--test', is_flag=True, help="Connect virtual camera for test")
 async def connect(
     command: Command,
     config: str,
+    test: bool,
 ):
     """
     Connect all available cameras
     """
-    print(f"{datetime.datetime.now()} |lvmcam/connection.py| Find all available cameras")
     global cs
-    config = os.path.abspath(config)
-    # print(config)
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    available_cameras_uid = cs.list_available_cameras()
     global cams
     global camdict
-    try:
-        for item in list(cs._config.items()):
-            if item[1]['uid'] in available_cameras_uid:
-                print(
-                    f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
-                cams.append(await cs.add_camera(uid=item[1]['uid']))
-                print(
-                    f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
-    except gi.repository.GLib.GError:
-        command.error(error="Cameras are already connected")
-        return
+    if(test):
+        testcamdict = {"name":"test", "uid":"-1"}
+        testcam = collections.namedtuple("ObjectName", testcamdict.keys())(*testcamdict.values())
+        cams.append(testcam)
+    else:
+        print(f"{datetime.datetime.now()} |lvmcam/connection.py| Find all available cameras")
+        config = os.path.abspath(config)
+        # print(config)
+        cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+        available_cameras_uid = cs.list_available_cameras()
+        try:
+            for item in list(cs._config.items()):
+                if item[1]['uid'] in available_cameras_uid:
+                    print(
+                        f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
+                    cams.append(await cs.add_camera(uid=item[1]['uid']))
+                    print(
+                        f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
+        except gi.repository.GLib.GError:
+            command.error(error="Cameras are already connected")
+            return
 
     if cams:
         for cam in cams:
@@ -88,7 +96,10 @@ async def disconnect(
     global cams
     if cams:
         for cam in cams:
-            await cs.remove_camera(uid=cam.uid)
+            try: 
+                await cs.remove_camera(uid=cam.uid)
+            except AttributeError:
+                pass
             command.info("Camera have been removed")
         cams.clear()
         camdict.clear()
