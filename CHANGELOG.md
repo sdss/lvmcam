@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 - September 13, 2021
+
+### 🚀 New
+
+* Added `--test` for test.
+    * `lvmcam connect --test`: add virtual camera
+    * `expose --testshot EXPTIME NUM CAMNAME`: Test shot
 
 ## 0.1.0 - September 6, 2021
 
