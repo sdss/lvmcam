@@ -75,6 +75,8 @@ Install Aravis 0.8.
 
 .. code-block:: console
 
+  $ mkdir aravis
+  $ cd aravis
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
