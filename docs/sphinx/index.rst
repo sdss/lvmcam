@@ -59,7 +59,7 @@ You should add the code below to ``~/.bashrc`` by using your preferred editor.
   eval "$(pyenv init --path)"
   eval "$(pyenv virtualenv-init -)"
 
-Install the dependencies for pyenv, poetry, and Aravis
+Install the dependencies for pyenv, poetry, and Aravis.
 
 .. code-block:: console
 
@@ -71,31 +71,22 @@ Install the dependencies for pyenv, poetry, and Aravis
   libnotify-dev libgtk-3-dev libgstreamer-plugins-base1.0-dev meson \
   python3-pip python3-dev intltool libxml2-dev
 
-gobject-introspection \
-  autoconf intltool automake libxml2-dev
+Install Aravis 0.8.
 
-$ mkdir aravis
-$ cd aravis
+.. code-block:: console
 
-$ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
-$ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
-$ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
-$ tar xvJf aravis_0.8.6.orig.tar.xz
-$ cd aravis-0.8.6
-$ tar xvJf ../aravis_0.8.6-1.debian.tar.xz
-$ dpkg-buildpackage -rfakeroot -b -uc -us
-$ cd ..
-$ sudo dpkg -i *.deb
+  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
+  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
+  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
+  $ tar xvJf aravis_0.8.6.orig.tar.xz
+  $ cd aravis-0.8.6
+  $ tar xvJf ../aravis_0.8.6-1.debian.tar.xz
+  $ dpkg-buildpackage -rfakeroot -b -uc -us
+  $ cd ..
+  $ sudo dpkg -i *.deb
+  $ sudo apt update
+  $ sudo apt install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
 
-$ sudo apt update
-$ sudo apt install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
-
-pip install python3-aio-pika python3-aiormq
-
-wget https://github.com/AravisProject/aravis/releases/download/0.8.17/aravis-0.8.17.tar.xz
-wget https://download.gnome.org/sources/aravis/0.8/aravis-0.8.9.tar.xz
-tar -xf aravis-0.8.17.tar.xz
-sudo apt-get install -y python3 python3-pip python3-setuptools python3-wheel ninja-build meson
 
 Install 
 ^^^^^^^
