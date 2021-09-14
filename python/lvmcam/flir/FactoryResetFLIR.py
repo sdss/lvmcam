@@ -16,7 +16,6 @@ import FLIR_Utils as FU  # All the camera interface stuff
 import gi
 import matplotlib.pyplot as plt
 import numpy as np
-from gi.repository import Aravis
 
 
 def printStatus(cam):
@@ -50,7 +49,7 @@ verbose = True    # How wordy to be
 
 print("-----")
 
-gi.require_version('Aravis', '0.8')
+from lvmcam.araviscam.aravis import Aravis
 
 
 # --- Set up camera

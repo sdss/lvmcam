@@ -27,12 +27,12 @@ import gi
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.io import fits  # To read and write FITS files (for diagnostics)
-from gi.repository import Aravis
+
 
 import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
 
 
-gi.require_version('Aravis', '0.8')
+from lvmcam.araviscam.aravis import Aravis
 
 
 def readflir():
