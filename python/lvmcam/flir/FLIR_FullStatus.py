@@ -24,7 +24,7 @@ def fullstat():
 
     print("-----")
 
-    from lvmcam.araviscam.aravis import Aravis
+    # from lvmcam.araviscam.aravis import Aravis
 
     # --- Set up camera
 

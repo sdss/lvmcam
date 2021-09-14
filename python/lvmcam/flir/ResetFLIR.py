@@ -13,7 +13,7 @@ import cv2
 import gi
 import matplotlib.pyplot as plt
 import numpy as np
-from lvmcam.araviscam.aravis import Aravis
+# from lvmcam.araviscam.aravis import Aravis
 
 
 def printStatus(cam):

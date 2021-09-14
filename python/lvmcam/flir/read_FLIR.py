@@ -32,7 +32,7 @@ from astropy.io import fits  # To read and write FITS files (for diagnostics)
 import lvmcam.flir.FLIR_Utils as FU  # All the camera interface stuff
 
 
-from lvmcam.araviscam.aravis import Aravis
+# from lvmcam.araviscam.aravis import Aravis
 
 
 def readflir():
