@@ -96,20 +96,20 @@ __all__ = ["expose"]
 @click.argument('NUM', type=int)
 @click.argument('CAMNAME', type=str)
 @click.argument("FILEPATH", type=str, default="python/lvmcam/assets")
-@click.option('--test', is_flag=True, help="testshot")
+@click.option('--testshot', is_flag=True, help="Test shot")
 async def expose(
     command: Command,
     exptime: float,
     num: int,
     camname: str,
     filepath: str,
-    test: bool,
+    testshot: bool,
 ):
     if(not camdict):
         command.error(error="There are no connected cameras")
         return
     cam = camdict[camname]
-    if (test):
+    if (testshot):
         num = 1
     if(cam.name == "test"):
         dates = []
@@ -125,10 +125,10 @@ async def expose(
         paths = []
         for i in range(num):
             curNum += 1
-            filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not test else "test.fits"
+            filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
             paths.append(os.path.join(filepath, filename))
             original = os.path.abspath("python/lvmcam/actor/example")
-            if (not test):
+            if (not testshot):
                 shutil.copyfile(original, paths[i])
             else:
                 if os.path.exists(paths[i]):
@@ -194,7 +194,7 @@ async def expose(
         paths = []
         for i in range(num):
             curNum += 1
-            filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not test else "test.fits"
+            filename = f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
             paths.append(os.path.join(filepath, filename))
             print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Ready for {paths[i]}")
             # correct fits data/header
@@ -203,7 +203,7 @@ async def expose(
             primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
             hdus[i] = fits.HDUList([primary_hdu,])
             print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
-            if (not test):
+            if (not testshot):
                 writeto_partial = functools.partial(
                     hdus[i].writeto, paths[i], checksum=True
                 )

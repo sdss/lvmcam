@@ -40,11 +40,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install .
 
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --show-source --statistics
+    # - name: Lint with flake8
+    #   run: |
+    #     pip install flake8
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     flake8 . --count --show-source --statistics
 
     # - name: Lint with isort
     #   run: |
@@ -58,7 +58,8 @@ jobs:
     #     pytest
 
     - name: Upload coverage to Codecov
-      if: matrix.python-version == '3.8'
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v2.1.0
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
+

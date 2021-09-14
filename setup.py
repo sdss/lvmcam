@@ -13,7 +13,7 @@ packages = \
  'lvmcam.flir']
 
 package_data = \
-{'': ['*'], 'lvmcam': ['assets/*', 'etc/*']}
+{'': ['*'], 'lvmcam': ['etc/*']}
 
 install_requires = \
 ['PyGObject>=3.40.1,<4.0.0',
@@ -35,7 +35,7 @@ setup_kwargs = {
     'name': 'sdss-lvmcam',
     'version': '0.1.0',
     'description': 'package for lvmagp',
-    'long_description': '# lvmcam\n\n![Versions](https://img.shields.io/badge/python->3.7-blue)\n[![Test](https://github.com/sdss/lvmcam/actions/workflows/test.yml/badge.svg)](https://github.com/sdss/lvmcam/actions/workflows/test.yml)\n[![Documentation Status](https://readthedocs.org/projects/sdss-lvmcam/badge/?version=latest)](https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest)\n[![Travis (.org)](https://img.shields.io/travis/sdss/lvmcam)](https://travis-ci.org/sdss/lvmcam)\n[![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)\n\nlvmcam is package for lvmagp. \n\n## Features\n- Show status of cameras\n- Connect/Disconnect cameras\n- Take exposure pictures by using custom parameters\n- Save fits files and return the absolute file paths in list type\n',
+    'long_description': '# lvmcam\n\n![Versions](https://img.shields.io/badge/python->3.7-blue)\n[![Test](https://github.com/sdss/lvmcam/actions/workflows/test.yml/badge.svg)](https://github.com/sdss/lvmcam/actions/workflows/test.yml)\n[![Documentation Status](https://readthedocs.org/projects/sdss-lvmcam/badge/?version=latest)](https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest)\n[![Travis (.org)](https://img.shields.io/travis/sdss/lvmcam)](https://travis-ci.org/sdss/lvmcam)\n[![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)\n\nThe package for lvmagp',
     'author': 'Mingyu Jeon',
     'author_email': 'mgjeon@khu.ac.kr',
     'maintainer': None,
