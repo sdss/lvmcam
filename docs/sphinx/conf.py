@@ -231,6 +231,7 @@ texinfo_documents = [
     ),
 ]
 
+import sys
 import mock
 
 MOCK_MODULES = ['Aravis']
