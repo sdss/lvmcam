@@ -24,8 +24,7 @@ def fullstat():
 
     print("-----")
 
-    gi.require_version('Aravis', '0.8')
-    from gi.repository import Aravis
+    from lvmcam.araviscam.aravis import Aravis
 
     # --- Set up camera
 

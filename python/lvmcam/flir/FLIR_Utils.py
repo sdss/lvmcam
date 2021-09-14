@@ -17,9 +17,7 @@ import sys
 import cv2  # To (optionally) write png files
 import numpy as np
 
-import gi  # To ensure correct Aravis version
-gi.require_version('Aravis', '0.8')     # Version check
-from gi.repository import Aravis  # Aravis package
+from lvmcam.araviscam.aravis import Aravis
 
 
 

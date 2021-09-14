@@ -19,10 +19,7 @@ from basecam import (BaseCamera, CameraConnectionError,
                      CameraEvent, CameraSystem, models)
 from basecam.mixins import ImageAreaMixIn
 
-import gi
-gi.require_version('Aravis', '0.8')
-from gi.repository import Aravis
-
+from lvmcam.araviscam.aravis import Aravis
 
 class bcolors:
     HEADER = '\033[95m'

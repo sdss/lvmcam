@@ -13,7 +13,7 @@ import cv2
 import gi
 import matplotlib.pyplot as plt
 import numpy as np
-from gi.repository import Aravis
+from lvmcam.araviscam.aravis import Aravis
 
 
 def printStatus(cam):
@@ -46,7 +46,6 @@ fakeCam = False   # Whether to use the Aravis "fake" camera (software) instead o
 verbose = True    # How wordy to be
 
 
-gi.require_version('Aravis', '0.8')
 
 
 def resetcam():
