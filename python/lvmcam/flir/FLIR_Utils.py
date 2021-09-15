@@ -17,7 +17,7 @@ import sys
 import cv2  # To (optionally) write png files
 import numpy as np
 
-# from lvmcam.araviscam.aravis import Aravis
+from lvmcam.araviscam.aravis import Aravis
 
 
 

@@ -49,7 +49,7 @@ verbose = True    # How wordy to be
 
 print("-----")
 
-# from lvmcam.araviscam.aravis import Aravis
+from lvmcam.araviscam.aravis import Aravis
 
 
 # --- Set up camera
