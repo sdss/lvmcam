@@ -3,18 +3,7 @@ sphinx:
   configuration: docs/sphinx/conf.py
 
 build:
-    image: latest
-    apt_packages:
-      - libgirepository1.0-dev
-      - python3-gi 
-      - python3-gi-cairo 
-      - gir1.2-gtk-3.0
-      - aravis-tools                   
-      - aravis-tools-cli               
-      - gir1.2-aravis-0.8              
-      - libaravis-0.8-0                
-      - libaravis-dev                  
-      - libaravis-doc     
+    image: latest    
 
 python:
     version: 3.8
