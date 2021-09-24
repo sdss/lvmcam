@@ -27,8 +27,12 @@ async def status(command: Command, verbose):
     Show status of camera
     """
     # print(Aravis.get_device_id(0))
-    cam, dev = Setup_Camera(verbose)
+    try:
+        cam, dev = Setup_Camera(verbose)
+        command.info(status=await custom_status(cam, dev))
+    except ValueError:
+        command.error(error="There are not real cameras")
     # cam,dev = FLIR_Utils.Setup_Camera(verbose,False)
     # FLIR_Utils.Standard_Settings(cam,dev,verbose)
-    command.info(status=await custom_status(cam, dev))
+    
     return
