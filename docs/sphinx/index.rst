@@ -75,6 +75,8 @@ Install Aravis 0.8.
 
 .. code-block:: console
 
+  $ mkdir aravis
+  $ cd aravis
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
   $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
@@ -84,8 +86,9 @@ Install Aravis 0.8.
   $ dpkg-buildpackage -rfakeroot -b -uc -us
   $ cd ..
   $ sudo dpkg -i *.deb
-  $ sudo apt update
-  $ sudo apt install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
+  $ sudo apt-get update
+  $ sudo apt-get upgrade
+  $ sudo apt-get install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
 
 
 Install 
