@@ -1,10 +1,17 @@
 # Changelog
 
+## 0.1.2 - September 24, 2021
+
+### 🔧 Fixed
+
+* Fixed `PermissionError: [Errno 13] Permission denied: '/python'` error that occurs when `lvmcam start` runs without `--debug` option.
+
+
 ## 0.1.1 - September 13, 2021
 
 ### 🚀 New
 
-* Added `--test` for test.
+* Added options for test.
     * `lvmcam connect --test`: add virtual camera
     * `expose --testshot EXPTIME NUM CAMNAME`: Test shot
 

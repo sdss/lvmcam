@@ -116,6 +116,11 @@ async def expose(
         for i in range(num):
             dates.append(datetime.datetime.utcnow().isoformat())
 
+        os.chdir(os.path.dirname(__file__))
+        os.chdir('../')
+        os.chdir('../')
+        os.chdir('../')
+        os.chdir('../')
         filepath = os.path.abspath(filepath)
         configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
         curNum = getLastExposure(configfile)
