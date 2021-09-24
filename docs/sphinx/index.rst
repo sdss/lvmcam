@@ -101,7 +101,7 @@ Clone the repository.
   $ git clone https://github.com/sdss/lvmcam
   $ cd lvmcam 
 
-Set the python 3.9.7 virtual environment.
+Set the python 3.9+ virtual environment.
 
 .. code-block:: console 
 
@@ -140,6 +140,21 @@ Stop lvmcam actor.
 .. code-block:: console
 
   $ lvmcam stop
+
+Update
+^^^^^^^
+
+Pull the repository.
+
+.. code-block:: console
+
+  $ git pull
+
+Run ``poetry install``
+
+.. code-block:: console
+
+  $ poetry install
 
 
 

@@ -134,11 +134,15 @@ async def expose(
             paths.append(os.path.join(filepath, filename))
             original = os.path.abspath("python/lvmcam/actor/example")
             if (not testshot):
+                await asyncio.sleep(exptime)
                 shutil.copyfile(original, paths[i])
+                print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose for test #={i+1}")
             else:
                 if os.path.exists(paths[i]):
                     os.remove(paths[i])
+                await asyncio.sleep(exptime)
                 shutil.copyfile(original, paths[i])
+                print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | expose for test with testshot")
             setLastExposure(configfile, curNum)
         command.finish(path=paths)
         return
@@ -209,10 +213,12 @@ async def expose(
             hdus[i] = fits.HDUList([primary_hdu,])
             print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Write start")
             if (not testshot):
+                print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Normal Shot")
                 writeto_partial = functools.partial(
                     hdus[i].writeto, paths[i], checksum=True
                 )
             else:
+                print(f"{pretty(datetime.datetime.now())} | lvmcam/expose.py | Test Shot")
                 writeto_partial = functools.partial(
                     hdus[i].writeto, paths[i], checksum=True, overwrite=True
                 )
