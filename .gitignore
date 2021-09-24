@@ -118,3 +118,5 @@ ENV/
 **/__pycache__/
 *.fits
 **/assets/
+
+python/lvmcam/araviscam/aravis.py
