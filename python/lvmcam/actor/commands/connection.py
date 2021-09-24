@@ -51,6 +51,11 @@ async def connect(
     """
     Connect all available cameras
     """
+    os.chdir(os.path.dirname(__file__))
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
     global cs
     global cams
     global camdict
@@ -92,6 +97,11 @@ async def disconnect(
     """
     Disconnect all cameras
     """
+    os.chdir(os.path.dirname(__file__))
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
     global cs
     global cams
     if cams:

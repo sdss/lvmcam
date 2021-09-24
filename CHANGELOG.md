@@ -4,7 +4,7 @@
 
 ### 🔧 Fixed
 
-* Fixed `PermissionError: [Errno 13] Permission denied: '/python'` error that occurs when `lvmcam start` runs without `--debug` option.
+* Fixed errors that occurs when `lvmcam start` runs without `--debug` option.
 
 
 ## 0.1.1 - September 13, 2021

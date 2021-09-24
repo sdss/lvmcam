@@ -10,6 +10,7 @@ from lvmcam.actor.commands import parser
 from lvmcam.actor.commands.connection import cams
 from lvmcam.araviscam import BlackflyCam as blc
 
+import os
 
 __all__ = ["show"]
 
@@ -51,6 +52,11 @@ async def all(
     """
     Show all cameras in configuration file.
     """
+    os.chdir(os.path.dirname(__file__))
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     show_available_camera(command, cs)
     return
@@ -65,6 +71,11 @@ async def connection(
     """
     Show all connected cameras.
     """
+    os.chdir(os.path.dirname(__file__))
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
+    os.chdir('../')
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     show_connected_camera(command, cs)
     return
