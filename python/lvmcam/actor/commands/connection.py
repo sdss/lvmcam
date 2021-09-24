@@ -69,6 +69,8 @@ async def connect(
         # print(config)
         cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
         available_cameras_uid = cs.list_available_cameras()
+        if available_cameras_uid = []:
+            command.error(error="There are not cameras to connect")
         try:
             for item in list(cs._config.items()):
                 if item[1]['uid'] in available_cameras_uid:
