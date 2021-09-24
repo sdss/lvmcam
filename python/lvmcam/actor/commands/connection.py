@@ -69,6 +69,9 @@ async def connect(
         # print(config)
         cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
         available_cameras_uid = cs.list_available_cameras()
+        if (available_cameras_uid == []):
+            command.error(error="There are not real cameras to connect")
+            return
         try:
             for item in list(cs._config.items()):
                 if item[1]['uid'] in available_cameras_uid:
@@ -106,13 +109,15 @@ async def disconnect(
     global cams
     if cams:
         for cam in cams:
+            if (cam.name == "test"):
+                break
             try: 
                 await cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
-            command.info("Camera have been removed")
         cams.clear()
         camdict.clear()
+        command.info("Cameras have been removed")
         return
     else:
         command.error(error="There is nothing to remove")
