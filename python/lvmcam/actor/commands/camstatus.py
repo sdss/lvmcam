@@ -13,12 +13,6 @@ from . import parser
 __all__ = ["status"]
 
 
-# def get_camera():
-#     Aravis.update_device_list()
-#     camera = Aravis.Camera.new(Aravis.get_device_id(0))
-#     device = camera.get_device()
-#     return camera, device
-
 
 @parser.command()
 @click.option('--verbose', type=bool, default=False)
@@ -26,13 +20,9 @@ async def status(command: Command, verbose):
     """
     Show status of camera
     """
-    # print(Aravis.get_device_id(0))
     try:
         cam, dev = Setup_Camera(verbose)
         command.info(status=await custom_status(cam, dev))
     except ValueError:
-        command.error(error="There are not real cameras")
-    # cam,dev = FLIR_Utils.Setup_Camera(verbose,False)
-    # FLIR_Utils.Standard_Settings(cam,dev,verbose)
-    
+        command.error(error="There are not real cameras")    
     return

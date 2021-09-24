@@ -150,7 +150,7 @@ Pull the repository.
 
   $ git pull
 
-Install dependencies by using poetry.
+Update by using poetry.
 
 .. code-block:: console
 
