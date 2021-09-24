@@ -150,7 +150,7 @@ Pull the repository.
 
   $ git pull
 
-Run ``poetry install``
+Update by using poetry.
 
 .. code-block:: console
 
