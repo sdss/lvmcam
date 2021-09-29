@@ -31,13 +31,13 @@ In ``clu`` terminal, type following commands step-by-step.
          "uid": "19283193"
       }
    }
-   lvmcam expose 0.1 3 sci.agw
+   lvmcam expose 0.1 3 sci.agw -r 10 -d 10 -K 10
    02:36:06.480 lvmcam > 
    02:36:09.742 lvmcam : {
       "path": [
-         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459471/sci.agw-00000001.fits",
-         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459471/sci.agw-00000002.fits",
-         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459471/sci.agw-00000003.fits"
+         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459486/sci.agw-00000001.fits",
+         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459486/sci.agw-00000002.fits",
+         "/home/mgjeon/lvmcam/python/lvmcam/assets/2459486/sci.agw-00000003.fits"
       ]
    }
 
@@ -52,7 +52,7 @@ The current headers of fits file are as follows.
      - Value
      - Comment
    * - SIMPLE
-     - True
+     - T
      - conforms to FITS standard
    * - BITPIX
      - 16
@@ -67,7 +67,7 @@ The current headers of fits file are as follows.
      - 1100
      - 
    * - VCAM
-     - 0.0.138
+     - 0.0.270
      - Version of the camera library
    * - CAMNAME
      - sci.agw
@@ -94,7 +94,7 @@ The current headers of fits file are as follows.
      - TAI
      - The time scale system
    * - DATE-OBS
-     - 2021-09-14T02:36:44.719
+     - 2021-09-29T08:38:39.397
      - Date (in TIMESYS) the exposure started
    * - BINX
      - 1
@@ -115,13 +115,13 @@ The current headers of fits file are as follows.
      - 1
      - [ct] Pixel Region Vert start
    * - GAIN
-     - 4.199427234238525
+     - 17.89790889664172
      - Gain
    * - REVERSEX
-     - False
+     - F
      - Flipped left-right
    * - REVERSEY
-     - True
+     - T
      - Flipped up-down
    * - BINMODEX
      - Sum
@@ -130,11 +130,17 @@ The current headers of fits file are as follows.
      - Sum
      - Vert Bin Mode Sum or Averag
    * - CAMBLCLM
-     - False
+     - F
      - Black Level Clamping en/disabled
    * - CAMTYP
      - Blackfly S BFS-PGE-16S7M
      - Camera model
+   * - CRPIX1
+     - 800.0
+     - [px] RA center along axis 1
+   * - CRPIX2
+     - -1238.301111111111
+     - [px] DEC center along axis 2
    * - PIXELFOR
      - Mono16
      - Pixel format
@@ -163,14 +169,44 @@ The current headers of fits file are as follows.
      - (min=0.0, max=47.994294033026364)
      - Gain bounds
    * - POWERSUP
-     - 0.228515625 A
+     - 0.1689453125 A
      - Power Supply Current
    * - TOTALDIS
-     - 2.045455574989319 W
+     - 1.873220443725586 W
      - Total Dissiapted Power
    * - CAMERATE
-     - 59.625 C
+     - 57.75 C
      - Camera Temperature
+   * - CUNIT1
+     - deg
+     - WCS units along axis 1                         
+   * - CUNIT2
+     - deg
+     - WCS units along axis 2                         
+   * - CTYPE1
+     - RA---TAN
+     - WCS type axis 1                                
+   * - CTYPE2
+     - DEC--TAN
+     - WCS type axis 2                                
+   * - CRVAL1
+     - 10.0
+     - [deg] RA at reference pixel                    
+   * - CRVAL2
+     - 10.0
+     - [deg] DEC at reference pixel                   
+   * - CD1_1
+     - -0.00021469855468581
+     - [deg/px] WCS matrix diagonal                   
+   * - CD2_2
+     - 0.000214698554685812
+     - [deg/px] WCS matrix diagonal                   
+   * - CD1_2
+     - 0.000180153478051160
+     - [deg/px] WCS matrix outer diagonal             
+   * - CD2_1
+     - 0.000180153478051160
+     - [deg/px] WCS matrix outer diagonal 
    * - BSCALE
      - 1
      - 
@@ -178,11 +214,11 @@ The current headers of fits file are as follows.
      - 32768
      - 
    * - CHECKSUM
-     - RYefSWdcRWdcRWdc
-     - HDU checksum updated 2021-09-14T11:36:09
+     - 9aCDEYBA9aBACWBA
+     - HDU checksum updated 2021-09-29T17:38:02 
    * - DATASUM
-     - 3015725399
-     - data unit checksum updated 2021-09-14T11:36:09
+     - 2128147065
+     - data unit checksum updated 2021-09-29T17:38:02 
 
 
 Header (2)
@@ -247,6 +283,10 @@ The above headers are created by different source.
 | CAMBLCLM |                           |
 +----------+                           |
 | CAMTYP   |                           |
++----------+                           |
+| CRPIX1   |                           |
++----------+                           |
+| CRPIX2   |                           |
 +----------+---------------------------+
 | PIXELFOR | FILR library using Aravis |
 +----------+                           |
@@ -272,11 +312,33 @@ The above headers are created by different source.
 +----------+                           |
 | CAMERATE |                           |
 +----------+---------------------------+
+| CUNIT1   | sdss/araviscam            |
++----------+                           |
+| CUNIT2   |                           |
++----------+                           |
+| CTYPE1   |                           |
++----------+                           |
+| CTYPE2   |                           |
++----------+                           |
+| CRVAL1   |                           |
++----------+                           |
+| CRVAL2   |                           |
++----------+                           |
+| CD1_1    |                           |
++----------+                           |
+| CD2_2    |                           |
++----------+                           |
+| CD1_2    |                           |
++----------+                           |
+| CD2_1    |                           |
++----------+---------------------------+
 | BSCALE   | sdss/basecam              |
 +----------+                           |
 | BEZERO   |                           |
 +----------+                           |
 | CHECKSUM |                           |
++----------+                           |
+| DATASUM  |                           |
 +----------+---------------------------+
 
 Exposure test with virtual camera
