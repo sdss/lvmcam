@@ -15,7 +15,7 @@ __all__ = ["status"]
 
 
 @parser.command()
-@click.option('--verbose', type=bool, default=False)
+@click.option("-v", '--verbose', type=bool, default=False)
 async def status(command: Command, verbose):
     """
     Show status of camera
