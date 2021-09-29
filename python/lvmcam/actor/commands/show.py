@@ -44,7 +44,7 @@ def show(*args):
 
 
 @show.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.option("-c", '--config', type=str, default="python/lvmcam/etc/cameras.yaml", help="YAML file of lvmt cameras")
 async def all(
     command: Command,
     config: str,
@@ -63,7 +63,7 @@ async def all(
 
 
 @show.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.option("-c", '--config', type=str, default="python/lvmcam/etc/cameras.yaml", help="YAML file of lvmt cameras")
 async def connection(
     command: Command,
     config: str,
