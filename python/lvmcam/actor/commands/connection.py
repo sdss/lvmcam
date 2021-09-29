@@ -16,6 +16,7 @@ import collections
 
 __all__ = ["connect", "disconnect"]
 cs = ""
+csa = []
 cams = []
 camdict = {}
 
@@ -41,12 +42,22 @@ def pretty2(time):
 
 
 @parser.command()
-@click.argument('CONFIG', type=str, default="python/lvmcam/etc/cameras.yaml")
-@click.option('--test', is_flag=True, help="Connect virtual camera for test")
+@click.option("-t", '--test', is_flag=True, help="Connect virtual camera for test")
+
+@click.option("-v", '--verbose', is_flag=True)
+
+# Name of an optional YAML file
+@click.option("-c", '--config', type=str, default="python/lvmcam/etc/cameras.yaml", help="YAML file of lvmt cameras")
+
+# With the -i switch we can add an explicit IP-Adress for a
+# camera if we want to read a camera that is not reachable
+# by the broadcast scanner.
+# @click.option("-i", '--ip', help="IP address of camera")
 async def connect(
     command: Command,
-    config: str,
     test: bool,
+    verbose: bool,
+    config: str,
 ):
     """
     Connect all available cameras
@@ -57,6 +68,7 @@ async def connect(
     os.chdir('../')
     os.chdir('../')
     global cs
+    global csa
     global cams
     global camdict
     if(test):
@@ -64,10 +76,13 @@ async def connect(
         testcam = collections.namedtuple("ObjectName", testcamdict.keys())(*testcamdict.values())
         cams.append(testcam)
     else:
-        print(f"{datetime.datetime.now()} |lvmcam/connection.py| Find all available cameras")
+
+        if verbose : print(f"{datetime.datetime.now()} |lvmcam/connection.py| Find all available cameras")
+
         config = os.path.abspath(config)
         # print(config)
         cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+        csa.append(cs)
         available_cameras_uid = cs.list_available_cameras()
         if (available_cameras_uid == []):
             command.error(error="There are not real cameras to connect")
@@ -75,11 +90,13 @@ async def connect(
         try:
             for item in list(cs._config.items()):
                 if item[1]['uid'] in available_cameras_uid:
-                    print(
-                        f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
+
+                    if verbose : print(f"{pretty(datetime.datetime.now())} |lvmcam/connection.py| Connecting {item[1]['name']} ...")
+
                     cams.append(await cs.add_camera(uid=item[1]['uid']))
-                    print(
-                        f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
+
+                    if verbose : print(f"{pretty2(datetime.datetime.now())} |lvmcam/connection.py| Connected {item[1]['name']} ...")
+
         except gi.repository.GLib.GError:
             command.error(error="Cameras are already connected")
             return
@@ -87,7 +104,6 @@ async def connect(
     if cams:
         for cam in cams:
             command.info(connect={"name": cam.name, "uid": cam.uid})
-        for cam in cams:
             camdict[cam.name] = cam
             # print(camdict)
     return
@@ -109,10 +125,9 @@ async def disconnect(
     global cams
     if cams:
         for cam in cams:
-            if (cam.name == "test"):
-                break
-            try: 
-                await cs.remove_camera(uid=cam.uid)
+            try:
+                if (cam.name != "test"):
+                    await cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
         cams.clear()
