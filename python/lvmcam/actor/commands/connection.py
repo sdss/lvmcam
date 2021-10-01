@@ -71,6 +71,9 @@ async def connect(
     global csa
     global cams
     global camdict
+    if(cs != ""):
+        command.error(error="Cameras are already connected")
+        return
     if(test):
         testcamdict = {"name":"test", "uid":"-1"}
         testcam = collections.namedtuple("ObjectName", testcamdict.keys())(*testcamdict.values())
@@ -130,6 +133,8 @@ async def disconnect(
                     await cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
+        cs = ""
+        csa.clear()
         cams.clear()
         camdict.clear()
         command.info("Cameras have been removed")
