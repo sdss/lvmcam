@@ -32,8 +32,31 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     
-    - name: Install libgirepository1.0-dev
-      run: sudo apt install libgirepository1.0-dev
+    - name: Install dependencies
+      run: |
+        sudo apt install libgirepository1.0-dev make build-essential
+        sudo apt install libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev
+        sudo apt install libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
+        sudo apt install bcairo2-dev libjpeg-dev libgif-dev debhelper cmake gtk-doc-tools
+        sudo apt install libusb-1.0-0-dev libaudit-dev libgirepository1.0-dev libglib2.0-dev
+        sudo apt install libnotify-dev libgtk-3-dev libgstreamer-plugins-base1.0-dev meson
+        sudo apt install python3-pip python3-dev intltool libxml2-dev
+    
+    - name: Install Aravis 0.8.
+      run: |
+        wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
+        wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
+        wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
+        tar xvJf aravis_0.8.6.orig.tar.xz
+        cd aravis-0.8.6
+        tar xvJf ../aravis_0.8.6-1.debian.tar.xz
+        dpkg-buildpackage -rfakeroot -b -uc -us
+        cd ..
+        sudo dpkg -i *.deb
+        sudo apt-get update
+        sudo apt-get upgrade
+        sudo apt-get install gir1.2-aravis-0.8 aravis-tools aravis-tools-cli
+    
   
     - name: Install dependencies
       run: |
