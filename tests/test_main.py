@@ -29,4 +29,4 @@ async def test_actor():
 
     reply2 = test_actor.mock_replies[-2]
     assert reply2['connect']['name'] == 'test'
-    assert reply2['connect']['uid'] == '0'
+    assert reply2['connect']['uid'] == '-1'
