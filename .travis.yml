@@ -9,6 +9,7 @@ sudo: false
 python:
 - '3.7'
 - '3.8'
+- '3.9'
 
 os:
 - linux
@@ -21,7 +22,7 @@ notifications:
 
 # repo branches to test
 branches:
-- main
+- develop
 
 install:
 - pip install -U pip wheel --quiet

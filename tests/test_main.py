@@ -1,17 +1,32 @@
-# encoding: utf-8
-#
-# main.py
+import pytest
 
-# from pytest import mark
-
-# from lvmcam.main import math
+import click
 
 
-# class TestMath(object):
-#     """Tests for the ``math`` function in main.py."""
+from clu import JSONActor
+from clu.testing import setup_test_actor
 
-#     @mark.parametrize(('arg1', 'arg2', 'operator', 'result'),
-#                       [(1, 2, '+', 3), (2, 2, '-', 0), (3, 5, '*', 15), (10, 2, '/', 5)])
-#     def test_math(self, arg1, arg2, operator, result):
+from lvmcam.actor.commands import parser as cam_command_parser
 
-#         assert math(arg1, arg2, arith_operator=operator) == result
+@pytest.mark.asyncio
+async def test_actor():
+
+    test_actor = await setup_test_actor(JSONActor('lvmcam',
+                                                    host='localhost',
+                                                    port=9999))
+
+    test_actor.parser = cam_command_parser
+
+    await test_actor.start()
+
+    command = test_actor.invoke_mock_command('connect -t')
+    await command
+
+    assert command.status.is_done
+
+    reply1 = test_actor.mock_replies[-1]
+    assert reply1['text'] == 'done'
+
+    reply2 = test_actor.mock_replies[-2]
+    assert reply2['connect']['name'] == 'test'
+    assert reply2['connect']['uid'] == '0'

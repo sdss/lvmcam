@@ -101,7 +101,7 @@ Clone the repository.
   $ git clone https://github.com/sdss/lvmcam
   $ cd lvmcam 
 
-Set the python 3.9+ virtual environment.
+Set the python 3.7+ virtual environment.
 
 .. code-block:: console 
 
@@ -116,7 +116,7 @@ Install poetry and dependencies.
   $ pip install poetry
   $ poetry install
 
-Start the actor 
+Ping-pong test
 ^^^^^^^^^^^^^^^
 Start lvmcam actor.
 

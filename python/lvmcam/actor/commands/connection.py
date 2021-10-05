@@ -102,14 +102,14 @@ async def connect(
 
         except gi.repository.GLib.GError:
             command.error(error="Cameras are already connected")
-            return
+            return 
 
     if cams:
         for cam in cams:
             command.info(connect={"name": cam.name, "uid": cam.uid})
             camdict[cam.name] = cam
             # print(camdict)
-    return
+    return command.finish(text="done")
 
 
 @parser.command()
