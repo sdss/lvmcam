@@ -109,7 +109,7 @@ async def connect(
             command.info(connect={"name": cam.name, "uid": cam.uid})
             camdict[cam.name] = cam
             # print(camdict)
-    return
+    return command.finish(text="done")
 
 
 @parser.command()
