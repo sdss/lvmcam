@@ -22,7 +22,7 @@ notifications:
 
 # repo branches to test
 branches:
-- develop
+- main
 
 install:
 - pip install -U pip wheel --quiet
