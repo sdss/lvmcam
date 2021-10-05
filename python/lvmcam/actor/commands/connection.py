@@ -71,6 +71,9 @@ async def connect(
     global csa
     global cams
     global camdict
+    if(cs != ""):
+        command.error(error="Cameras are already connected")
+        return
     if(test):
         testcamdict = {"name":"test", "uid":"-1"}
         testcam = collections.namedtuple("ObjectName", testcamdict.keys())(*testcamdict.values())
@@ -99,14 +102,14 @@ async def connect(
 
         except gi.repository.GLib.GError:
             command.error(error="Cameras are already connected")
-            return
+            return 
 
     if cams:
         for cam in cams:
             command.info(connect={"name": cam.name, "uid": cam.uid})
             camdict[cam.name] = cam
             # print(camdict)
-    return
+    return command.finish(text="done")
 
 
 @parser.command()
@@ -130,6 +133,8 @@ async def disconnect(
                     await cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
+        cs = ""
+        csa.clear()
         cams.clear()
         camdict.clear()
         command.info("Cameras have been removed")

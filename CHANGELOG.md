@@ -3,7 +3,7 @@
 ## 0.0.4 - September 29, 2021
 
 ### 🚀 New
-* Reflected update of sdss/aravisca on Sep 28, 2021.
+* Reflected update of sdss/araviscam on Sep 28, 2021.
     * Added properties such as pixsize and pixcal in cameras.yaml
     * Added headers such as CRPIX1, CRPIX2, CUNIT1, CUNIT2, CTYPE1, CTYPE2, CRVAL1, CRVAL2, CD1_1, CD2_2, CD1_2, and CD2_1.
     * Added options in `lvmcam expose` such as `-r`, `-d`, `-K`. This options are respectively RA J2000 (deg), Dec J2000 (deg), and K-mirror angle (deg).

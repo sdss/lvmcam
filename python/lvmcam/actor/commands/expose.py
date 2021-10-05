@@ -1,8 +1,3 @@
-# @Author: Mingyu Jeon (mgjeon@khu.ac.kr)
-# @Date: 2021-08-23
-# @Filename: expose.py
-# @Reference: https://github.com/sdss/araviscam
-
 from __future__ import absolute_import, annotations, division, print_function
 from astropy.time import Time
 import numpy as np
