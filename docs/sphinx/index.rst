@@ -15,10 +15,6 @@ This is the documentation for the SDSS Python product lvmcam. The current versio
     :target: https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image:: https://img.shields.io/travis/sdss/lvmcam
-    :target: https://gitlab.com/group-name/project-name/commits/master
-    :alt: Travis (.org)
-
 .. image:: https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg
     :target: https://codecov.io/gh/sdss/lvmcam
     :alt: codecov
