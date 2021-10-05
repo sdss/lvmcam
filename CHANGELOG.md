@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.5 - October 5, 2021
+
+### 🔧 Fixed
+* First unit testing for codecov
+* Delete unnecessary directories and files(/filr/*, /comutest/) in python/lvmcam
+
 ## 0.0.4 - September 29, 2021
 
 ### 🚀 New
