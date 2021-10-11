@@ -22,9 +22,5 @@ async def test_actor():
 
     assert command.status.is_done
 
-    reply1 = test_actor.mock_replies[-1]
-    assert reply1["text"] == "done"
-
     reply2 = test_actor.mock_replies[-2]
-    assert reply2["connect"]["name"] == "test"
-    assert reply2["connect"]["uid"] == "-1"
+    assert reply2["text"] == "{'name': test, 'uid': -1}"
