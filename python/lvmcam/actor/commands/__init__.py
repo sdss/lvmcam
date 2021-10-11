@@ -39,6 +39,8 @@ files = [
 
 for file_ in files:
     modname = file_[0:-3].replace("/", ".")
-    mod = importlib.import_module("lvmcam.actor.commands." + modname)  # changged by CK 2021/03/30
+    mod = importlib.import_module(
+        "lvmcam.actor.commands." + modname
+    )  # changged by CK 2021/03/30
 
 os.chdir(cwd)
