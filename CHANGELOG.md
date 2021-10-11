@@ -1,32 +1,41 @@
 # Changelog
 
+## 0.1.0 - October 11, 2021
+
+### 💥 Breaking changes
+* Change returned values of functions because of update of [sdss-clu 1.3.0](https://clu.readthedocs.io/en/latest/changelog.html#september-17-2021)
+
+### ✨ Improved
+* Add Lints in github workflows
+* Refactor some files
+
 ## 0.0.5 - October 5, 2021
 
-### 🔧 Fixed
-* First unit testing for codecov
+### ✨ Improved
+* First unit testing
 * Delete unnecessary directories and files(filr/*, comutest/) in python/lvmcam/
 
 ## 0.0.4 - September 29, 2021
 
 ### 🚀 New
-* Reflected update of sdss/araviscam on Sep 28, 2021.
-    * Added properties such as pixsize and pixcal in cameras.yaml
-    * Added headers such as CRPIX1, CRPIX2, CUNIT1, CUNIT2, CTYPE1, CTYPE2, CRVAL1, CRVAL2, CD1_1, CD2_2, CD1_2, and CD2_1.
-    * Added options in `lvmcam expose` such as `-r`, `-d`, `-K`. This options are respectively RA J2000 (deg), Dec J2000 (deg), and K-mirror angle (deg).
+* Reflect update of sdss/araviscam on Sep 28, 2021.
+    * Add properties such as pixsize and pixcal in cameras.yaml
+    * Add headers such as CRPIX1, CRPIX2, CUNIT1, CUNIT2, CTYPE1, CTYPE2, CRVAL1, CRVAL2, CD1_1, CD2_2, CD1_2, and CD2_1.
+    * Add options in `lvmcam expose` such as `-r`, `-d`, `-K`. This options are respectively RA J2000 (deg), Dec J2000 (deg), and K-mirror angle (deg).
 * Rename versions.
 
 ## 0.0.3 - September 24, 2021
 
 ### 🔧 Fixed
 
-* Fixed errors that occurs when `lvmcam start` runs without `--debug` option.
+* Fix errors that occurs when `lvmcam start` runs without `--debug` option.
 
 
 ## 0.0.2 - September 13, 2021
 
 ### 🚀 New
 
-* Added options for test.
+* Add options for test.
     * `lvmcam connect --test`: add virtual camera
     * `expose --testshot EXPTIME NUM CAMNAME`: Test shot
 
