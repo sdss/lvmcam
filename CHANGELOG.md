@@ -5,10 +5,6 @@
 ### 💥 Breaking changes
 * Change returned values of functions because of update of [sdss-clu 1.3.0](https://clu.readthedocs.io/en/latest/changelog.html#september-17-2021)
 
-### ✨ Improved
-* Add Lints in github workflows
-* Refactor some files
-
 ## 0.0.5 - October 5, 2021
 
 ### ✨ Improved
