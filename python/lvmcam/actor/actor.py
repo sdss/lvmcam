@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import, annotations, division, print_function
 
 from clu.actor import AMQPActor
@@ -18,8 +17,8 @@ __all__ = ["lvmcam"]
 
 
 class lvmcam(AMQPActor):
-    """agp controller actor.
-    """
+    """agp controller actor."""
+
     parser = lvm_command_parser
 
     def __init__(

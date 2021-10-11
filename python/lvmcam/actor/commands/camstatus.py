@@ -5,7 +5,7 @@ import asyncio
 import click
 from clu.command import Command
 
-from lvmcam.flir.FLIR_Utils import Setup_Camera, custom_status
+from lvmcam.flir import FLIR_Utils as flir
 
 from . import parser
 
@@ -13,16 +13,18 @@ from . import parser
 __all__ = ["status"]
 
 
-
 @parser.command()
-@click.option("-v", '--verbose', type=bool, default=False)
+@click.option("-v", "--verbose", type=bool, default=False)
 async def status(command: Command, verbose):
     """
     Show status of camera
     """
     try:
-        cam, dev = Setup_Camera(verbose)
-        command.info(status=await custom_status(cam, dev))
+        cam, dev = flir.setup_camera(verbose)
+        status = await flir.custom_status(cam, dev)
     except ValueError:
-        command.error(error="There are not real cameras")    
-    return
+        command.error("There are not real cameras")
+
+    for stat in status:
+        command.write("i", f"{stat}: {status[stat]}")
+    return command.finish()

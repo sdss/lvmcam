@@ -1,22 +1,23 @@
 [flake8]
 
 ignore =
-    H101
-    N
-    W504
+    ; H101
+    ; N
+    ; W504
     E501
     F401
+    F841
     F811
-    F403
-    F405
+    ; F403
+    ; F405
     E402
-    W291
+    ; W291
 
 per-file-ignores =
-    */__init__.py:E,W
+    */__init__.py:E,F,W
     */BlackflyCam.py:E,F,W
     ./setup.py:E,F,W
-    python/lvmcam/comutest/*py:E,F,W
-    python/lvmcam/flir/*.py:E,F,W
+    ; python/lvmcam/comutest/*py:E,F,W
+    python/lvmcam/flir/*.py:E722
 
 max-line-length = 99

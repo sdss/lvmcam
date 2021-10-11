@@ -6,14 +6,14 @@ Python3 class to work with Aravis/GenICam cameras, subclass of sdss-basecam.
 .. moduleauthor:: Richard J. Mathar <mathar@mpia.de>
 """
 
-import sys
-import math
 import asyncio
-import numpy
-import astropy
+import math
+import sys
 
+import astropy
+import numpy
+from basecam import BaseCamera, CameraConnectionError, CameraEvent, CameraSystem, models
 from basecam.mixins import ImageAreaMixIn
-from basecam import CameraSystem, BaseCamera, CameraEvent, CameraConnectionError, models
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
 # is using glib2 GObjects to represent cameras and streams, the
@@ -27,14 +27,14 @@ from lvmcam.araviscam.aravis import Aravis
 
 # from sdsstools import read_yaml_file
 
-__all__ = ['BlackflyCameraSystem', 'BlackflyCamera', 'BlackflyImageAreaMixIn']
+__all__ = ["BlackflyCameraSystem", "BlackflyCamera", "BlackflyImageAreaMixIn"]
 
 
 class BlackflyCameraSystem(CameraSystem):
-    """ A collection of GenICam cameras, possibly online
+    """A collection of GenICam cameras, possibly online
     :param camera_class : `.BaseCamera` subclass
         The subclass of `.BaseCamera` to use with this camera system.
-    :param camera_config : 
+    :param camera_config :
         A dictionary with the configuration parameters for the multiple
         cameras that can be present in the system, or the path to a YAML file.
         Refer to the documentation for details on the accepted format.
@@ -62,12 +62,28 @@ class BlackflyCameraSystem(CameraSystem):
     # usual broadcase auto-detection (i.e., possibly on some other global network).
     ips_nonlocal = []
 
-    def __init__(self, camera_class=None, camera_config=None,
-                 include=None, exclude=None, logger=None,
-                 log_header=None, log_file=None, verbose=False, ip_list=None):
-        super().__init__(camera_class=camera_class, camera_config=camera_config,
-                         include=include, exclude=exclude, logger=logger, log_header=log_header,
-                         log_file=log_file, verbose=verbose)
+    def __init__(
+        self,
+        camera_class=None,
+        camera_config=None,
+        include=None,
+        exclude=None,
+        logger=None,
+        log_header=None,
+        log_file=None,
+        verbose=False,
+        ip_list=None,
+    ):
+        super().__init__(
+            camera_class=camera_class,
+            camera_config=camera_config,
+            include=include,
+            exclude=exclude,
+            logger=logger,
+            log_header=log_header,
+            log_file=log_file,
+            verbose=verbose,
+        )
 
         # If the ctor is fed with an explicit list of IP addresses, add them to
         # the scanner (with delayed inspection in list_available_cameras).
@@ -78,14 +94,14 @@ class BlackflyCameraSystem(CameraSystem):
         # print(self._config)
 
     def list_available_cameras(self):
-        """ Gather serial numbers of online Aravis/Genicam devices.
+        """Gather serial numbers of online Aravis/Genicam devices.
         :return: a list of serial numbers (as strings). This list may be
                  empty if no cameras are online/switched on.
                  For cameras explicitly addressed by IP, the serial
                  numbers have the format sn@ip, with an @ between number and address.
         :rtype: list
 
-        .. todo:: optionally implement a specific filter for Blackfly's if Basler 
+        .. todo:: optionally implement a specific filter for Blackfly's if Basler
                   cameras should not be listed.
         """
 
@@ -105,7 +121,7 @@ class BlackflyCameraSystem(CameraSystem):
             cam = Aravis.Camera.new(Aravis.get_device_id(i))
             uid = cam.get_string("DeviceSerialNumber")
             serialNums.append(uid)
-            addrs.append('')
+            addrs.append("")
 
         # Try to ping cameras explicitly proposed with ctor.
         for ip in self.ips_nonlocal:
@@ -115,7 +131,7 @@ class BlackflyCameraSystem(CameraSystem):
                 # If is this was already in the scan: discard, else add
                 if uid not in serialNums:
                     serialNums.append(uid)
-                    addrs.append('@'+ip)
+                    addrs.append("@" + ip)
             except:
                 # apparently no such camera at this address....
                 pass
@@ -123,13 +139,13 @@ class BlackflyCameraSystem(CameraSystem):
         # we zip the two lists to the format 'serialnumber{@ip}'
         ids = []
         for cam in range(len(serialNums)):
-            ids.append(serialNums[cam]+addrs[cam])
+            ids.append(serialNums[cam] + addrs[cam])
 
         return ids
 
 
 class BlackflyCamera(BaseCamera):
-    """ A FLIR (formerly Point Grey Research) Blackfly camera.
+    """A FLIR (formerly Point Grey Research) Blackfly camera.
     Given the pixel scale on the benches of LVMi and the assumption
     of 9 um pixel sizes of the LVMi cameras, we assume that the
     cameras have roughly 1 arsec per pixel, so they are used without binning.
@@ -139,6 +155,7 @@ class BlackflyCamera(BaseCamera):
     the first values in the sequential data are the bottom row).
     So this is not done in this python code but by the camera.
     """
+
     def __init__(
         self,
         uid,
@@ -157,6 +174,7 @@ class BlackflyCamera(BaseCamera):
             camera_params=camera_params,
         )
         self.header = []
+
     async def _connect_internal(self, **kwargs):
         """Connect to a camera and upload basic binning and ROI parameters.
         :param kwargs:  recognizes the key uid with integer value, the serial number
@@ -164,10 +182,10 @@ class BlackflyCamera(BaseCamera):
                         This is a subdictionary of 'cameras' in practise.
         """
 
-        # print(self.name) 
+        # print(self.name)
         # search for an optional uid key in the arguments
         try:
-            uid = kwargs['uid']
+            uid = kwargs["uid"]
         except:
             uid = None
 
@@ -205,7 +223,7 @@ class BlackflyCamera(BaseCamera):
         # search for an optional gain key in the arguments
         # todo: one could interpret gain=0 here as to call set_gain_auto(ARV_AUTO_ON)
         try:
-            gain = kwargs['gain']
+            gain = kwargs["gain"]
             if gain > 0.0:
                 # todo: it might make sense to squeeze this into the minimum
                 # and maximum range of the camera's gain if outside that range.
@@ -220,7 +238,7 @@ class BlackflyCamera(BaseCamera):
 
         # search for an optional x and y binning factor
         try:
-            var = kwargs['binning']
+            var = kwargs["binning"]
             cam.set_binning(var[0], var[1])
         except Exception as ex:
             # print("failed to set binning " + str(ex))
@@ -231,7 +249,7 @@ class BlackflyCamera(BaseCamera):
         # of the four native types
         for typp, arvLst in kwargs.items():
             if arvLst is not None:
-                if typp == 'bool':
+                if typp == "bool":
                     for genkey, genval in arvLst.items():
                         try:
                             cam.set_boolean(genkey, int(genval))
@@ -239,7 +257,7 @@ class BlackflyCamera(BaseCamera):
                             # probably a typo in the yaml file... todo: log this
                             # print("failed for " + str(genkey)+str(genval))
                             pass
-                elif typp == 'int':
+                elif typp == "int":
                     for genkey, genval in arvLst.items():
                         try:
                             cam.set_integer(genkey, genval)
@@ -247,7 +265,7 @@ class BlackflyCamera(BaseCamera):
                             # probably a typo in the yaml file... todo: log this
                             # print("failed for " + str(genkey)+str(genval))
                             pass
-                elif typp == 'float':
+                elif typp == "float":
                     for genkey, genval in arvLst.items():
                         try:
                             cam.set_float(genkey, genval)
@@ -255,7 +273,7 @@ class BlackflyCamera(BaseCamera):
                             # probably a typo in the yaml file... todo: log this
                             # print("failed for " + str(genkey)+str(genval))
                             pass
-                elif typp == 'string':
+                elif typp == "string":
                     for genkey, genval in arvLst.items():
                         try:
                             cam.set_string(genkey, genval)
@@ -282,12 +300,11 @@ class BlackflyCamera(BaseCamera):
         self.regionBounds = roiBounds
 
     async def _disconnect_internal(self):
-        """Close connection to camera.
-        """
+        """Close connection to camera."""
         self.device = None
 
     async def _expose_grabFrame(self, exposure):
-        """ Read a single unbinned full frame.
+        """Read a single unbinned full frame.
         The class splits the parent class' exposure into this function and
         the part which generates the FITS file, because applications in guiders
         are usually only interested in the frame's data, and would not
@@ -310,14 +327,18 @@ class BlackflyCamera(BaseCamera):
         # timeout (factor 2: assuming there may be two frames in auto mode taken
         #   internally)
         #   And 5 seconds margin for any sort of transmission overhead over PoE
-        tout_ms = int(1.0e6 * (2.*exposure.exptime+5))
+        tout_ms = int(1.0e6 * (2.0 * exposure.exptime + 5))
         self.notify(CameraEvent.EXPOSURE_INTEGRATING)
 
         # the buffer allocated/created within the acquisition()
         buf = await self.loop.run_in_executor(None, self.device.acquisition, tout_ms)
         if buf is None:
-            raise ExposureError("Exposing for " + str(exposure.exptime) +
-                                " sec failed. Timout " + str(tout_ms/1.0e6))
+            raise ExposureError(
+                "Exposing for "
+                + str(exposure.exptime)
+                + " sec failed. Timout "
+                + str(tout_ms / 1.0e6)
+            )
 
         # Decipher which methods this aravis buffer has...
         # print(dir(buf))
@@ -329,14 +350,15 @@ class BlackflyCamera(BaseCamera):
 
         data = buf.get_data()
 
-        exposure.data = numpy.ndarray(buffer=data, dtype=numpy.uint16,
-                                      shape=(1, reg.height, reg.width))
+        exposure.data = numpy.ndarray(
+            buffer=data, dtype=numpy.uint16, shape=(1, reg.height, reg.width)
+        )
         # print("exposure data shape", exposure.data.shape)
 
         return reg
 
     async def _expose_internal(self, exposure):
-        """ Read a single unbinned full frame and store in a FITS file.
+        """Read a single unbinned full frame and store in a FITS file.
         :param exposure:  On entry exposure.exptim is the intended exposure time in [sec]
                   On exit, exposure.data contains the 16bit data of a single frame
         :return: There is no return value
@@ -363,10 +385,13 @@ class BlackflyCamera(BaseCamera):
             ("BinY", binxy.dy, "[ct] Vertical Bin Factor 1, 2 or 4"),
             ("Width", reg.width, "[ct] Pixel Columns"),
             ("Height", reg.height, "[ct] Pixel Rows"),
-            ("RegX", 1+reg.x, "[ct] Pixel Region Horiz start"),
+            ("RegX", 1 + reg.x, "[ct] Pixel Region Horiz start"),
             # The lower left FITS corner is the upper left X11 corner...
-            ("RegY", self.regionBounds[1]-(reg.y+reg.height-1),
-             "[ct] Pixel Region Vert start")
+            (
+                "RegY",
+                self.regionBounds[1] - (reg.y + reg.height - 1),
+                "[ct] Pixel Region Vert start",
+            ),
         ]
 
         dev = self.device.get_device()
@@ -385,8 +410,7 @@ class BlackflyCamera(BaseCamera):
         imgrev = [False, False]
         try:
             imgrev[0] = self.device.get_boolean("ReverseX")
-            addHeaders.append(
-                ("ReverseX", imgrev[0] != 0, " Flipped left-right"))
+            addHeaders.append(("ReverseX", imgrev[0] != 0, " Flipped left-right"))
             imgrev[1] = self.device.get_boolean("ReverseY")
             addHeaders.append(("ReverseY", imgrev[1] != 0, " Flipped up-down"))
             # print("reversed" +  str(imgrev[0]) + str(imgrev[1]) )
@@ -402,17 +426,15 @@ class BlackflyCamera(BaseCamera):
             binMod[0] = dev.get_integer_feature_value("BinningHorizontalMode")
             if binMod[0] == 0:
                 addHeaders.append(
-                    ("BinModeX", "Averag", "Horiz Bin Mode Sum or Averag"))
+                    ("BinModeX", "Averag", "Horiz Bin Mode Sum or Averag")
+                )
             else:
-                addHeaders.append(
-                    ("BinModeX", "Sum", "Horiz Bin Mode Sum or Averag"))
+                addHeaders.append(("BinModeX", "Sum", "Horiz Bin Mode Sum or Averag"))
             binMod[1] = dev.get_integer_feature_value("BinningVerticalMode")
             if binMod[1] == 0:
-                addHeaders.append(
-                    ("BinModeY", "Averag", "Vert Bin Mode Sum or Averag"))
+                addHeaders.append(("BinModeY", "Averag", "Vert Bin Mode Sum or Averag"))
             else:
-                addHeaders.append(
-                    ("BinModeY", "Sum", "Vert Bin Mode Sum or Averag"))
+                addHeaders.append(("BinModeY", "Sum", "Vert Bin Mode Sum or Averag"))
         except Exception as ex:
             # print("failed to read binmode" + str(ex))
             pass
@@ -421,7 +443,8 @@ class BlackflyCamera(BaseCamera):
         try:
             tmp = self.device.get_boolean("BlackLevelClampingEnable")
             addHeaders.append(
-                ("CAMBLCLM", tmp != 0, "Black Level Clamping en/disabled"))
+                ("CAMBLCLM", tmp != 0, "Black Level Clamping en/disabled")
+            )
             # print("BlackLevelClampingEnable" +  str(imgrev[0]) + str(imgrev[1]) )
         except Exception as ex:
             # print("failed to read BlackLevelClampingEnable" + str(ex))
@@ -434,7 +457,7 @@ class BlackflyCamera(BaseCamera):
             pass
 
         # call _expose_wcs() to gather WCS header keywords
-        addHeaders.extend(self._expose_wcs(exposure,reg))
+        addHeaders.extend(self._expose_wcs(exposure, reg))
 
         # for headr in addHeaders:
         #     exposure.fits_model[0].header_model.append(models.Card(headr))
@@ -447,11 +470,11 @@ class BlackflyCamera(BaseCamera):
         # buf.unref()
         return
 
-    def _expose_wcs(self, exposure,reg):
-        """ Gather information for the WCS FITS keywords
+    def _expose_wcs(self, exposure, reg):
+        """Gather information for the WCS FITS keywords
         :param exposure:  On entry exposure.exptim is the intended exposure time in [sec]
                   On exit, exposure.data contains the 16bit data of a single frame
-        :param reg The binning and region information 
+        :param reg The binning and region information
         """
         # the section/dictionary of the yaml file for this camera
         yamlconfig = self.camera_system._config[self.name]
@@ -465,12 +488,14 @@ class BlackflyCamera(BaseCamera):
         # away in the y-coordinate and in the middle of the x-coordinate.
         # For the *c cameras at the fiber bundle we assume them to be in the beam center.
         # print(reg.height)
-        wcsHeaders.append(("CRPIX1", reg.width/2, "[px] RA center along axis 1"))
-        if self.name[-1] == 'c' :
-            wcsHeaders.append(("CRPIX2", reg.height/2, "[px] DEC center along axis 2"))
-        else :
+        wcsHeaders.append(("CRPIX1", reg.width / 2, "[px] RA center along axis 1"))
+        if self.name[-1] == "c":
+            wcsHeaders.append(
+                ("CRPIX2", reg.height / 2, "[px] DEC center along axis 2")
+            )
+        else:
             # convert 11.14471 mm to microns and to to pixels
-            crefy = 11.14471*1000.0/yamlconfig["pixsize"]
+            crefy = 11.14471 * 1000.0 / yamlconfig["pixsize"]
             wcsHeaders.append(("CRPIX2", -crefy, "[px] DEC center along axis 2"))
 
         # print(wcsHeaders)
@@ -478,8 +503,8 @@ class BlackflyCamera(BaseCamera):
 
 
 class BlackflyImageAreaMixIn(ImageAreaMixIn):
-    """ Allows to select image region and binning factors
-    """
+    """Allows to select image region and binning factors"""
+
     async def _get_image_area_internal(self):
         pass
 
@@ -493,8 +518,17 @@ class BlackflyImageAreaMixIn(ImageAreaMixIn):
         pass
 
 
-async def singleFrame(exptim, name, verb=False, ip_add=None, config="cameras.yaml", ra=None, dec=None, kmirr=0.0):
-    """ Expose once and write the image to a FITS file.
+async def singleFrame(
+    exptim,
+    name,
+    verb=False,
+    ip_add=None,
+    config="cameras.yaml",
+    ra=None,
+    dec=None,
+    kmirr=0.0,
+):
+    """Expose once and write the image to a FITS file.
     :param exptim: The exposure time in seconds. Non-negative.
     :type exptim: float
     :param verb: Verbosity on or off
@@ -514,48 +548,48 @@ async def singleFrame(exptim, name, verb=False, ip_add=None, config="cameras.yam
     """
 
     cs = BlackflyCameraSystem(
-        BlackflyCamera, camera_config=config, verbose=verb, ip_list=ip_add)
+        BlackflyCamera, camera_config=config, verbose=verb, ip_list=ip_add
+    )
     cam = await cs.add_camera(name=name)
     # print("cameras", cs.cameras)
     # print("config" ,config)
- 
 
     exp = await cam.expose(exptim, "LAB TEST")
 
     if ra is not None and dec is not None and kmirr is not None:
-        if ra >=0.0 and ra <=360.0 and dec >= -90. and dec <= 90 :
+        if ra >= 0.0 and ra <= 360.0 and dec >= -90.0 and dec <= 90:
             # if there is already a (partial) header information, keep it,
             # otherwise create one ab ovo.
-            if exp.wcs is None :
+            if exp.wcs is None:
                 wcshdr = astropy.io.fits.Header()
-            else :
+            else:
                 wcshdr = exp.wcs.to_header()
 
-            key = astropy.io.fits.Card("CUNIT1","deg","WCS units along axis 1")
+            key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CUNIT2","deg","WCS units along axis 2")
+            key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE1","RA---TAN","WCS type axis 1")
+            key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE2","DEC--TAN","WCS type axis 2")
+            key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL1",ra,"[deg] RA at reference pixel")
+            key = astropy.io.fits.Card("CRVAL1", ra, "[deg] RA at reference pixel")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL2",dec,"[deg] DEC at reference pixel")
+            key = astropy.io.fits.Card("CRVAL2", dec, "[deg] DEC at reference pixel")
             wcshdr.append(key)
-    
+
             # field angle: degrees, then radians
             # direction of NCP on the detectors (where we have already flipped pixels
             # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
             # todo: get initial value from a siderostat angle model
             fieldrot = 0.0
-            fieldrot += 2.*kmirr
+            fieldrot += 2.0 * kmirr
             fieldrot = math.radians(fieldrot)
 
             # the section/dictionary of the yaml file for this camera
             yamlconfig = cs._config[name]
             # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
-            degperpix =  yamlconfig["pixsize"]/yamlconfig["pixscal"]/3600.0
+            degperpix = yamlconfig["pixsize"] / yamlconfig["pixscal"] / 3600.0
 
             # for the right handed coodriantes
             # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
@@ -563,68 +597,85 @@ async def singleFrame(exptim, name, verb=False, ip_add=None, config="cameras.yam
             # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
             # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
             # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
-            cosperpix = degperpix*math.cos(fieldrot) 
-            sinperpix = degperpix*math.sin(fieldrot) 
-            key = astropy.io.fits.Card("CD1_1",-cosperpix,"[deg/px] WCS matrix diagonal")
+            cosperpix = degperpix * math.cos(fieldrot)
+            sinperpix = degperpix * math.sin(fieldrot)
+            key = astropy.io.fits.Card(
+                "CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD2_2",cosperpix,"[deg/px] WCS matrix diagonal")
+            key = astropy.io.fits.Card(
+                "CD2_2", cosperpix, "[deg/px] WCS matrix diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD1_2",sinperpix,"[deg/px] WCS matrix outer diagonal")
+            key = astropy.io.fits.Card(
+                "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD2_1",sinperpix,"[deg/px] WCS matrix outer diagonal")
+            key = astropy.io.fits.Card(
+                "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
+            )
             wcshdr.append(key)
 
             exp.wcs = astropy.wcs.WCS(wcshdr)
-            # print(exp.wcs.to_header_string()) 
-            for headr in wcshdr.cards :
+            # print(exp.wcs.to_header_string())
+            for headr in wcshdr.cards:
                 exp.fits_model[0].header_model.append(models.Card(headr))
 
     await exp.write()
     if verb:
         print("wrote ", exp.filename)
 
+
 # A debugging aid, demonstrator and simple test run
 # This allows to call this file as an executable from the command line.
 # The last command line argument must be the name of the camera
 # as used in the configuration file.
 # Example
-#    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r RAdegrees] [-d Decdegrees] 
+#    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r RAdegrees] [-d Decdegrees]
 #       [-K kmirrdegrees] [-s "LCO"|"MPIA"|"APO"|"KHU"] {spec.age|spec.agw|...}
 if __name__ == "__main__":
 
     import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-e", '--exptime', type=float, default=5.0,
-                        help="Expose for for exptime seconds")
 
-    parser.add_argument("-v", '--verbose', action='store_true',
-                        help="print some notes to stdout")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-e",
+        "--exptime",
+        type=float,
+        default=5.0,
+        help="Expose for for exptime seconds",
+    )
+
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="print some notes to stdout"
+    )
 
     # With the -i switch we can add an explicit IP-Adress for a
     # camera if we want to read a camera that is not reachable
     # by the broadcast scanner.
-    parser.add_argument("-i", '--ip', help="IP address of camera")
+    parser.add_argument("-i", "--ip", help="IP address of camera")
 
     # Name of an optional YAML file
-    parser.add_argument("-c", '--cfg', default="cameras.yaml",
-                        help="YAML file of lvmt cameras")
+    parser.add_argument(
+        "-c", "--cfg", default="cameras.yaml", help="YAML file of lvmt cameras"
+    )
 
     # right ascension in degrees (as a simple number)
-    parser.add_argument("-r", '--ra', type=float, help="RA J2000 in degrees")
+    parser.add_argument("-r", "--ra", type=float, help="RA J2000 in degrees")
 
     # declination in degrees (as a simple number)
-    parser.add_argument("-d", '--dec', type=float, help="DEC J2000 in degrees")
+    parser.add_argument("-d", "--dec", type=float, help="DEC J2000 in degrees")
 
-    # K-mirror angle in degrees 
+    # K-mirror angle in degrees
     # Note this is only relevant for 3 of the 4 tables/telescopes
-    parser.add_argument("-K", '--Kmirr', type=float, help="K-mirror angle in degrees")
+    parser.add_argument("-K", "--Kmirr", type=float, help="K-mirror angle in degrees")
 
     # shortcut for site coordinates: observatory
     # parser.add_argument("-s", '--site', default="LCO", help="LCO or MPIA or APO or KHU")
 
     # the last argument is mandatory: must be the name of exactly one camera
     # as used in the configuration file
-    parser.add_argument('camname', default="sci.agw")
+    parser.add_argument("camname", default="sci.agw")
 
     args = parser.parse_args()
 
@@ -636,40 +687,50 @@ if __name__ == "__main__":
     # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
     # bsys.list_available_cameras()
 
-    asyncio.run(singleFrame(args.exptime, args.camname, 
-                verb=args.verbose, ip_add=ip_cmdLine, config=args.cfg, ra= args.ra, dec=args.dec, kmirr=args.Kmirr))
+    asyncio.run(
+        singleFrame(
+            args.exptime,
+            args.camname,
+            verb=args.verbose,
+            ip_add=ip_cmdLine,
+            config=args.cfg,
+            ra=args.ra,
+            dec=args.dec,
+            kmirr=args.Kmirr,
+        )
+    )
 
 
 def get_wcshdr(ra, dec, kmirr, cs, name):
-    if ra is not None and dec is not None and kmirr is not None :
-        if ra >=0.0 and ra <=360.0 and dec >= -90. and dec <= 90 :
+    if ra is not None and dec is not None and kmirr is not None:
+        if ra >= 0.0 and ra <= 360.0 and dec >= -90.0 and dec <= 90:
             wcshdr = astropy.io.fits.Header()
 
-            key = astropy.io.fits.Card("CUNIT1","deg","WCS units along axis 1")
+            key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CUNIT2","deg","WCS units along axis 2")
+            key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE1","RA---TAN","WCS type axis 1")
+            key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE2","DEC--TAN","WCS type axis 2")
+            key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL1",ra,"[deg] RA at reference pixel")
+            key = astropy.io.fits.Card("CRVAL1", ra, "[deg] RA at reference pixel")
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL2",dec,"[deg] DEC at reference pixel")
+            key = astropy.io.fits.Card("CRVAL2", dec, "[deg] DEC at reference pixel")
             wcshdr.append(key)
-    
+
             # field angle: degrees, then radians
             # direction of NCP on the detectors (where we have already flipped pixels
             # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
             # todo: get initial value from a siderostat angle model
             fieldrot = 0.0
-            fieldrot += 2.*kmirr
+            fieldrot += 2.0 * kmirr
             fieldrot = math.radians(fieldrot)
 
             # the section/dictionary of the yaml file for this camera
             yamlconfig = cs._config[name]
             # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
-            degperpix =  yamlconfig["pixsize"]/yamlconfig["pixscal"]/3600.0
+            degperpix = yamlconfig["pixsize"] / yamlconfig["pixscal"] / 3600.0
 
             # for the right handed coodriantes
             # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
@@ -677,15 +738,23 @@ def get_wcshdr(ra, dec, kmirr, cs, name):
             # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
             # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
             # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
-            cosperpix = degperpix*math.cos(fieldrot) 
-            sinperpix = degperpix*math.sin(fieldrot) 
-            key = astropy.io.fits.Card("CD1_1",-cosperpix,"[deg/px] WCS matrix diagonal")
+            cosperpix = degperpix * math.cos(fieldrot)
+            sinperpix = degperpix * math.sin(fieldrot)
+            key = astropy.io.fits.Card(
+                "CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD2_2",cosperpix,"[deg/px] WCS matrix diagonal")
+            key = astropy.io.fits.Card(
+                "CD2_2", cosperpix, "[deg/px] WCS matrix diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD1_2",sinperpix,"[deg/px] WCS matrix outer diagonal")
+            key = astropy.io.fits.Card(
+                "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
+            )
             wcshdr.append(key)
-            key = astropy.io.fits.Card("CD2_1",sinperpix,"[deg/px] WCS matrix outer diagonal")
+            key = astropy.io.fits.Card(
+                "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
+            )
             wcshdr.append(key)
 
             return wcshdr
