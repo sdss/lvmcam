@@ -1,11 +1,13 @@
 from lvmcam.araviscam.aravis import Aravis
 
-#--------------------------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------------------------
+
 
 async def custom_status(cam, dev):
-    [fullWidth, fullHeight] = cam.get_sensor_size()    # Full frame size
-    [x, y, width, height] = cam.get_region()             # Get RoI details
-    payload = cam.get_payload()                       # Get "payload", the size of in bytes
+    [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+    [x, y, width, height] = cam.get_region()  # Get RoI details
+    payload = cam.get_payload()  # Get "payload", the size of in bytes
 
     stat = {
         "Camera model": f"{cam.get_model_name()}",
@@ -28,16 +30,18 @@ async def custom_status(cam, dev):
         "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
         "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
         "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
-        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C"
+        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
     }
     return stat
 
-#--------------------------------------------------------------------------------------------
 
-async def stat4header(cam, dev):
-    [fullWidth, fullHeight] = cam.get_sensor_size()    # Full frame size
-    [x, y, width, height] = cam.get_region()             # Get RoI details
-    payload = cam.get_payload()                       # Get "payload", the size of in bytes
+# --------------------------------------------------------------------------------------------
+
+
+async def status_for_header(cam, dev):
+    [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+    [x, y, width, height] = cam.get_region()  # Get RoI details
+    payload = cam.get_payload()  # Get "payload", the size of in bytes
 
     stat = {
         "Pixel format": f"{cam.get_pixel_format_as_string()}",
@@ -54,43 +58,44 @@ async def stat4header(cam, dev):
         "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
         "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
         "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
-        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C"
+        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
     }
     return stat
 
-#--------------------------------------------------------------------------------------------
 
-def Setup_Camera(verbose, fakeCam = False):
+# --------------------------------------------------------------------------------------------
 
-    '''
-        Instantiates a camera and returns it, along with the corresponding "dev". This
-        gives access to "deeper" camera functions, such as the device temperature.
 
-        If fakeCam = True, it returns the fake camera object, a software equivalent,
-        with (presumably realistic) noise, etc.
+def setup_camera(verbose, fakeCam=False):
 
-    '''
+    """
+    Instantiates a camera and returns it, along with the corresponding "dev". This
+    gives access to "deeper" camera functions, such as the device temperature.
 
-    Aravis.update_device_list()             # Scan for live cameras
+    If fakeCam = True, it returns the fake camera object, a software equivalent,
+    with (presumably realistic) noise, etc.
+
+    """
+
+    Aravis.update_device_list()  # Scan for live cameras
 
     if fakeCam:
-        Aravis.enable_interface("Fake")     # using arv-fake-gv-camera-0.8
-        cam = Aravis.Camera.new(None)       # Instantiate cam
+        Aravis.enable_interface("Fake")  # using arv-fake-gv-camera-0.8
+        cam = Aravis.Camera.new(None)  # Instantiate cam
 
         if verbose:
-            print ("Instantiated FakeCam")
+            print("Instantiated FakeCam")
 
-    else:             # Note: We expect only one "real" camera !!
+    else:  # Note: We expect only one "real" camera !!
 
         try:
-            cam = Aravis.Camera.new(Aravis.get_device_id(0))      # Instantiate cam
-            if verbose: 
-                   print ("Instantiated real camera")
+            cam = Aravis.Camera.new(Aravis.get_device_id(0))  # Instantiate cam
+            if verbose:
+                print("Instantiated real camera")
         except:
-          print("ERROR - No camera found")  # Ooops!!
-          return None,None,None             # Send back nothing
+            print("ERROR - No camera found")  # Ooops!!
+            return None, None, None  # Send back nothing
 
-    dev = cam.get_device()        # Allows access to "deeper" features
+    dev = cam.get_device()  # Allows access to "deeper" features
 
-    return cam, dev          # Send back camera, device
-
+    return cam, dev  # Send back camera, device

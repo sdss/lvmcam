@@ -16,8 +16,7 @@ class LvmcamError(Exception):
 
     def __init__(self, message=None):
 
-        message = 'There has been an error' \
-            if not message else message
+        message = "There has been an error" if not message else message
 
         super(LvmcamError, self).__init__(message)
 
@@ -27,8 +26,7 @@ class LvmcamNotImplemented(LvmcamError):
 
     def __init__(self, message=None):
 
-        message = 'This feature is not implemented yet.' \
-            if not message else message
+        message = "This feature is not implemented yet." if not message else message
 
         super(LvmcamNotImplemented, self).__init__(message)
 
@@ -38,20 +36,22 @@ class LvmcamAPIError(LvmcamError):
 
     def __init__(self, message=None):
         if not message:
-            message = 'Error with Http Response from Lvmcam API'
+            message = "Error with Http Response from Lvmcam API"
         else:
-            message = 'Http response error from Lvmcam API. {0}'.format(message)
+            message = "Http response error from Lvmcam API. {0}".format(message)
 
         super(LvmcamAPIError, self).__init__(message)
 
 
 class LvmcamApiAuthError(LvmcamAPIError):
     """A custom exception for API authentication errors"""
+
     pass
 
 
 class LvmcamMissingDependency(LvmcamError):
     """A custom exception for missing dependencies."""
+
     pass
 
 
@@ -61,14 +61,17 @@ class LvmcamWarning(Warning):
 
 class LvmcamUserWarning(UserWarning, LvmcamWarning):
     """The primary warning class."""
+
     pass
 
 
 class LvmcamSkippedTestWarning(LvmcamUserWarning):
     """A warning for when a test is skipped."""
+
     pass
 
 
 class LvmcamDeprecationWarning(LvmcamUserWarning):
     """A warning for deprecated features."""
+
     pass
