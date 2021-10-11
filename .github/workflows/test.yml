@@ -68,18 +68,18 @@ jobs:
     #   with:
     #     node-version: '12'
 
-    # - name: Lint with flake8
-    #   run: |
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     poetry run flake8 . --count --show-source --statistics
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        poetry run flake8 . --count --show-source --statistics
 
-    # - name: Lint with black
-    #   run: |
-    #     poetry run black --check .
+    - name: Lint with black
+      run: |
+        poetry run black --check .
 
-    # - name: Lint with isort
-    #   run: |
-    #     poetry run isort -c archon
+    - name: Lint with isort
+      run: |
+        poetry run isort -c .
     
     # - name: Run type checking
     #   continue-on-error: true
