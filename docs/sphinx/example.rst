@@ -41,6 +41,19 @@ In ``clu`` terminal, type following commands step-by-step.
         "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/sci.agw-00000003.fits"
     }
     06:55:03.654 lvmcam : 
+    lvmcam expose -f "foo/bar" 0.1 3 sci.agw
+    07:14:18.653 lvmcam > 
+    07:14:22.041 lvmcam i {
+        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000001.fits"
+    }
+    07:14:22.046 lvmcam i {
+        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000002.fits"
+    }
+    07:14:22.047 lvmcam i {
+        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000003.fits"
+    }
+    07:14:22.048 lvmcam : 
+ 
  
 
 
