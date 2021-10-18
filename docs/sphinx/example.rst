@@ -467,7 +467,7 @@ The 'available' means that the camera can be connected.
     06:58:57.138 lvmcam : 
  
 
-``lvmcam show connection`` shows all connected cameras. This reply is equal to that of lvmcam connect.
+``lvmcam show connection`` shows all connected cameras. This reply is equal to that of ``lvmcam connect``.
 
 .. code-block:: console
 
