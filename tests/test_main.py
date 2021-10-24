@@ -1,26 +1,38 @@
-import click
 import pytest
-from clu import JSONActor
-from clu.testing import setup_test_actor
+from lvmcam.actor import LvmcamActor
 
-from lvmcam.actor.commands import parser as cam_command_parser
+pytestmark = [pytest.mark.asyncio]
 
+async def test_actor(actor: LvmcamActor):
 
-@pytest.mark.asyncio
-async def test_actor():
+    # command = await actor.invoke_mock_command("connect -t")
+    # await command
+    # assert command.status.did_succeed
 
-    test_actor = await setup_test_actor(
-        JSONActor("lvmcam", host="localhost", port=9999)
-    )
+    await actor.invoke_mock_command("help")
+    await actor.invoke_mock_command("--help")
+    await actor.invoke_mock_command("ping")
+    await actor.invoke_mock_command("version")
 
-    test_actor.parser = cam_command_parser
+    await actor.invoke_mock_command("status")
 
-    await test_actor.start()
+    await actor.invoke_mock_command("show all")
+    await actor.invoke_mock_command("show connection")
 
-    command = test_actor.invoke_mock_command("connect -t")
-    await command
+    await actor.invoke_mock_command("connect")
 
-    assert command.status.is_done
+    await actor.invoke_mock_command("show connection")
+    await actor.invoke_mock_command("disconnect")
+    await actor.invoke_mock_command("show connection")
 
-    reply2 = test_actor.mock_replies[-2]
-    assert reply2["text"] == "{'name': test, 'uid': -1}"
+    await actor.invoke_mock_command("connect -t")
+
+    await actor.invoke_mock_command("expose 0.1 3 test")
+    await actor.invoke_mock_command("expose -t 0.1 3 test")
+    await actor.invoke_mock_command("expose -r 10 -d 10 -K 10 0.1 3 test")
+    await actor.invoke_mock_command("expose -f \"foo/bar\" 0.1 3  test")
+    await actor.invoke_mock_command("expose 0.2 1 test")
+
+    await actor.invoke_mock_command("show connection")
+    await actor.invoke_mock_command("disconnect")
+    await actor.invoke_mock_command("show connection")

@@ -1,2 +1,2 @@
-from .actor import lvmcam
+from .actor import LvmcamActor
 from .commands import parser

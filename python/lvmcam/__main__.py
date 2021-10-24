@@ -17,7 +17,7 @@ from clu.tools import cli_coro as cli_coro_lvm
 
 from sdsstools.daemonizer import DaemonGroup
 
-from lvmcam.actor.actor import lvmcam as lvmcamInstance
+from lvmcam.actor.actor import LvmcamActor as lvmcamInstance
 
 
 @click.group(cls=DefaultGroup, default="actor", default_if_no_args=True)

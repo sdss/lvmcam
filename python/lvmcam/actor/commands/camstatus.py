@@ -25,6 +25,5 @@ async def status(command: Command, verbose):
     except ValueError:
         command.error("There are not real cameras")
 
-    for stat in status:
-        command.write("i", f"{stat}: {status[stat]}")
+    command.info(STATUS=status)
     return command.finish()
