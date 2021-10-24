@@ -21,7 +21,7 @@ from clu.actor import AMQPBaseActor
 from sdsstools import merge_config, read_yaml_file
 
 from lvmcam import config
-from lvmcam.actor import lvmcam
+from lvmcam.actor import LvmcamActor
 
 
 @pytest.fixture()
@@ -34,7 +34,7 @@ def test_config():
 async def actor(test_config: dict, mocker):
     mocker.patch.object(AMQPBaseActor, "start")
 
-    _actor = lvmcam.from_config(test_config)
+    _actor = LvmcamActor.from_config(test_config)
     await _actor.start()
 
     _actor = await clu.testing.setup_test_actor(_actor)

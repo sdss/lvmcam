@@ -77,15 +77,19 @@ async def expose(
         filepath, paths = await expose_test_cam(
             testshot, exptime, num, verbose, filepath, cam
         )
-        for path in paths:
-            command.write("i", f"{path}")
+        # for path in paths:
+        #     command.write("i", f"{path}")
+        path_dict = {i : paths[i] for i in range(len(paths))}
+        command.info(PATH=path_dict)
         return command.finish()
     else:
         paths = await expose_real_cam(
             testshot, exptime, num, verbose, ra, dec, kmirr, filepath, camname, cam
         )
-        for path in paths:
-            command.write("i", f"{path}")
+        # for path in paths:
+        #     command.write("i", f"{path}")
+        path_dict = {i : paths[i] for i in range(len(paths))}
+        command.info(PATH=path_dict)
         return command.finish()
 
 
