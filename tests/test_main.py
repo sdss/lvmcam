@@ -3,6 +3,7 @@ from lvmcam.actor import LvmcamActor
 
 pytestmark = [pytest.mark.asyncio]
 
+
 async def test_actor(actor: LvmcamActor):
 
     # command = await actor.invoke_mock_command("connect -t")
@@ -30,7 +31,7 @@ async def test_actor(actor: LvmcamActor):
     await actor.invoke_mock_command("expose 0.1 3 test")
     await actor.invoke_mock_command("expose -t 0.1 3 test")
     await actor.invoke_mock_command("expose -r 10 -d 10 -K 10 0.1 3 test")
-    await actor.invoke_mock_command("expose -f \"foo/bar\" 0.1 3  test")
+    await actor.invoke_mock_command('expose -f "foo/bar" 0.1 3  test')
     await actor.invoke_mock_command("expose 0.2 1 test")
 
     await actor.invoke_mock_command("show connection")
