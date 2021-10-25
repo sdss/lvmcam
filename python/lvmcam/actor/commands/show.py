@@ -38,32 +38,6 @@ async def all(
 ):
     """
     Show all cameras in configuration file.
-
-    Example
-    -------
-
-    .. code-block:: console
-
-    $ clu
-    lvmcam show all
-    12:22:02.371 lvmcam >
-    12:22:04.706 lvmcam i {
-        "ALL": {
-            "sci.agw": "Available",
-            "sci.age": "Unavailable",
-            "sci.agc": "Unavailable",
-            "skyw.agw": "Unavailable",
-            "skyw.age": "Unavailable",
-            "skyw.agc": "Unavailable",
-            "skye.agw": "Unavailable",
-            "skye.age": "Unavailable",
-            "skye.agc": "Unavailable",
-            "spec.agw": "Unavailable",
-            "spec.age": "Unavailable",
-            "spec.agc": "Unavailable"
-        }
-    }
-    12:22:04.711 lvmcam :
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
@@ -92,47 +66,6 @@ async def connection(
 ):
     """
     Show all connected cameras.
-
-    Example
-    -------
-
-    .. code-block:: console
-
-    $ clu
-    lvmcam show connection
-    12:22:57.797 lvmcam >
-    12:22:57.853 lvmcam e {
-        "text": "There are no connected cameras"
-    }
-    lvmcam connect
-    12:23:01.094 lvmcam >
-    12:23:06.110 lvmcam i {
-        "CAMERA": {
-            "name": "sci.agw",
-            "uid": "19283193"
-        }
-    }
-    12:23:06.119 lvmcam :
-    lvmcam show connection
-    12:23:09.535 lvmcam >
-    12:23:09.592 lvmcam i {
-        "CONNECTED": {
-            "name": "sci.agw",
-            "uid": "19283193"
-        }
-    }
-    12:23:09.593 lvmcam :
-    lvmcam disconnect
-    12:23:13.638 lvmcam >
-    12:23:13.999 lvmcam i {
-        "text": "Cameras have been removed"
-    }
-    12:23:14.004 lvmcam :
-    lvmcam show connection
-    12:23:17.098 lvmcam >
-    12:23:17.155 lvmcam e {
-        "text": "There are no connected cameras"
-    }
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
