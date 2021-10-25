@@ -46,42 +46,6 @@ async def connect(
 ):
     """
     Connect all available cameras
-
-    Example
-    --------
-
-    .. code-block:: console
-    $ clu
-    lvmcam connect
-    12:25:20.623 lvmcam >
-    12:25:25.642 lvmcam i {
-        "CAMERA": {
-            "name": "sci.agw",
-            "uid": "19283193"
-        }
-    }
-    12:25:25.649 lvmcam :
-    lvmcam connect
-    12:25:28.151 lvmcam >
-    12:25:28.153 lvmcam e {
-        "text": "Cameras are already connected"
-    }
-    lvmcam disconnect
-    12:25:31.534 lvmcam >
-    12:25:32.528 lvmcam i {
-        "text": "Cameras have been removed"
-    }
-    12:25:32.533 lvmcam :
-    lvmcam connect -t
-    12:25:35.523 lvmcam >
-    12:25:35.524 lvmcam i {
-        "CAMERA": {
-            "name": "test",
-            "uid": "-1"
-        }
-    }
-    12:25:35.525 lvmcam :
-
     """
     modules.change_dir_for_normal_actor_start(__file__)
     global cs
@@ -143,33 +107,6 @@ async def disconnect(
 ):
     """
     Disconnect all cameras
-
-    Example
-    --------
-
-    .. code-block:: console
-    $ clu
-    lvmcam connect
-    12:17:35.058 lvmcam >
-    12:17:40.083 lvmcam i {
-        "CAMERA": {
-            "name": "sci.agw",
-            "uid": "19283193"
-        }
-    }
-    12:17:40.092 lvmcam :
-    lvmcam connect
-    12:17:42.540 lvmcam >
-    12:17:42.542 lvmcam e {
-        "text": "Cameras are already connected"
-    }
-    lvmcam disconnect
-    12:17:45.700 lvmcam >
-    12:17:45.963 lvmcam i {
-        "text": "Cameras have been removed"
-    }
-    12:17:45.970 lvmcam :
-
     """
     modules.change_dir_for_normal_actor_start(__file__)
     global cs
