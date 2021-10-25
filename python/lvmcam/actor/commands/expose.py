@@ -79,7 +79,7 @@ async def expose(
         )
         # for path in paths:
         #     command.write("i", f"{path}")
-        path_dict = {i : paths[i] for i in range(len(paths))}
+        path_dict = {i: paths[i] for i in range(len(paths))}
         command.info(PATH=path_dict)
         return command.finish()
     else:
@@ -88,7 +88,7 @@ async def expose(
         )
         # for path in paths:
         #     command.write("i", f"{path}")
-        path_dict = {i : paths[i] for i in range(len(paths))}
+        path_dict = {i: paths[i] for i in range(len(paths))}
         command.info(PATH=path_dict)
         return command.finish()
 

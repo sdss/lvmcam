@@ -11,9 +11,11 @@ more information.
 """
 
 import os
+
 # import pathlib
 
 import clu.testing
+
 # import numpy
 import pytest
 from clu.actor import AMQPBaseActor

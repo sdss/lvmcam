@@ -44,10 +44,11 @@ class LvmcamBaseActor(BaseActor):
         if "schema" not in kwargs:
             kwargs["schema"] = os.path.join(
                 os.path.dirname(__file__),
-               "../etc/schema.json",
+                "../etc/schema.json",
             )
 
         super().__init__(*args, **kwargs)
+
 
 class LvmcamActor(LvmcamBaseActor, AMQPActor):
     """Lvmcam actor based on the AMQP protocol."""
