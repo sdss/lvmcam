@@ -52,7 +52,7 @@ async def connect(
     global csa
     global cams
     global camdict
-    if cs != "":
+    if cs != "" or cams != []:
         return command.error("Cameras are already connected")
     if test:
         test_camdict = {"name": "test", "uid": "-1"}
@@ -96,7 +96,7 @@ async def connect(
 
     if cams:
         for cam in cams:
-            command.write("i", f"{{'name': {cam.name}, 'uid': {cam.uid}}}")
+            command.info(CAMERA={"name": cam.name, "uid": cam.uid})
             camdict[cam.name] = cam
     return command.finish()
 

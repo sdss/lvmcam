@@ -1,0 +1,4 @@
+actor:
+  name: lvmcam
+  host: localhost
+  port: 5672

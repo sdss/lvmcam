@@ -1,10 +1,22 @@
 # Changelog
 
+## 0.2.0 - October 25, 2021
+
+### 🚀 New
+* Restore returned values of actor commands similar to before 0.1.0 version.
+    * Add JSON schema
+
+### ✨ Improved
+* Change unit testing code so that JSONActor is not used.
+
 ## 0.1.0 - October 11, 2021
 
-### 💥 Breaking changes
-* Change returned values of functions because of update of [sdss-clu 1.3.0](https://clu.readthedocs.io/en/latest/changelog.html#september-17-2021)
+### 🚀 New
+* Change returned values of actor commands because of update of [sdss-clu 1.3.0](https://clu.readthedocs.io/en/latest/changelog.html#september-17-2021)
 
+### ✨ Improved
+* Code Refactoring
+ 
 ## 0.0.5 - October 5, 2021
 
 ### ✨ Improved
