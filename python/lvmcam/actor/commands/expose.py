@@ -67,6 +67,73 @@ async def expose(
     filepath: str,
     camname: str,
 ):
+    """
+    Save fits file
+
+    Example
+    -------
+
+    .. code-block:: console
+    $ clu
+    lvmcam connect
+    12:17:35.058 lvmcam >
+    12:17:40.083 lvmcam i {
+        "CAMERA": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
+    }
+    12:17:40.092 lvmcam :
+    lvmcam connect
+    12:17:42.540 lvmcam >
+    12:17:42.542 lvmcam e {
+        "text": "Cameras are already connected"
+    }
+    lvmcam disconnect
+    12:17:45.700 lvmcam >
+    12:17:45.963 lvmcam i {
+        "text": "Cameras have been removed"
+    }
+    12:17:45.970 lvmcam :
+
+    (lvmcam-with-3.9.7) mgjeon@linux:~/lvmcam$ clu
+    lvmcam connect
+    12:19:54.419 lvmcam >
+    12:19:59.431 lvmcam i {
+        "CAMERA": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
+    }
+    12:19:59.438 lvmcam :
+    lvmcam expose 0.1 3 sci.agw
+    12:20:05.037 lvmcam >
+    12:20:08.447 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000009.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000010.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000011.fits"
+        }
+    }
+    12:20:08.453 lvmcam :
+    lvmcam expose -r 10 -d 10 -K 10 0.5 2 sci.agw
+    12:20:22.036 lvmcam >
+    12:20:25.397 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000012.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000013.fits"
+        }
+    }
+    12:20:25.402 lvmcam :
+    lvmcam expose -t 0.1 1 sci.agw
+    12:20:34.706 lvmcam >
+    12:20:37.020 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test.fits"
+        }
+    }
+    12:20:37.025 lvmcam :
+    """
     if not connection.camdict:
         return command.error("There are no connected cameras")
     modules.change_dir_for_normal_actor_start(__file__)
