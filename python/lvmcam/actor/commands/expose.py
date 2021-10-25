@@ -67,6 +67,9 @@ async def expose(
     filepath: str,
     camname: str,
 ):
+    """
+    Save fits file
+    """
     if not connection.camdict:
         return command.error("There are no connected cameras")
     modules.change_dir_for_normal_actor_start(__file__)

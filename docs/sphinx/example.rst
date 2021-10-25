@@ -6,11 +6,11 @@ Example
 Exposure test with real camera
 -------------------------------
 
-Start the actor in debug mode.
+Start the actor (in debug mode).
 
 .. code-block:: console
 
-    $ lvmcam start --debug
+    $ lvmcam start (--debug)
 
 In another terminal, start ``clu``.
 
@@ -24,38 +24,35 @@ In ``clu`` terminal, type following commands step-by-step.
 
     $ clu
     lvmcam connect
-    06:54:23.681 lvmcam > 
-    06:54:28.691 lvmcam i {
-        "text": "{'name': sci.agw, 'uid': 19283193}"
+    12:05:45.900 lvmcam > 
+    12:05:50.920 lvmcam i {
+        "CAMERA": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
     }
-    06:54:28.700 lvmcam : 
+    12:05:50.931 lvmcam : 
     lvmcam expose -r 10 -d 10 -K 10 0.1 3 sci.agw
-    06:55:00.238 lvmcam > 
-    06:55:03.647 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/sci.agw-00000001.fits"
+    12:06:15.383 lvmcam > 
+    12:06:18.801 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000003.fits"
+        }
     }
-    06:55:03.652 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/sci.agw-00000002.fits"
-    }
-    06:55:03.653 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/sci.agw-00000003.fits"
-    }
-    06:55:03.654 lvmcam : 
+    12:06:18.806 lvmcam : 
     lvmcam expose -f "foo/bar" 0.1 3 sci.agw
-    07:14:18.653 lvmcam > 
-    07:14:22.041 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000001.fits"
+    12:06:28.633 lvmcam > 
+    12:06:32.027 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000004.fits",
+            "1": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000005.fits",
+            "2": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000006.fits"
+        }
     }
-    07:14:22.046 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000002.fits"
-    }
-    07:14:22.047 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/foo/bar/2459505/sci.agw-00000003.fits"
-    }
-    07:14:22.048 lvmcam : 
+    12:06:32.033 lvmcam :
  
- 
-
 
 Header (1)
 ^^^^^^^^^^
@@ -360,11 +357,11 @@ The above headers are created by different source.
 Exposure test with virtual camera
 ----------------------------------
 
-Start the actor in debug mode.
+Start the actor (in debug mode).
 
 .. code-block:: console
 
-   $ lvmcam start --debug
+   $ lvmcam start (--debug)
 
 In another terminal, start ``clu``.
 
@@ -372,31 +369,31 @@ In another terminal, start ``clu``.
 
    $ clu 
 
-In ``clu`` terminal, type following commands step-by-step.
+In ``clu`` terminal, type following commands step-by-step. The ``--test`` or ``-t`` option in ``connect`` command makes a 'test' camera.
 
 .. code-block:: console
 
     $ clu
     lvmcam connect -t
-    06:56:22.722 lvmcam > 
-    06:56:22.724 lvmcam i {
-        "text": "{'name': test, 'uid': -1}"
+    12:08:17.298 lvmcam > 
+    12:08:17.299 lvmcam i {
+        "CAMERA": {
+            "name": "test",
+            "uid": "-1"
+        }
     }
-    06:56:22.725 lvmcam : 
+    12:08:17.300 lvmcam : 
     lvmcam expose 0.1 3 test
-    06:56:32.869 lvmcam > 
-    06:56:33.191 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/test-00000001.fits"
+    12:08:25.268 lvmcam > 
+    12:08:25.590 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/test-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/test-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/test-00000003.fits"
+        }
     }
-    06:56:33.196 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/test-00000002.fits"
-    }
-    06:56:33.197 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459505/test-00000003.fits"
-    }
-    06:56:33.198 lvmcam : 
+    12:08:25.595 lvmcam : 
     
-
 
 The 'test' camera is just fake camera. All images gotten by test camera are files copied of `python/lvmcam/actor/example`.
 
@@ -404,109 +401,142 @@ The 'test' camera is just fake camera. All images gotten by test camera are file
 Test shot
 ---------  
 
-The ``--testshot`` option in ``expose`` command makes one ``test.fits`` file that is always overwritten. 
+The ``--testshot`` or ``-t`` option in ``expose`` command makes one ``test.fits`` file that is always overwritten. 
 The ``NUM`` argument of ``expose`` is ignored.
 
 .. code-block:: console
 
     $ clu
-    lvmcam expose -t 0.1 3 sci.agw
-    06:58:11.853 lvmcam > 
-    06:58:14.174 lvmcam i {
-        "text": "/home/mgjeon/lvmcam/python/lvmcam/assets/test.fits"
+    lvmcam connect -t
+    12:11:50.442 lvmcam > 
+    12:11:50.443 lvmcam i {
+        "CAMERA": {
+            "name": "test",
+            "uid": "-1"
+        }
     }
-    06:58:14.180 lvmcam : 
+    12:11:50.444 lvmcam : 
+    lvmcam expose -t 0.1 3 test
+    12:11:57.167 lvmcam > 
+    12:11:57.273 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test.fits"
+        }
+    }
+    12:11:57.274 lvmcam : 
+    lvmcam disconnect
+    12:12:00.238 lvmcam > 
+    12:12:00.239 lvmcam i {
+        "text": "Cameras have been removed"
+    }
+    12:12:00.240 lvmcam : 
+    lvmcam connect
+    12:12:04.067 lvmcam > 
+    12:12:09.091 lvmcam i {
+        "CAMERA": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
+    }
+    12:12:09.101 lvmcam : 
+    lvmcam expose -t 0.1 3 sci.agw
+    12:12:15.066 lvmcam > 
+    12:12:17.406 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test.fits"
+        }
+    }
+    12:12:17.412 lvmcam : 
+ 
 
 
 Show commands
 --------------
 
-The 'available' means that the camera can be connected.
+The 'Available' means that the camera can be connected.
 
 .. code-block:: console
 
     $ clu
     lvmcam show all
-    06:58:54.787 lvmcam > 
-    06:58:57.122 lvmcam i {
-        "text": "available: ('sci.agw', {'name': 'sci.agw', 'uid': '19283193', 'serial': 19283193, 'ip': '192.168.70.50', 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283193', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
+    12:12:49.081 lvmcam > 
+    12:12:51.425 lvmcam i {
+        "ALL": {
+            "sci.agw": "Available",
+            "sci.age": "Unavailable",
+            "sci.agc": "Unavailable",
+            "skyw.agw": "Unavailable",
+            "skyw.age": "Unavailable",
+            "skyw.agc": "Unavailable",
+            "skye.agw": "Unavailable",
+            "skye.age": "Unavailable",
+            "skye.agc": "Unavailable",
+            "spec.agw": "Unavailable",
+            "spec.age": "Unavailable",
+            "spec.agc": "Unavailable"
+        }
     }
-    06:58:57.127 lvmcam i {
-        "text": "unavailable: ('sci.age', {'name': 'sci.age', 'uid': '19283182', 'serial': 19283182, 'ip': '192.168.70.70', 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283182', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.128 lvmcam i {
-        "text": "unavailable: ('sci.agc', {'name': 'sci.agc', 'uid': '-100', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': False, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.129 lvmcam i {
-        "text": "unavailable: ('skyw.agw', {'name': 'skyw.agw', 'uid': '-2', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.130 lvmcam i {
-        "text": "unavailable: ('skyw.age', {'name': 'skyw.age', 'uid': '-3', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.131 lvmcam i {
-        "text": "unavailable: ('skyw.agc', {'name': 'skyw.agc', 'uid': '-101', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': False, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.132 lvmcam i {
-        "text": "unavailable: ('skye.agw', {'name': 'skye.agw', 'uid': '-4', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.133 lvmcam i {
-        "text": "unavailable: ('skye.age', {'name': 'skye.age', 'uid': '-5', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.134 lvmcam i {
-        "text": "unavailable: ('skye.agc', {'name': 'skye.agc', 'uid': '-102', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': False, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.135 lvmcam i {
-        "text": "unavailable: ('spec.agw', {'name': 'spec.agw', 'uid': '-6', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': False, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.136 lvmcam i {
-        "text": "unavailable: ('spec.age', {'name': 'spec.age', 'uid': '-7', 'serial': 0})"
-    }
-    06:58:57.137 lvmcam i {
-        "text": "unavailable: ('spec.agc', {'name': 'spec.agc', 'uid': '-103', 'serial': 0, 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283186', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False})"
-    }
-    06:58:57.138 lvmcam : 
+    12:12:51.430 lvmcam : 
+    
  
 
-``lvmcam show connection`` shows all connected cameras. This reply is equal to that of ``lvmcam connect``.
+``lvmcam show connection`` shows all connected cameras. This reply is similar to that of ``lvmcam connect``.
 
 .. code-block:: console
 
     $ clu
     lvmcam show connection
-    07:01:44.699 lvmcam > 
-    07:01:44.750 lvmcam e {
+    12:13:44.881 lvmcam > 
+    12:13:44.937 lvmcam e {
         "text": "There are no connected cameras"
     }
     lvmcam connect -t
-    07:01:51.030 lvmcam > 
-    07:01:51.031 lvmcam i {
-        "text": "{'name': test, 'uid': -1}"
+    12:13:50.888 lvmcam > 
+    12:13:50.889 lvmcam i {
+        "CAMERA": {
+            "name": "test",
+            "uid": "-1"
+        }
     }
-    07:01:51.032 lvmcam : 
+    12:13:50.890 lvmcam : 
     lvmcam show connection
-    07:01:55.295 lvmcam > 
-    07:01:55.354 lvmcam i {
-        "text": "{ 'name': test, 'uid': -1 }"
+    12:13:55.143 lvmcam > 
+    12:13:55.203 lvmcam i {
+        "CONNECTED": {
+            "name": "test",
+            "uid": "-1"
+        }
     }
-    07:01:55.355 lvmcam : 
+    12:13:55.204 lvmcam : 
     lvmcam connect
-    07:01:58.131 lvmcam > 
-    07:02:03.125 lvmcam i {
-        "text": "{'name': test, 'uid': -1}"
+    12:13:58.360 lvmcam > 
+    12:13:58.362 lvmcam e {
+        "text": "Cameras are already connected"
     }
-    07:02:03.134 lvmcam i {
-        "text": "{'name': sci.agw, 'uid': 19283193}"
+    lvmcam disconnect
+    12:14:01.035 lvmcam > 
+    12:14:01.036 lvmcam i {
+        "text": "Cameras have been removed"
     }
-    07:02:03.135 lvmcam : 
+    12:14:01.037 lvmcam : 
+    lvmcam connect
+    12:14:04.052 lvmcam > 
+    12:14:09.075 lvmcam i {
+        "CAMERA": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
+    }
+    12:14:09.083 lvmcam : 
     lvmcam show connection
-    07:02:06.885 lvmcam > 
-    07:02:06.964 lvmcam i {
-        "text": "{ 'name': test, 'uid': -1 }"
+    12:14:12.393 lvmcam > 
+    12:14:12.465 lvmcam i {
+        "CONNECTED": {
+            "name": "sci.agw",
+            "uid": "19283193"
+        }
     }
-    07:02:06.965 lvmcam i {
-        "text": "{ 'name': sci.agw, 'uid': 19283193 }"
-    }
-    07:02:06.966 lvmcam : 
+    12:14:12.466 lvmcam : 
     
 
 Status command
@@ -516,68 +546,31 @@ Status command
 
     $ clu
     lvmcam status
-    07:03:39.788 lvmcam > 
-    07:03:42.061 lvmcam i {
-        "text": "Camera model: Blackfly S BFS-PGE-16S7M"
+    12:14:48.884 lvmcam > 
+    12:14:51.161 lvmcam i {
+        "STATUS": {
+            "Camera model": "Blackfly S BFS-PGE-16S7M",
+            "Camera vendor": "FLIR",
+            "Camera id": "19283193",
+            "Pixel format": "Mono16",
+            "Available Formats": "['Mono8', 'Mono16', 'Mono10Packed', 'Mono12Packed', 'Mono10p', 'Mono12p']",
+            "Full Frame": "1608x1104",
+            "ROI": "1600x1100 at 0,0",
+            "Frame size": "3520000 Bytes",
+            "Frame rate": "27.695798215061195 Hz",
+            "Exposure time": "0.099996 seconds",
+            "Gain Conv.": "LCG",
+            "Gamma Enable": "False",
+            "Gamma Value": "0.800048828125",
+            "Acquisition mode": "SingleFrame",
+            "Framerate bounds": "(min=1.0, max=31.46968198249933)",
+            "Exp. time bounds": "(min=14.0, max=30000003.0)",
+            "Gain bounds": "(min=0.0, max=47.994294033026364)",
+            "Power Supply Voltage": "9.76171875 V",
+            "Power Supply Current": "0.259765625 A",
+            "Total Dissiapted Power": "2.569320797920227 W",
+            "Camera Temperature": "55.25 C"
+        }
     }
-    07:03:42.066 lvmcam i {
-        "text": "Camera vendor: FLIR"
-    }
-    07:03:42.067 lvmcam i {
-        "text": "Camera id: 19283193"
-    }
-    07:03:42.068 lvmcam i {
-        "text": "Pixel format: Mono16"
-    }
-    07:03:42.069 lvmcam i {
-        "text": "Available Formats: ['Mono8', 'Mono16', 'Mono10Packed', 'Mono12Packed', 'Mono10p', 'Mono12p']"
-    }
-    07:03:42.070 lvmcam i {
-        "text": "Full Frame: 1608x1104"
-    }
-    07:03:42.071 lvmcam i {
-        "text": "ROI: 1600x1100 at 0,0"
-    }
-    07:03:42.072 lvmcam i {
-        "text": "Frame size: 3520000 Bytes"
-    }
-    07:03:42.073 lvmcam i {
-        "text": "Frame rate: 27.695798215061195 Hz"
-    }
-    07:03:42.074 lvmcam i {
-        "text": "Exposure time: 0.099996 seconds"
-    }
-    07:03:42.075 lvmcam i {
-        "text": "Gain Conv.: LCG"
-    }
-    07:03:42.076 lvmcam i {
-        "text": "Gamma Enable: False"
-    }
-    07:03:42.077 lvmcam i {
-        "text": "Gamma Value: 0.800048828125"
-    }
-    07:03:42.079 lvmcam i {
-        "text": "Acquisition mode: SingleFrame"
-    }
-    07:03:42.084 lvmcam i {
-        "text": "Framerate bounds: (min=1.0, max=31.46968198249933)"
-    }
-    07:03:42.085 lvmcam i {
-        "text": "Exp. time bounds: (min=14.0, max=30000003.0)"
-    }
-    07:03:42.086 lvmcam i {
-        "text": "Gain bounds: (min=0.0, max=47.994294033026364)"
-    }
-    07:03:42.087 lvmcam i {
-        "text": "Power Supply Voltage: 9.73681640625 V"
-    }
-    07:03:42.088 lvmcam i {
-        "text": "Power Supply Current: 0.18994140625 A"
-    }
-    07:03:42.090 lvmcam i {
-        "text": "Total Dissiapted Power: 2.0348424911499023 W"
-    }
-    07:03:42.092 lvmcam i {
-        "text": "Camera Temperature: 56.25 C"
-    }
-    07:03:42.092 lvmcam : 
+    12:14:51.166 lvmcam : 
+    
