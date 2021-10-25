@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 - October 25, 2021
+## 0.1.1 - October 25, 2021
 
 ### 🚀 New
 * Restore returned values of actor commands similar to before 0.1.0 version.
