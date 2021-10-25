@@ -64,6 +64,7 @@ async def all(
         }
     }
     12:22:04.711 lvmcam :
+
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
@@ -133,6 +134,7 @@ async def connection(
     12:23:17.155 lvmcam e {
         "text": "There are no connected cameras"
     }
+
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)

@@ -53,6 +53,7 @@ async def status(command: Command, verbose):
         }
     }
     12:14:51.166 lvmcam :
+
     """
     try:
         cam, dev = flir.setup_camera(verbose)
