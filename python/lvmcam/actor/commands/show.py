@@ -121,7 +121,7 @@ async def ip(
         if uid not in serialNums:
             serialNums.append(uid)
             addrs.append("@" + iplist)
-    except:
+    except UnboundLocalError:
         # apparently no such camera at this address....
         pass
     # for ip in self.ips_nonlocal:
