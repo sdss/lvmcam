@@ -12,8 +12,7 @@ import sys
 
 import astropy
 import numpy
-from basecam import (BaseCamera, CameraConnectionError,
-                     CameraEvent, CameraSystem, models)
+from basecam import BaseCamera, CameraConnectionError, CameraEvent, CameraSystem, models
 from basecam.mixins import ImageAreaMixIn
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
