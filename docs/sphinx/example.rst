@@ -395,7 +395,7 @@ In ``clu`` terminal, type following commands step-by-step. The ``--test`` or ``-
     12:08:25.595 lvmcam : 
     
 
-The 'test' camera is just fake camera. All images gotten by test camera are files copied of `python/lvmcam/actor/example`.
+The 'test' camera is fake camera. All images captured by the 'test' camera are just files copied from `python/lvmcam/actor/example`.
 
 
 Test shot

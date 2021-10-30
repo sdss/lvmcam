@@ -11,6 +11,7 @@ from lvmcam.actor import modules
 from lvmcam.actor.commands import parser
 from lvmcam.actor.commands.connection import cams
 from lvmcam.araviscam import BlackflyCam as blc
+from lvmcam.araviscam.aravis import Aravis
 
 
 __all__ = ["show"]

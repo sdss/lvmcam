@@ -44,7 +44,7 @@ Install pyenv by using pyenv installer.
 
   $ curl https://pyenv.run | bash
 
-You should add the code below to ``~/.bashrc`` by using your preferred editor.
+You should add the code below to ``~/.bashrc`` or ``~/.zshrc`` by using your preferred editor.
 
 .. code-block::
 
