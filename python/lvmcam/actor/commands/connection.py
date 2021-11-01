@@ -24,20 +24,14 @@ camdict = {}
 
 
 @parser.command()
-@click.option("-t", "--test", is_flag=True, help="Connect virtual camera for test")
+@click.option("-t", "--test", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 # Name of an optional YAML file
-@click.option(
-    "-c",
-    "--config",
-    type=str,
-    default="python/lvmcam/etc/cameras.yaml",
-    help="YAML file of lvmt cameras",
-)
+@click.option("-c", "--config", type=str, default="python/lvmcam/etc/cameras.yaml")
 # With the -i switch we can add an explicit IP-Adress for a
 # camera if we want to read a camera that is not reachable
 # by the broadcast scanner.
-@click.option("-i", "--ip", help="IP address of camera")
+@click.option("-i", "--ip")
 async def connect(
     command: Command,
     test: bool,
