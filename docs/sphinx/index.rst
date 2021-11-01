@@ -24,11 +24,6 @@ Quick Start
 
 Prerequisite
 ^^^^^^^^^^^^
-Install CLU.
-
-.. code-block:: console
-
-  $ pip install sdss-clu
 
 Install RabbitMQ.
 

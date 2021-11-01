@@ -50,6 +50,7 @@ class LvmcamBaseActor(BaseActor):
             )
 
         super().__init__(*args, **kwargs)
+        self.version = __version__
 
 
 class LvmcamActor(LvmcamBaseActor, AMQPActor):

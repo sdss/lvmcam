@@ -18,8 +18,8 @@ from lvmcam.araviscam import BlackflyCam as blc
 __all__ = ["connect", "disconnect"]
 
 cs = ""
-csa = []
-cams = []
+cs_list = []
+cam_list = []
 camdict = {}
 
 
@@ -37,37 +37,48 @@ camdict = {}
 # With the -i switch we can add an explicit IP-Adress for a
 # camera if we want to read a camera that is not reachable
 # by the broadcast scanner.
-# @click.option("-i", '--ip', help="IP address of camera")
+@click.option("-i", "--ip", help="IP address of camera")
 async def connect(
     command: Command,
     test: bool,
     verbose: bool,
     config: str,
+    ip=None,
 ):
     """
     Connect all available cameras
+    :param test: Connection to test camera on or off
+    :type test: boolean
+    :param verbose: Verbosity on or off
+    :type verbose: boolean
+    :param config: Name of the YAML file with the cameras configuration
+    :type config: string of the file name
+    :param ip: list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
+    :type ip: list of strings
     """
     modules.change_dir_for_normal_actor_start(__file__)
     global cs
-    global csa
-    global cams
+    global cs_list
+    global cam_list
     global camdict
-    if cs != "" or cams != []:
+    if cs != "" or cam_list != []:
         return command.error("Cameras are already connected")
     if test:
         test_camdict = {"name": "test", "uid": "-1"}
         test_cam = collections.namedtuple("ObjectName", test_camdict.keys())(
             *test_camdict.values()
         )
-        cams.append(test_cam)
+        cam_list.append(test_cam)
     else:
 
         if verbose:
             print(modules.current_progress(__file__, "Find all available cameras"))
 
         config = os.path.abspath(config)
-        cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-        csa.append(cs)
+        cs = blc.BlackflyCameraSystem(
+            blc.BlackflyCamera, camera_config=config, verbose=verbose, ip_list=ip
+        )
+        cs_list.append(cs)
         available_cameras_uid = cs.list_available_cameras()
         if available_cameras_uid == []:
             return command.error("There are not real cameras to connect")
@@ -82,7 +93,7 @@ async def connect(
                             )
                         )
 
-                    cams.append(await cs.add_camera(uid=item[1]["uid"]))
+                    cam_list.append(await cs.add_camera(uid=item[1]["uid"]))
 
                     if verbose:
                         print(
@@ -94,8 +105,8 @@ async def connect(
         except gi.repository.GLib.GError:
             return command.error("Cameras are already connected")
 
-    if cams:
-        for cam in cams:
+    if cam_list:
+        for cam in cam_list:
             command.info(CAMERA={"name": cam.name, "uid": cam.uid})
             camdict[cam.name] = cam
     return command.finish()
@@ -110,19 +121,19 @@ async def disconnect(
     """
     modules.change_dir_for_normal_actor_start(__file__)
     global cs
-    global csa
-    global cams
+    global cs_list
+    global cam_list
     global camdict
-    if cams:
-        for cam in cams:
+    if cam_list:
+        for cam in cam_list:
             try:
                 if cam.name != "test":
                     await cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
         cs = ""
-        csa.clear()
-        cams.clear()
+        cs_list.clear()
+        cam_list.clear()
         camdict.clear()
         command.write("i", "Cameras have been removed")
         return command.finish()
