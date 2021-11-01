@@ -162,7 +162,7 @@ async def expose_real_cam(
 ):
     if verbose:
         print(modules.current_progress(__file__, "expose function start"))
-    exps, hdrs, status = await expose_cam(exptime, num, verbose, cam)
+    exps, hdrs, status = await expose_cam(exptime, num, verbose, cam, camname)
 
     hdus, dates = make_header_info(
         exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
@@ -252,17 +252,14 @@ async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
 def make_header_info(
     exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
 ):
+    if verbose:
+        print(
+            modules.current_progress(__file__, f"EXP={exptime}, Setting header start")
+        )
     wcshdr = blc.get_wcshdr(connection.cs_list[0], camname, targ, kmirr, flen)
     hdus = []
     dates = []
     for i in range(num):
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Setting header start"
-                )
-            )
-
         hdu = exps[i].to_hdu()[0]
         dates.append(hdu.header["DATE-OBS"])
         for item in hdrs[i]:
@@ -298,8 +295,7 @@ def make_header_info(
     return hdus, dates
 
 
-async def expose_cam(exptime, num, verbose, cam):
-    camera, device = flir.setup_camera(verbose)
+async def expose_cam(exptime, num, verbose, cam, camname):
     exps = []
     hdrs = []
     status = []
@@ -317,13 +313,14 @@ async def expose_cam(exptime, num, verbose, cam):
                     __file__, f"#{i+1}, EXP={exptime}, Expose done"
                 )
             )
-
         if verbose:
             print(
                 modules.current_progress(
                     __file__, f"#{i+1}, EXP={exptime}, Saving camera info start"
                 )
             )
+        # camera, device = flir.setup_camera(verbose)
+        camera, device = connection.dev_list[camname]
         status.append(await flir.status_for_header(camera, device))
         if verbose:
             print(
