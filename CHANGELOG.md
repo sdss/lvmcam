@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 - November 1, 2021
+
+### ✨ Improved
+* Reflect update of [sdss/araviscam](https://github.com/sdss/araviscam) version 0.0.301.
+
 ## 0.1.1 - October 25, 2021
 
 ### 🚀 New

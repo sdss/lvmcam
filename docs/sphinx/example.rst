@@ -24,34 +24,36 @@ In ``clu`` terminal, type following commands step-by-step.
 
     $ clu
     lvmcam connect
-    12:05:45.900 lvmcam > 
-    12:05:50.920 lvmcam i {
+    03:30:31.526 lvmcam > 
+    03:30:36.461 lvmcam i {
         "CAMERA": {
             "name": "sci.agw",
             "uid": "19283193"
         }
     }
-    12:05:50.931 lvmcam : 
-    lvmcam expose -r 10 -d 10 -K 10 0.1 3 sci.agw
-    12:06:15.383 lvmcam > 
-    12:06:18.801 lvmcam i {
+    03:30:36.467 lvmcam : 
+    lvmcam expose -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 3 sci.agw
+    03:30:41.867 lvmcam > 
+    03:30:45.230 lvmcam i {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000001.fits",
-            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000002.fits",
-            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459513/sci.agw-00000003.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459519/sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459519/sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/2459519/sci.agw-00000003.fits"
         }
     }
-    12:06:18.806 lvmcam : 
-    lvmcam expose -f "foo/bar" 0.1 3 sci.agw
-    12:06:28.633 lvmcam > 
-    12:06:32.027 lvmcam i {
+    03:30:45.233 lvmcam : 
+    lvmcam expose -p "foo/bar" -r 10.68 -d 41.27  -K 10 -f 1800 0.1 3 sci.agw
+    
+    03:32:36.491 lvmcam > 
+    03:32:39.825 lvmcam i {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000004.fits",
-            "1": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000005.fits",
-            "2": "/home/mgjeon/lvmcam/foo/bar/2459513/sci.agw-00000006.fits"
+            "0": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000003.fits"
         }
     }
-    12:06:32.033 lvmcam :
+    03:32:39.828 lvmcam : 
+ 
  
 
 Header (1)
@@ -80,7 +82,7 @@ The current headers of fits file are as follows.
      - 1100
      - 
    * - VCAM
-     - 0.0.270
+     - 0.0.301
      - Version of the camera library
    * - CAMNAME
      - sci.agw
@@ -107,7 +109,7 @@ The current headers of fits file are as follows.
      - TAI
      - The time scale system
    * - DATE-OBS
-     - 2021-09-29T08:38:39.397
+     - 2021-11-01T03:31:20.126
      - Date (in TIMESYS) the exposure started
    * - BINX
      - 1
@@ -128,7 +130,7 @@ The current headers of fits file are as follows.
      - 1
      - [ct] Pixel Region Vert start
    * - GAIN
-     - 17.89790889664172
+     - 5.299259725669739
      - Gain
    * - REVERSEX
      - F
@@ -182,13 +184,13 @@ The current headers of fits file are as follows.
      - (min=0.0, max=47.994294033026364)
      - Gain bounds
    * - POWERSUP
-     - 0.1689453125 A
+     - 0.268798828125 A
      - Power Supply Current
    * - TOTALDIS
-     - 1.873220443725586 W
+     - 1.7733557224273682 W
      - Total Dissiapted Power
    * - CAMERATE
-     - 57.75 C
+     - 50.125 C
      - Camera Temperature
    * - CUNIT1
      - deg
@@ -203,22 +205,22 @@ The current headers of fits file are as follows.
      - DEC--TAN
      - WCS type axis 2                                
    * - CRVAL1
-     - 10.0
+     - 10.68333333333333
      - [deg] RA at reference pixel                    
    * - CRVAL2
-     - 10.0
+     - 41.26916666666666
      - [deg] DEC at reference pixel                   
    * - CD1_1
-     - -0.00021469855468581
+     - -9.7981553605101E-05
      - [deg/px] WCS matrix diagonal                   
    * - CD2_2
-     - 0.000214698554685812
+     - 9.79815536051017E-05
      - [deg/px] WCS matrix diagonal                   
    * - CD1_2
-     - 0.000180153478051160
+     - -0.00026920210605309
      - [deg/px] WCS matrix outer diagonal             
    * - CD2_1
-     - 0.000180153478051160
+     - -0.00026920210605309
      - [deg/px] WCS matrix outer diagonal 
    * - BSCALE
      - 1
@@ -227,11 +229,11 @@ The current headers of fits file are as follows.
      - 32768
      - 
    * - CHECKSUM
-     - 9aCDEYBA9aBACWBA
-     - HDU checksum updated 2021-09-29T17:38:02 
+     - WBi9X9g9WAg9W9g9
+     - HDU checksum updated 2021-11-01T12:30:45
    * - DATASUM
-     - 2128147065
-     - data unit checksum updated 2021-09-29T17:38:02 
+     - 2464420802
+     - data unit checksum updated 2021-11-01T12:30:45
 
 
 Header (2)
