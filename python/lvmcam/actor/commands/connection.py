@@ -13,6 +13,7 @@ from clu.command import Command
 from lvmcam.actor import modules
 from lvmcam.actor.commands import parser
 from lvmcam.araviscam import BlackflyCam as blc
+from lvmcam.flir import FLIR_Utils as flir
 
 
 __all__ = ["connect", "disconnect"]
@@ -20,6 +21,7 @@ __all__ = ["connect", "disconnect"]
 cs = ""
 cs_list = []
 cam_list = []
+dev_list = {}
 camdict = {}
 
 
@@ -57,6 +59,7 @@ async def connect(
     global cs
     global cs_list
     global cam_list
+    global dev_list
     global camdict
     if cs != "" or cam_list != []:
         return command.error("Cameras are already connected")
@@ -91,6 +94,11 @@ async def connect(
                         )
 
                     cam_list.append(await cs.add_camera(uid=item[1]["uid"]))
+                    while True:
+                        camera, device = flir.setup_camera(verbose)
+                        if camera.get_device_id() == item[1]["uid"]:
+                            dev_list[item[1]["name"]] = (camera, device)
+                            break
 
                     if verbose:
                         print(
