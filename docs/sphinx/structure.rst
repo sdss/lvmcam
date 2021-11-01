@@ -5,7 +5,20 @@ Structure
 
 Current fits header
 --------------------
+.. code-block:: console
 
+    $ clu
+    lvmcam expose -p "foo/bar" -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 3 sci.agw
+    03:32:36.491 lvmcam > 
+    03:32:39.825 lvmcam i {
+        "PATH": {
+            "0": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000003.fits"
+        }
+    }
+    03:32:39.828 lvmcam : 
+    
 Header (1)
 ^^^^^^^^^^
 The current headers of fits file are as follows.
@@ -306,7 +319,7 @@ The above headers are created by different source.
 | DATASUM  |                           |
 +----------+---------------------------+
 
-Rule of fits file name
+Current rule of fits file name
 --------------------------
 .. code-block:: console
 
