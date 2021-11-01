@@ -47,14 +47,17 @@ async def connect(
 ):
     """
     Connect all available cameras
-    :param test: Connection to test camera on or off
-    :type test: boolean
-    :param verbose: Verbosity on or off
-    :type verbose: boolean
-    :param config: Name of the YAML file with the cameras configuration
-    :type config: string of the file name
-    :param ip: list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
-    :type ip: list of strings
+
+    Parameters
+    ----------
+    test
+        Connection to test camera on or off
+    verbose
+        Verbosity on or off
+    config
+        Name of the YAML file with the cameras configuration
+    ip
+        list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
     """
     modules.change_dir_for_normal_actor_start(__file__)
     global cs
