@@ -163,6 +163,7 @@ Update by using poetry.
   :hidden:
 
   example
+  structure
   Changelog <changelog>
   GitHub Repository <https://github.com/sdss/lvmcam>
   Issues  <https://github.com/sdss/lvmcam/issues>
