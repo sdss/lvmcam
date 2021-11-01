@@ -2,8 +2,7 @@ name: Docker
 
 on:
   push:
-    branches:
-      - main
+    branches: main
     tags:
       - '*'
     paths-ignore:
@@ -14,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       USER: sdss
-      APP: archon
+      APP: lvmcam
     steps:
       - name: Set docker tags
         id: set-tags
@@ -40,7 +39,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.PAC_TOKEN }} # from Secrets
+          password: ${{ secrets.GITHUB_TOKEN }} # from Secrets
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
