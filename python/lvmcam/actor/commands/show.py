@@ -39,6 +39,11 @@ async def all(
 ):
     """
     Show all cameras in configuration file.
+
+    Parameter
+    ----------
+    config
+        Name of the YAML file with the cameras configuration
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
@@ -67,6 +72,11 @@ async def connection(
 ):
     """
     Show all connected cameras.
+
+    Parameter
+    ----------
+    config
+        Name of the YAML file with the cameras configuration
     """
     modules.change_dir_for_normal_actor_start(__file__)
     cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
