@@ -30,8 +30,12 @@ async def test_actor(actor: LvmcamActor):
 
     await actor.invoke_mock_command("expose 0.1 3 test")
     await actor.invoke_mock_command("expose -t 0.1 3 test")
-    await actor.invoke_mock_command("expose -r 10 -d 10 -K 10 0.1 3 test")
-    await actor.invoke_mock_command('expose -f "foo/bar" 0.1 3  test')
+    await actor.invoke_mock_command(
+        'expose -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 3 test'
+    )
+    await actor.invoke_mock_command(
+        'expose -p "foo/bar" -r 10.68 -d 41.27  -K 10 -f 1800 0.1 3 test'
+    )
     await actor.invoke_mock_command("expose 0.2 1 test")
 
     await actor.invoke_mock_command("show connection")

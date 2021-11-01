@@ -24,7 +24,7 @@ __all__ = ["expose"]
 
 
 @parser.command()
-@click.option("-t", "--testshot", is_flag=True, help="")
+@click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
 # right ascension in degrees
