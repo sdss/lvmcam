@@ -8,6 +8,7 @@ import shutil
 
 import click
 import numpy as np
+import astropy
 from astropy.io import fits
 from astropy.time import Time
 from click.decorators import command
@@ -22,58 +23,70 @@ from lvmcam.flir import FLIR_Utils as flir
 __all__ = ["expose"]
 
 
-# A debugging aid, demonstrator and simple test run
-# This allows to call this file as an executable from the command line.
-# The last command line argument must be the name of the camera
-# as used in the configuration file.
-# Example
-#    lvmcam expose [-t] [-e seconds] [-n #] [-v] [-r RAdegrees] [-d Decdegrees]
-#       [-K kmirrdegrees] [-f filepath to save] {spec.age|spec.agw|...}
 @parser.command()
-@click.option("-t", "--testshot", is_flag=True, help="Test shot")
-@click.argument("EXPTIME", type=float)
-@click.argument("NUM", type=int)
+@click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
-# right ascension in degrees (as a simple number)
-@click.option("-r", "--ra", type=float, help="RA J2000 in degrees", default=None)
-# declination in degrees (as a simple number)
-@click.option("-d", "--dec", type=float, help="DEC J2000 in degrees", default=None)
+@click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
+# right ascension in degrees
+@click.option("-r", "--ra")
+# declination in degrees
+@click.option("-d", "--dec")
 # K-mirror angle in degrees
 # Note this is only relevant for 3 of the 4 tables/telescopes
-@click.option(
-    "-K", "--Kmirr", type=float, help="K-mirror angle in degrees", default=0.0
-)
-# shortcut for site coordinates: observatory
-# @click.option("-s", '--site', default="LCO", help="LCO or MPIA or APO or KHU")
-@click.option(
-    "-f",
-    "--filepath",
-    type=str,
-    default="python/lvmcam/assets",
-    help="The path of files to save",
-)
+@click.option("-K", "--kmirr", type=float, default=0.0)
+# focal length of telescope in mm
+# Default is the LCO triple lens configuration of 1.8 meters
+@click.option("-f", "--flen", type=float, default=1839.8)
+@click.argument("EXPTIME", type=float)
+@click.argument("NUM", type=int)
 # the last argument is mandatory: must be the name of exactly one camera
 # as used in the configuration file
 @click.argument("CAMNAME", type=str)
 async def expose(
     command: Command,
     testshot: bool,
-    exptime: float,
-    num: int,
     verbose: bool,
+    filepath: str,
     ra: float,
     dec: float,
     kmirr: float,
-    filepath: str,
+    flen: float,
+    exptime: float,
+    num: int,
     camname: str,
 ):
     """
-    Save fits file
+    Expose ``num`` times and write the images to a FITS file.
+
+    Parameters
+    ----------
+    testshot
+        Test shot on or off
+    verbose
+        Verbosity on or off
+    filepath
+        The path to save the images captured by the camera
+    ra
+        RA J2000 in degrees or in xxhxxmxxs format
+    dec
+        DEC J2000 in degrees or in +-xxdxxmxxs format
+    kmirr
+        Kmirr angle in degrees (0 if up, positive with right hand rule along North on bench)
+    flen
+        focal length of telescope/siderostat in mm
+        If not provided it will be taken from the configuration file
+    exptime
+        The exposure time in seconds. Non-negative.
+    num
+        The number of exposure times. Natural number.
+    camname
+        The name of camera to expose.
     """
     if not connection.camdict:
         return command.error("There are no connected cameras")
     modules.change_dir_for_normal_actor_start(__file__)
     cam = connection.camdict[camname]
+    targ = make_targ_from_ra_dec(ra, dec)
     if testshot:
         num = 1
     if cam.name == "test":
@@ -87,13 +100,27 @@ async def expose(
         return command.finish()
     else:
         paths = await expose_real_cam(
-            testshot, exptime, num, verbose, ra, dec, kmirr, filepath, camname, cam
+            testshot, exptime, num, verbose, targ, kmirr, filepath, camname, cam, flen
         )
         # for path in paths:
         #     command.write("i", f"{path}")
         path_dict = {i: paths[i] for i in range(len(paths))}
         command.info(PATH=path_dict)
         return command.finish()
+
+
+def make_targ_from_ra_dec(ra, dec):
+    if ra is not None and dec is not None:
+        if ra.find("h") < 0:
+            # apparently simple floating point representation
+            targ = astropy.coordinates.SkyCoord(
+                ra=float(ra), dec=float(dec), unit="deg"
+            )
+        else:
+            targ = astropy.coordinates.SkyCoord(ra + " " + dec)
+    else:
+        targ = None
+    return targ
 
 
 def get_last_exposure(path):
@@ -131,14 +158,14 @@ def jd_to_folder(path, jd):
 
 
 async def expose_real_cam(
-    testshot, exptime, num, verbose, ra, dec, kmirr, filepath, camname, cam
+    testshot, exptime, num, verbose, targ, kmirr, filepath, camname, cam, flen
 ):
     if verbose:
         print(modules.current_progress(__file__, "expose function start"))
     exps, hdrs, status = await expose_cam(exptime, num, verbose, cam)
 
     hdus, dates = make_header_info(
-        exptime, num, verbose, ra, dec, kmirr, camname, exps, hdrs, status
+        exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
     )
 
     paths = await make_file(testshot, num, verbose, filepath, cam, hdus, dates)
@@ -223,9 +250,9 @@ async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
 
 
 def make_header_info(
-    exptime, num, verbose, ra, dec, kmirr, camname, exps, hdrs, status
+    exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
 ):
-    wcshdr = blc.get_wcshdr(ra, dec, kmirr, connection.csa[0], camname)
+    wcshdr = blc.get_wcshdr(connection.cs_list[0], camname, targ, kmirr, flen)
     hdus = []
     dates = []
     for i in range(num):

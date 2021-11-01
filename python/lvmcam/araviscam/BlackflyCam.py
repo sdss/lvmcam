@@ -6,14 +6,21 @@ Python3 class to work with Aravis/GenICam cameras, subclass of sdss-basecam.
 .. moduleauthor:: Richard J. Mathar <mathar@mpia.de>
 """
 
-import asyncio
-import math
 import sys
-
-import astropy
+import math
+import asyncio
 import numpy
-from basecam import BaseCamera, CameraConnectionError, CameraEvent, CameraSystem, models
+import astropy
+
 from basecam.mixins import ImageAreaMixIn
+from basecam import (
+    CameraSystem,
+    BaseCamera,
+    CameraEvent,
+    CameraConnectionError,
+    models,
+    ExposureError,
+)
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
 # is using glib2 GObjects to represent cameras and streams, the
@@ -55,7 +62,7 @@ class BlackflyCameraSystem(CameraSystem):
     :type ip_list: List of strings.
     """
 
-    __version__ = "0.0.270"
+    __version__ = "0.0.301"
 
     # A list of ip addresses in the usual "xxx.yyy.zzz.ttt" or "name.subnet.net"
     # format that have been added manually/explicitly and may not be found by the
@@ -462,9 +469,10 @@ class BlackflyCamera(BaseCamera):
         # for headr in addHeaders:
         #     exposure.fits_model[0].header_model.append(models.Card(headr))
 
-        # print(repr(exposure.to_hdu()[0].header))
-        # print(addHeaders)
         self.header = addHeaders
+
+        # print(repr(exposure.to_hdu()[0].header))
+
         # unref() is currently usupported in this GObject library.
         # Hope that this does not lead to any memory leak....
         # buf.unref()
@@ -478,7 +486,6 @@ class BlackflyCamera(BaseCamera):
         """
         # the section/dictionary of the yaml file for this camera
         yamlconfig = self.camera_system._config[self.name]
-        # print(yamlconfig)
         wcsHeaders = []
 
         # The distance from the long edge of the FLIR camera to the center
@@ -487,7 +494,6 @@ class BlackflyCamera(BaseCamera):
         # For the *w or *e cameras the pixel row 1 (in FITS) is that far
         # away in the y-coordinate and in the middle of the x-coordinate.
         # For the *c cameras at the fiber bundle we assume them to be in the beam center.
-        # print(reg.height)
         wcsHeaders.append(("CRPIX1", reg.width / 2, "[px] RA center along axis 1"))
         if self.name[-1] == "c":
             wcsHeaders.append(
@@ -498,7 +504,6 @@ class BlackflyCamera(BaseCamera):
             crefy = 11.14471 * 1000.0 / yamlconfig["pixsize"]
             wcsHeaders.append(("CRPIX2", -crefy, "[px] DEC center along axis 2"))
 
-        # print(wcsHeaders)
         return wcsHeaders
 
 
@@ -524,9 +529,9 @@ async def singleFrame(
     verb=False,
     ip_add=None,
     config="cameras.yaml",
-    ra=None,
-    dec=None,
+    targ=None,
     kmirr=0.0,
+    flen=None,
 ):
     """Expose once and write the image to a FITS file.
     :param exptim: The exposure time in seconds. Non-negative.
@@ -537,14 +542,13 @@ async def singleFrame(
     :type ip_add: list of strings
     :param config: Name of the YAML file with the cameras configuration
     :type config: string of the file name
-    :param ra: right ascension in degrees
-    :type ra: float
-    :param dec: declination in degrees
-    :type dec: float
+    :param targ: alpha/delta ra/dec of the sidereal target
+    :type targ: astropy.coordinates.SkyCoord
     :param kmirr: Kmirr angle in degrees (0 if up, positive with right hand rule along North on bench)
     :type kmirr: float
-
-    Todo: accept also ra and dec in the standard hex-format HH:MM:SS.ss or +-DD:MM:SS.ss
+    :param flen: focal length of telescope/siderostat in mm
+                 If not provided it will be taken from the configuration file
+    :type flen: float
     """
 
     cs = BlackflyCameraSystem(
@@ -556,70 +560,113 @@ async def singleFrame(
 
     exp = await cam.expose(exptim, "LAB TEST")
 
-    if ra is not None and dec is not None and kmirr is not None:
-        if ra >= 0.0 and ra <= 360.0 and dec >= -90.0 and dec <= 90:
-            # if there is already a (partial) header information, keep it,
-            # otherwise create one ab ovo.
-            if exp.wcs is None:
-                wcshdr = astropy.io.fits.Header()
+    if targ is not None and kmirr is not None:
+        # if there is already a (partial) header information, keep it,
+        # otherwise create one ab ovo.
+        if exp.wcs is None:
+            wcshdr = astropy.io.fits.Header()
+        else:
+            wcshdr = exp.wcs.to_header()
+
+        key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CRVAL1", targ.ra.deg, "[deg] RA at reference pixel")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CRVAL2", targ.dec.deg, "[deg] DEC at reference pixel"
+        )
+        wcshdr.append(key)
+
+        # field angle: degrees, then radians
+        # direction of NCP on the detectors (where we have already flipped pixels
+        # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
+        # With right-handed-rule: zero if N=up (y-axis), 90 deg if N=right (x-axis)
+        # so the direction is the vector ( sin(f), cos(f)) before the K-mirror.
+        # Action of K-mirror is ( cos(2*m), sin(2*m); sin(2*m), -cos(2*m))
+        # and action of prism is (-1 0 ; 0 1), i.e. to flip the horizontal coordinate.
+        # todo: get starting  value from a siderostat field rotation tracking model
+        fieldrot = 0.0
+
+        if name[-1] == "c":
+            # without prism, assuming center camera placed horizontally
+            if name[:4] == "spec":
+                # without K-mirror
+                pass
             else:
-                wcshdr = exp.wcs.to_header()
+                # with K-mirror
+                # in the configuration the y-axis of the image has been flipped,
+                # the combined action of (1, 0; 0, -1) and the K-mirror is (cos(2m), sin(2m); -sin(2m), cos(2m))
+                # and applied to the input vector this is (sin(2m+f), cos(2m+f))
+                fieldrot += 2.0 * kmirr
+        else:
+            # with prism
+            if name[:4] == "spec":
+                # without K-mirror
+                # Applied to input beam this gives (-sin(f), cos(f)) but prism effect
+                # had been undone by vertical flip in the FLIR image.
+                pass
+            else:
+                # with K-mirror
+                # Combined action of K-mirror and prism is (-cos(2*m), -sin(2*m);sin(2*m), -cos(2*m)).
+                # Applied to input beam this gives (-sin(2*m+f), -cos(2*m+f)) = (sin(2*m+f+pi), cos(2*m+f+pi)).
+                fieldrot += 2.0 * kmirr + 180.0
 
-            key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL1", ra, "[deg] RA at reference pixel")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL2", dec, "[deg] DEC at reference pixel")
-            wcshdr.append(key)
+            if name[-1] == "w":
+                # Camera is vertically,
+                # so up in the lab is right in the image
+                fieldrot += 90
+            else:
+                # Camera is vertically,
+                # so up in the lab is left in the image
+                fieldrot -= 90
 
-            # field angle: degrees, then radians
-            # direction of NCP on the detectors (where we have already flipped pixels
-            # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
-            # todo: get initial value from a siderostat angle model
-            fieldrot = 0.0
-            fieldrot += 2.0 * kmirr
-            fieldrot = math.radians(fieldrot)
+        fieldrot = math.radians(fieldrot)
 
-            # the section/dictionary of the yaml file for this camera
-            yamlconfig = cs._config[name]
-            # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
-            degperpix = yamlconfig["pixsize"] / yamlconfig["pixscal"] / 3600.0
+        # the section/dictionary of the yaml file for this camera
+        yamlconfig = cs._config[name]
 
-            # for the right handed coodriantes
-            # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
-            # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
-            # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
-            # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
-            # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
-            cosperpix = degperpix * math.cos(fieldrot)
-            sinperpix = degperpix * math.sin(fieldrot)
-            key = astropy.io.fits.Card(
-                "CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD2_2", cosperpix, "[deg/px] WCS matrix diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
-            )
-            wcshdr.append(key)
+        if flen is None:
+            flen = yamlconfig["flen"]
 
-            exp.wcs = astropy.wcs.WCS(wcshdr)
-            # print(exp.wcs.to_header_string())
-            for headr in wcshdr.cards:
-                exp.fits_model[0].header_model.append(models.Card(headr))
+        # pixel scale per arcseconds is focal length *pi/180 /3600
+        # = flen * mm *pi/180 /3600
+        # = flen * um *pi/180 /3.6, so in microns per arcsec...
+        pixscal = math.radians(flen) / 3.6
+
+        # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
+        degperpix = yamlconfig["pixsize"] / pixscal / 3600.0
+
+        # for the right handed coordinates
+        # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
+        # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
+        # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
+        # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
+        # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
+        cosperpix = degperpix * math.cos(fieldrot)
+        sinperpix = degperpix * math.sin(fieldrot)
+        key = astropy.io.fits.Card("CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CD2_2", cosperpix, "[deg/px] WCS matrix diagonal")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
+        )
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
+        )
+        wcshdr.append(key)
+
+        exp.wcs = astropy.wcs.WCS(wcshdr)
+        # print(exp.wcs.to_header_string())
+        for headr in wcshdr.cards:
+            exp.fits_model[0].header_model.append(models.Card(headr))
 
     await exp.write()
     if verb:
@@ -631,8 +678,8 @@ async def singleFrame(
 # The last command line argument must be the name of the camera
 # as used in the configuration file.
 # Example
-#    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r RAdegrees] [-d Decdegrees]
-#       [-K kmirrdegrees] [-s "LCO"|"MPIA"|"APO"|"KHU"] {spec.age|spec.agw|...}
+#    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r 2h10m10s] [-d -20d10m3s]
+#       [-K kmirrdegrees] [-s "LCO"|"MPIA"|"APO"|"KHU"] [-f focallengthmm] {spec.age|spec.agw|...}
 if __name__ == "__main__":
 
     import argparse
@@ -660,15 +707,23 @@ if __name__ == "__main__":
         "-c", "--cfg", default="cameras.yaml", help="YAML file of lvmt cameras"
     )
 
-    # right ascension in degrees (as a simple number)
-    parser.add_argument("-r", "--ra", type=float, help="RA J2000 in degrees")
+    # right ascension in degrees
+    parser.add_argument("-r", "--ra", help="RA J2000 in degrees or in xxhxxmxxs format")
 
-    # declination in degrees (as a simple number)
-    parser.add_argument("-d", "--dec", type=float, help="DEC J2000 in degrees")
+    # declination in degrees
+    parser.add_argument(
+        "-d", "--dec", help="DEC J2000 in degrees or in +-xxdxxmxxs format"
+    )
 
     # K-mirror angle in degrees
     # Note this is only relevant for 3 of the 4 tables/telescopes
     parser.add_argument("-K", "--Kmirr", type=float, help="K-mirror angle in degrees")
+
+    # focal length of telescope in mm
+    # Default is the LCO triple lens configuration of 1.8 meters
+    parser.add_argument(
+        "-f", "--flen", type=float, default=1839.8, help="focal length in mm"
+    )
 
     # shortcut for site coordinates: observatory
     # parser.add_argument("-s", '--site', default="LCO", help="LCO or MPIA or APO or KHU")
@@ -683,6 +738,20 @@ if __name__ == "__main__":
     if args.ip is not None:
         ip_cmdLine.append(args.ip)
 
+    # check ranges and combine ra/dec into a single SkyCoord
+    if args.ra is not None and args.dec is not None:
+        if args.ra.find("h") < 0:
+            # apparently simple floating point representation
+            targ = astropy.coordinates.SkyCoord(
+                ra=float(args.ra), dec=float(args.dec), unit="deg"
+            )
+        else:
+            targ = astropy.coordinates.SkyCoord(args.ra + " " + args.dec)
+    else:
+        targ = None
+
+    # print(targ)
+
     # The following 2 lines test that listing the connected cameras works...
     # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
     # bsys.list_available_cameras()
@@ -694,71 +763,118 @@ if __name__ == "__main__":
             verb=args.verbose,
             ip_add=ip_cmdLine,
             config=args.cfg,
-            ra=args.ra,
-            dec=args.dec,
+            targ=targ,
             kmirr=args.Kmirr,
+            flen=args.flen,
         )
     )
 
 
-def get_wcshdr(ra, dec, kmirr, cs, name):
-    if ra is not None and dec is not None and kmirr is not None:
-        if ra >= 0.0 and ra <= 360.0 and dec >= -90.0 and dec <= 90:
-            wcshdr = astropy.io.fits.Header()
+def get_wcshdr(
+    cs,
+    name,
+    targ,
+    kmirr,
+    flen,
+):
+    if targ is not None and kmirr is not None:
+        wcshdr = astropy.io.fits.Header()
 
-            key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL1", ra, "[deg] RA at reference pixel")
-            wcshdr.append(key)
-            key = astropy.io.fits.Card("CRVAL2", dec, "[deg] DEC at reference pixel")
-            wcshdr.append(key)
+        key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CRVAL1", targ.ra.deg, "[deg] RA at reference pixel")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CRVAL2", targ.dec.deg, "[deg] DEC at reference pixel"
+        )
+        wcshdr.append(key)
 
-            # field angle: degrees, then radians
-            # direction of NCP on the detectors (where we have already flipped pixels
-            # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
-            # todo: get initial value from a siderostat angle model
-            fieldrot = 0.0
-            fieldrot += 2.0 * kmirr
-            fieldrot = math.radians(fieldrot)
+        # field angle: degrees, then radians
+        # direction of NCP on the detectors (where we have already flipped pixels
+        # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
+        # With right-handed-rule: zero if N=up (y-axis), 90 deg if N=right (x-axis)
+        # so the direction is the vector ( sin(f), cos(f)) before the K-mirror.
+        # Action of K-mirror is ( cos(2*m), sin(2*m); sin(2*m), -cos(2*m))
+        # and action of prism is (-1 0 ; 0 1), i.e. to flip the horizontal coordinate.
+        # todo: get starting  value from a siderostat field rotation tracking model
+        fieldrot = 0.0
 
-            # the section/dictionary of the yaml file for this camera
-            yamlconfig = cs._config[name]
-            # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
-            degperpix = yamlconfig["pixsize"] / yamlconfig["pixscal"] / 3600.0
-
-            # for the right handed coodriantes
-            # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
-            # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
-            # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
-            # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
-            # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
-            cosperpix = degperpix * math.cos(fieldrot)
-            sinperpix = degperpix * math.sin(fieldrot)
-            key = astropy.io.fits.Card(
-                "CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD2_2", cosperpix, "[deg/px] WCS matrix diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
-            )
-            wcshdr.append(key)
-            key = astropy.io.fits.Card(
-                "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
-            )
-            wcshdr.append(key)
-
-            return wcshdr
+        if name[-1] == "c":
+            # without prism, assuming center camera placed horizontally
+            if name[:4] == "spec":
+                # without K-mirror
+                pass
+            else:
+                # with K-mirror
+                # in the configuration the y-axis of the image has been flipped,
+                # the combined action of (1, 0; 0, -1) and the K-mirror is (cos(2m), sin(2m); -sin(2m), cos(2m))
+                # and applied to the input vector this is (sin(2m+f), cos(2m+f))
+                fieldrot += 2.0 * kmirr
         else:
-            return None
+            # with prism
+            if name[:4] == "spec":
+                # without K-mirror
+                # Applied to input beam this gives (-sin(f), cos(f)) but prism effect
+                # had been undone by vertical flip in the FLIR image.
+                pass
+            else:
+                # with K-mirror
+                # Combined action of K-mirror and prism is (-cos(2*m), -sin(2*m);sin(2*m), -cos(2*m)).
+                # Applied to input beam this gives (-sin(2*m+f), -cos(2*m+f)) = (sin(2*m+f+pi), cos(2*m+f+pi)).
+                fieldrot += 2.0 * kmirr + 180.0
+
+            if name[-1] == "w":
+                # Camera is vertically,
+                # so up in the lab is right in the image
+                fieldrot += 90
+            else:
+                # Camera is vertically,
+                # so up in the lab is left in the image
+                fieldrot -= 90
+
+        fieldrot = math.radians(fieldrot)
+
+        # the section/dictionary of the yaml file for this camera
+        yamlconfig = cs._config[name]
+
+        if flen is None:
+            flen = yamlconfig["flen"]
+
+        # pixel scale per arcseconds is focal length *pi/180 /3600
+        # = flen * mm *pi/180 /3600
+        # = flen * um *pi/180 /3.6, so in microns per arcsec...
+        pixscal = math.radians(flen) / 3.6
+
+        # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
+        degperpix = yamlconfig["pixsize"] / pixscal / 3600.0
+
+        # for the right handed coordinates
+        # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
+        # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
+        # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
+        # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
+        # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
+        cosperpix = degperpix * math.cos(fieldrot)
+        sinperpix = degperpix * math.sin(fieldrot)
+        key = astropy.io.fits.Card("CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card("CD2_2", cosperpix, "[deg/px] WCS matrix diagonal")
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
+        )
+        wcshdr.append(key)
+        key = astropy.io.fits.Card(
+            "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
+        )
+        wcshdr.append(key)
+
+        return wcshdr
     else:
         return None
