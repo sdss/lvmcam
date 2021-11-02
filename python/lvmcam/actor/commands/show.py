@@ -27,10 +27,8 @@ def show(*args):
 
 @show.command()
 @click.option("-c", "--config", type=str, default="python/lvmcam/etc/cameras.yaml")
-async def all(
-    command: Command,
-    config: str,
-):
+@click.option("-v", "--verbose", is_flag=True)
+async def all(command: Command, config: str, verbose: bool):
     """
     Show all cameras in configuration file.
 
@@ -38,36 +36,47 @@ async def all(
     ----------
     config
         Name of the YAML file with the cameras configuration
+    verbose
+        Verbosity on or off
     """
     modules.change_dir_for_normal_actor_start(__file__)
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    available_cameras_uid = cs.list_available_cameras()
+
+    if verbose:
+        modules.logger.sh.setLevel(int(verbose))
+    else:
+        modules.logger.sh.setLevel(modules.logging.WARNING)
+
+    cs, available_cameras_uid = find_all_available_cameras_for_show(config)
+
     cameras_dict = {}
     for item in list(cs._config.items()):
-        if item[1]["uid"] in available_cameras_uid:
-            cameras_dict[item[0]] = "Available"
+        uid = item[1]["uid"]
+        if uid in available_cameras_uid:
+            cameras_dict[item[0]] = f"Available | uid: {uid}"
         else:
-            cameras_dict[item[0]] = "Unavailable"
+            cameras_dict[item[0]] = f"Unavailable | uid: {uid}"
     command.info(ALL=cameras_dict)
     return command.finish()
 
 
+@modules.timeit
+def find_all_available_cameras_for_show(config):
+    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+    available_cameras_uid = cs.list_available_cameras()
+    return cs, available_cameras_uid
+
+
 @show.command()
-@click.option("-c", "--config", type=str, default="python/lvmcam/etc/cameras.yaml")
+# @click.option("-c", "--config", type=str, default="python/lvmcam/etc/cameras.yaml")
 async def connection(
     command: Command,
-    config: str,
+    # config: str,
 ):
     """
     Show all connected cameras.
-
-    Parameter
-    ----------
-    config
-        Name of the YAML file with the cameras configuration
     """
     modules.change_dir_for_normal_actor_start(__file__)
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+    # cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
     if cam_list:
         for cam in cam_list:
             command.info(CONNECTED={"name": cam.name, "uid": cam.uid})

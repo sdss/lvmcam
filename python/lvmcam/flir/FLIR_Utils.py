@@ -1,5 +1,5 @@
 from lvmcam.araviscam.aravis import Aravis
-
+from lvmcam.actor import modules
 
 # --------------------------------------------------------------------------------------------
 
@@ -87,36 +87,47 @@ async def vol_cur_tem(cam, dev):
 # --------------------------------------------------------------------------------------------
 
 
-def setup_camera(verbose, fakeCam=False):
+def setup_camera():
+    Aravis.update_device_list()
+    try:
+        cam = Aravis.Camera.new(Aravis.get_device_id(0))
+    except:
+        print("ERROR - No camera found")
+        return None, None
+    dev = cam.get_device()
+    return cam, dev
 
-    """
-    Instantiates a camera and returns it, along with the corresponding "dev". This
-    gives access to "deeper" camera functions, such as the device temperature.
 
-    If fakeCam = True, it returns the fake camera object, a software equivalent,
-    with (presumably realistic) noise, etc.
+# def setup_camera(verbose, fakeCam=False):
 
-    """
+#     """
+#     Instantiates a camera and returns it, along with the corresponding "dev". This
+#     gives access to "deeper" camera functions, such as the device temperature.
 
-    Aravis.update_device_list()  # Scan for live cameras
+#     If fakeCam = True, it returns the fake camera object, a software equivalent,
+#     with (presumably realistic) noise, etc.
 
-    if fakeCam:
-        Aravis.enable_interface("Fake")  # using arv-fake-gv-camera-0.8
-        cam = Aravis.Camera.new(None)  # Instantiate cam
+#     """
 
-        if verbose:
-            print("Instantiated FakeCam")
+#     Aravis.update_device_list()  # Scan for live cameras
 
-    else:  # Note: We expect only one "real" camera !!
+#     if fakeCam:
+#         Aravis.enable_interface("Fake")  # using arv-fake-gv-camera-0.8
+#         cam = Aravis.Camera.new(None)  # Instantiate cam
 
-        try:
-            cam = Aravis.Camera.new(Aravis.get_device_id(0))  # Instantiate cam
-            if verbose:
-                print("Instantiated real camera")
-        except:
-            print("ERROR - No camera found")  # Ooops!!
-            return None, None, None  # Send back nothing
+#         if verbose:
+#             print("Instantiated FakeCam")
 
-    dev = cam.get_device()  # Allows access to "deeper" features
+#     else:  # Note: We expect only one "real" camera !!
 
-    return cam, dev  # Send back camera, device
+#         try:
+#             cam = Aravis.Camera.new(Aravis.get_device_id(0))  # Instantiate cam
+#             # if verbose:
+#             #     print(f"[DEBUG]: [{__name__}]: Instantiated real camera")
+#         except:
+#             print("ERROR - No camera found")  # Ooops!!
+#             return None, None, None  # Send back nothing
+
+#     dev = cam.get_device()  # Allows access to "deeper" features
+
+#     return cam, dev  # Send back camera, device
