@@ -84,11 +84,21 @@ async def expose(
     """
     if not connection.camdict:
         return command.error("There are no connected cameras")
+
     modules.change_dir_for_normal_actor_start(__file__)
+
+    if verbose:
+        modules.logger.sh.setLevel(int(verbose))
+    else:
+        modules.logger.sh.setLevel(modules.logging.WARNING)
+
     cam = connection.camdict[camname]
+
     targ = make_targ_from_ra_dec(ra, dec)
+
     if testshot:
         num = 1
+
     if cam.name == "test":
         filepath, paths = await expose_test_cam(
             testshot, exptime, num, verbose, filepath, cam
@@ -109,6 +119,7 @@ async def expose(
         return command.finish()
 
 
+@modules.timeit
 def make_targ_from_ra_dec(ra, dec):
     if ra is not None and dec is not None:
         if ra.find("h") < 0:
@@ -123,6 +134,7 @@ def make_targ_from_ra_dec(ra, dec):
     return targ
 
 
+@modules.timeit
 def get_last_exposure(path):
     try:
         with open(path, "r") as f:
@@ -135,11 +147,13 @@ def get_last_exposure(path):
             return 0
 
 
+@modules.timeit
 def set_last_exposure(path, num):
     with open(path, "w") as f:
         f.write(str(num))
 
 
+@modules.timeit
 def time_to_jd(times):
     # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
     t = Time(times, format="isot", scale="utc")
@@ -147,6 +161,7 @@ def time_to_jd(times):
     return jd
 
 
+@modules.timeit
 def jd_to_folder(path, jd):
     jd = set(jd)
     for j in jd:
@@ -157,11 +172,10 @@ def jd_to_folder(path, jd):
             pass
 
 
+@modules.atimeit
 async def expose_real_cam(
     testshot, exptime, num, verbose, targ, kmirr, filepath, camname, cam, flen
 ):
-    if verbose:
-        print(modules.current_progress(__file__, "expose function start"))
 
     exps, hdrs, status, camera = await expose_cam(exptime, num, verbose, cam, camname)
     status[0].update(await flir.status_for_header(camera))
@@ -173,25 +187,19 @@ async def expose_real_cam(
 
     paths = await make_file(testshot, num, verbose, filepath, cam, hdus, dates)
 
-    if verbose:
-        print(modules.current_progress(__file__, "expose function done"))
     return paths
 
 
+@modules.atimeit
 async def make_file(testshot, num, verbose, filepath, cam, hdus, dates):
-    if verbose:
-        print(modules.current_progress(__file__, "Making filename start"))
-
     configfile, curNum, paths = prepare_write_file(
         testshot, num, verbose, filepath, cam, hdus, dates
     )
     await write_file(testshot, num, verbose, hdus, configfile, curNum, paths)
-
-    if verbose:
-        print(modules.current_progress(__file__, "Making filename done"))
     return paths
 
 
+@modules.timeit
 def prepare_write_file(testshot, num, verbose, filepath, cam, hdus, dates):
     filepath = os.path.abspath(filepath)
 
@@ -209,9 +217,6 @@ def prepare_write_file(testshot, num, verbose, filepath, cam, hdus, dates):
         )
         paths.append(os.path.join(filepath, filename))
 
-        if verbose:
-            print(modules.current_progress(__file__, f"Ready for {paths[i]}"))
-
         # correct fits data/header
         _hdusheader = hdus[i].header
         _hdusdata = hdus[i].data[0]
@@ -225,21 +230,16 @@ def prepare_write_file(testshot, num, verbose, filepath, cam, hdus, dates):
     return configfile, curNum, paths
 
 
+@modules.atimeit
 async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
     for i in range(num):
-        if verbose:
-            print(modules.current_progress(__file__, "Write start"))
 
         if not testshot:
-            if verbose:
-                print(modules.current_progress(__file__, "Normal Shot"))
 
             writeto_partial = functools.partial(
                 hdus[i].writeto, paths[i], checksum=True
             )
         else:
-            if verbose:
-                print(modules.current_progress(__file__, "Test Shot"))
 
             writeto_partial = functools.partial(
                 hdus[i].writeto, paths[i], checksum=True, overwrite=True
@@ -248,17 +248,11 @@ async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
         await loop.run_in_executor(None, writeto_partial)
         set_last_exposure(configfile, curNum)
 
-        if verbose:
-            print(modules.current_progress(__file__, "Write done"))
 
-
+@modules.timeit
 def make_header_info(
     exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
 ):
-    if verbose:
-        print(
-            modules.current_progress(__file__, f"EXP={exptime}, Setting header start")
-        )
     wcshdr = blc.get_wcshdr(connection.cs_list[0], camname, targ, kmirr, flen)
     hdus = []
     dates = []
@@ -296,55 +290,24 @@ def make_header_info(
                 hdu.header[headerName] = (headerValue, headerComment)
 
         hdus.append(hdu)
-
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Setting header done"
-                )
-            )
-
     return hdus, dates
 
 
+@modules.atimeit
 async def expose_cam(exptime, num, verbose, cam, camname):
     exps = []
     hdrs = []
     status = []
     camera, device = connection.dev_list[camname]
     for i in range(num):
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Expose start"
-                )
-            )
         exps.append(await cam.expose(exptime=exptime, image_type="object"))
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Expose done"
-                )
-            )
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Saving camera info start"
-                )
-            )
         # camera, device = flir.setup_camera(verbose)
         status.append(await flir.vol_cur_tem(camera, device))
-        if verbose:
-            print(
-                modules.current_progress(
-                    __file__, f"#{i+1}, EXP={exptime}, Saving camera info done"
-                )
-            )
-
         hdrs.append(cam.header)
     return exps, hdrs, status, camera
 
 
+@modules.atimeit
 async def expose_test_cam(testshot, exptime, num, verbose, filepath, cam):
     dates = []
     for i in range(num):

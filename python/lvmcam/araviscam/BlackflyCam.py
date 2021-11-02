@@ -22,7 +22,7 @@ from basecam import (
     ExposureError,
 )
 
-import datetime
+from lvmcam.actor import modules
 
 
 # Since the aravis wrapper for GenICam cameras (such as the Blackfly)
@@ -103,6 +103,7 @@ class BlackflyCameraSystem(CameraSystem):
         # debuging: print yaml configuration
         # print(self._config)
 
+    @modules.timeit
     def list_available_cameras(self):
         """Gather serial numbers of online Aravis/Genicam devices.
         :return: a list of serial numbers (as strings). This list may be
@@ -185,6 +186,7 @@ class BlackflyCamera(BaseCamera):
         )
         self.header = []
 
+    @modules.atimeit
     async def _connect_internal(self, **kwargs):
         """Connect to a camera and upload basic binning and ROI parameters.
         :param kwargs:  recognizes the key uid with integer value, the serial number
@@ -309,10 +311,12 @@ class BlackflyCamera(BaseCamera):
         self.device = cam
         self.regionBounds = roiBounds
 
+    @modules.atimeit
     async def _disconnect_internal(self):
         """Close connection to camera."""
         self.device = None
 
+    @modules.atimeit
     async def _expose_grabFrame(self, exposure):
         """Read a single unbinned full frame.
         The class splits the parent class' exposure into this function and
@@ -326,7 +330,6 @@ class BlackflyCamera(BaseCamera):
                           arranged in FITS order (i.e., the data of the bottom row appear first...)
         :return: The dictionary with the window location and size (x=,y=,width=,height=)
         """
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "_expose_grabFrame start")
         # To avoid being left over by other programs with no change
         # to set the exposure time, we switch the auto=0=off first
         self.device.set_exposure_time_auto(0)
@@ -341,9 +344,7 @@ class BlackflyCamera(BaseCamera):
         self.notify(CameraEvent.EXPOSURE_INTEGRATING)
 
         # the buffer allocated/created within the acquisition()
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "save buffer start")
         buf = await self.loop.run_in_executor(None, self.device.acquisition, tout_ms)
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "save buffer done")
         if buf is None:
             raise ExposureError(
                 "Exposing for "
@@ -366,9 +367,9 @@ class BlackflyCamera(BaseCamera):
             buffer=data, dtype=numpy.uint16, shape=(1, reg.height, reg.width)
         )
         # print("exposure data shape", exposure.data.shape)
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "_expose_grabFrame done")
         return reg
 
+    @modules.atimeit
     async def _expose_internal(self, exposure):
         """Read a single unbinned full frame and store in a FITS file.
         :param exposure:  On entry exposure.exptim is the intended exposure time in [sec]
@@ -379,18 +380,9 @@ class BlackflyCamera(BaseCamera):
         # fill exposure.data with the frame's 16bit data
         # reg becomes a x=, y=, width= height= dictionary
         # these are in standard X11 coordinates where upper left =(0,0)
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "_expose_internal start")
 
-        print(
-            datetime.datetime.now(), "|BlackflyCam.py|", "await _expose_grapFrame call"
-        )
         reg = await self._expose_grabFrame(exposure)
-        print(
-            datetime.datetime.now(), "|BlackflyCam.py|", "await _expose_grapFrame end"
-        )
         # print('region',reg)
-
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "make addHeaders start")
 
         binxy = {}
         try:
@@ -485,15 +477,14 @@ class BlackflyCamera(BaseCamera):
         #     exposure.fits_model[0].header_model.append(models.Card(headr))
 
         self.header = addHeaders
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "make addHeaders done")
         # print(repr(exposure.to_hdu()[0].header))
 
         # unref() is currently usupported in this GObject library.
         # Hope that this does not lead to any memory leak....
         # buf.unref()
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "_expose_internal done")
         return
 
+    @modules.timeit
     def _expose_wcs(self, exposure, reg):
         """Gather information for the WCS FITS keywords
         :param exposure:  On entry exposure.exptim is the intended exposure time in [sec]
@@ -786,6 +777,7 @@ if __name__ == "__main__":
     )
 
 
+@modules.timeit
 def get_wcshdr(
     cs,
     name,
@@ -793,7 +785,6 @@ def get_wcshdr(
     kmirr,
     flen,
 ):
-    print(datetime.datetime.now(), "|BlackflyCam.py|", "make wcshdr start")
     if targ is not None and kmirr is not None:
         wcshdr = astropy.io.fits.Header()
 
@@ -891,7 +882,6 @@ def get_wcshdr(
             "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
         )
         wcshdr.append(key)
-        print(datetime.datetime.now(), "|BlackflyCam.py|", "make wcshdr done")
         return wcshdr
     else:
         return None
