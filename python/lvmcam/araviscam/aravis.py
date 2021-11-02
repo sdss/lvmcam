@@ -1,7 +1,8 @@
-import gi
+# import gi
 
-gi.require_version("Aravis", "0.8")
-from gi.repository import Aravis
+# gi.require_version("Aravis", "0.8")
+# from gi.repository import Aravis
 
-# class Aravis:
-#     pass
+
+class Aravis:
+    pass
