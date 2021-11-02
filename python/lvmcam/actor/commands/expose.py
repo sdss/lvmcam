@@ -162,7 +162,10 @@ async def expose_real_cam(
 ):
     if verbose:
         print(modules.current_progress(__file__, "expose function start"))
-    exps, hdrs, status = await expose_cam(exptime, num, verbose, cam, camname)
+
+    exps, hdrs, status, camera = await expose_cam(exptime, num, verbose, cam, camname)
+    status[0].update(await flir.status_for_header(camera))
+    # print(status)
 
     hdus, dates = make_header_info(
         exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
@@ -271,10 +274,19 @@ def make_header_info(
             hdr = item[0]
             val = item[1]
             if len(val) > 70:
+                # print(val)
                 continue
-            _hdr = hdr.replace(" ", "")
-            _hdr = _hdr.replace(".", "")
-            _hdr = _hdr.upper()[:8]
+            _hdr = ""
+            if "Voltage" in hdr:
+                _hdr = "VOLTAGE"
+            elif "Current" in hdr:
+                _hdr = "CURRENT"
+            elif "Hz" in val:
+                _hdr = "FRAME"
+            else:
+                _hdr = hdr.replace(" ", "")
+                _hdr = _hdr.replace(".", "")
+                _hdr = _hdr.upper()[:8]
             hdu.header[_hdr] = (val, hdr)
         if wcshdr is not None:
             for wcs in wcshdr:
@@ -299,6 +311,7 @@ async def expose_cam(exptime, num, verbose, cam, camname):
     exps = []
     hdrs = []
     status = []
+    camera, device = connection.dev_list[camname]
     for i in range(num):
         if verbose:
             print(
@@ -320,8 +333,7 @@ async def expose_cam(exptime, num, verbose, cam, camname):
                 )
             )
         # camera, device = flir.setup_camera(verbose)
-        camera, device = connection.dev_list[camname]
-        status.append(await flir.status_for_header(camera, device))
+        status.append(await flir.vol_cur_tem(camera, device))
         if verbose:
             print(
                 modules.current_progress(
@@ -330,7 +342,7 @@ async def expose_cam(exptime, num, verbose, cam, camname):
             )
 
         hdrs.append(cam.header)
-    return exps, hdrs, status
+    return exps, hdrs, status, camera
 
 
 async def expose_test_cam(testshot, exptime, num, verbose, filepath, cam):
