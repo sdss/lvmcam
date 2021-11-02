@@ -200,7 +200,7 @@ The current headers of fits file are as follows.
      - data unit checksum updated 2021-11-01T12:30:45
 
 
-The above headers are created by different sources such as sdss/basecam, sdss/araviscam, andsdss/LVM_FLIR_Software.
+The above headers are created by different sources such as sdss/basecam, sdss/araviscam, and sdss/LVM_FLIR_Software.
 
 Current rule of fits file name
 --------------------------
