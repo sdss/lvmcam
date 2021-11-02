@@ -19,8 +19,6 @@ Current fits header
     }
     03:32:39.828 lvmcam : 
     
-Header (1)
-^^^^^^^^^^
 The current headers of fits file are as follows.
 
 .. list-table:: 
@@ -93,7 +91,7 @@ The current headers of fits file are as follows.
      - 1
      - [ct] Pixel Region Vert start
    * - GAIN
-     - 5.299259725669739
+     - 0.3998054629726562
      - Gain
    * - REVERSEX
      - F
@@ -119,15 +117,24 @@ The current headers of fits file are as follows.
    * - CRPIX2
      - -1238.301111111111
      - [px] DEC center along axis 2
+   * - VOLTAGE
+     - 9.75341796875 V
+     - Power Supply Voltage
+   * - CURRENT
+     - 0.28466796875 A
+     - Power Supply Current
+   * - CAMERATE
+     - 55.75 C
+     - Camera Temperature
    * - PIXELFOR
      - Mono16
      - Pixel format
    * - ROI
      - 1600x1100 at 0,0
      - ROI
-   * - FRAMERAT
-     - (min=1.0, max=31.46968198249933)
-     - Framerate bounds
+   * - FRAME
+     - 27.695798215061195 Hz
+     - Frame rate
    * - GAINCONV
      - LCG
      - Gain Conv.
@@ -140,21 +147,15 @@ The current headers of fits file are as follows.
    * - ACQUISIT
      - SingleFrame
      - Acquisition mode
+   * - FRAMERAT
+     - (min=1.0, max=31.46968198249933)
+     - Framerate bounds
    * - EXPTIMEB
      - (min=14.0, max=30000003.0)
      - Exp. time bounds
    * - GAINBOUN
      - (min=0.0, max=47.994294033026364)
      - Gain bounds
-   * - POWERSUP
-     - 0.268798828125 A
-     - Power Supply Current
-   * - TOTALDIS
-     - 1.7733557224273682 W
-     - Total Dissiapted Power
-   * - CAMERATE
-     - 50.125 C
-     - Camera Temperature
    * - CUNIT1
      - deg
      - WCS units along axis 1                         
@@ -199,125 +200,7 @@ The current headers of fits file are as follows.
      - data unit checksum updated 2021-11-01T12:30:45
 
 
-Header (2)
-^^^^^^^^^^
-The above headers are created by different source.
-
-+----------+---------------------------+
-| Header   | Source                    |
-+==========+===========================+
-| SIMPLE   | sdss/basecam              |
-+----------+                           |
-| BITPIX   |                           |
-+----------+                           |
-| NAXIS    |                           |
-+----------+                           |
-| NAXIS1   |                           |
-+----------+                           |
-| NAXIS2   |                           |
-+----------+                           |
-| VCAM     |                           |
-+----------+                           |
-| CAMNAME  |                           |
-+----------+                           |
-| CAMUID   |                           |
-+----------+                           |
-| IMAGETYP |                           |
-+----------+                           |
-| EXPTIME  |                           |
-+----------+                           |
-| EXPTIMEN |                           |
-+----------+                           |
-| STACK    |                           |
-+----------+                           |
-| STACKFUN |                           |
-+----------+                           |
-| TIMESYS  |                           |
-+----------+                           |
-| DATE-OBS |                           |
-+----------+---------------------------+
-| BINX     | sdss/araviscam            |
-+----------+                           |
-| BINY     |                           |
-+----------+                           |
-| WIDTH    |                           |
-+----------+                           |
-| HEIGHT   |                           |
-+----------+                           |
-| REGX     |                           |
-+----------+                           |
-| REGY     |                           |
-+----------+                           |
-| GAIN     |                           |
-+----------+                           |
-| REVERSEX |                           |
-+----------+                           |
-| REVERSEY |                           |
-+----------+                           |
-| BINMODEX |                           |
-+----------+                           |
-| BINMODEY |                           |
-+----------+                           |
-| CAMBLCLM |                           |
-+----------+                           |
-| CAMTYP   |                           |
-+----------+                           |
-| CRPIX1   |                           |
-+----------+                           |
-| CRPIX2   |                           |
-+----------+---------------------------+
-| PIXELFOR | sdss/LVM_FLIR_Software    |
-+----------+                           |
-| ROI      |                           |
-+----------+                           |
-| FRAMERAT |                           |
-+----------+                           |
-| GAINCOV  |                           |
-+----------+                           |
-| GAMMAENA |                           |
-+----------+                           |
-| GAMMAVAL |                           |
-+----------+                           |
-| ACQUISIT |                           |
-+----------+                           |
-| EXPTIMEB |                           |
-+----------+                           |
-| GAINBOUN |                           |
-+----------+                           |
-| POWERSUP |                           |
-+----------+                           |
-| TOTALDIS |                           |
-+----------+                           |
-| CAMERATE |                           |
-+----------+---------------------------+
-| CUNIT1   | sdss/araviscam            |
-+----------+                           |
-| CUNIT2   |                           |
-+----------+                           |
-| CTYPE1   |                           |
-+----------+                           |
-| CTYPE2   |                           |
-+----------+                           |
-| CRVAL1   |                           |
-+----------+                           |
-| CRVAL2   |                           |
-+----------+                           |
-| CD1_1    |                           |
-+----------+                           |
-| CD2_2    |                           |
-+----------+                           |
-| CD1_2    |                           |
-+----------+                           |
-| CD2_1    |                           |
-+----------+---------------------------+
-| BSCALE   | sdss/basecam              |
-+----------+                           |
-| BEZERO   |                           |
-+----------+                           |
-| CHECKSUM |                           |
-+----------+                           |
-| DATASUM  |                           |
-+----------+---------------------------+
+The above headers are created by different sources such as sdss/basecam, sdss/araviscam, andsdss/LVM_FLIR_Software.
 
 Current rule of fits file name
 --------------------------
@@ -341,7 +224,6 @@ Current rule of fits file name
 
 Sequence diagram of lvmcam
 --------------------------
-This sequence diagram is drawn when EXPTIME = 0.1, 0.5, 1.0, 5.0 second.
 
 .. image:: ./_static/lvmcam_sequence_diagram.png
     :width: 800
