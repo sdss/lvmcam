@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3 - November 2, 2021
+
+### ✨ Improved
+* Change log when `-v` option is provided.
+
 ## 0.1.2 - November 1, 2021
 
 ### ✨ Improved
