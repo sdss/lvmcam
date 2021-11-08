@@ -530,251 +530,251 @@ class BlackflyImageAreaMixIn(ImageAreaMixIn):
         pass
 
 
-async def singleFrame(
-    exptim,
-    name,
-    verb=False,
-    ip_add=None,
-    config="cameras.yaml",
-    targ=None,
-    kmirr=0.0,
-    flen=None,
-):
-    """Expose once and write the image to a FITS file.
-    :param exptim: The exposure time in seconds. Non-negative.
-    :type exptim: float
-    :param verb: Verbosity on or off
-    :type verb: boolean
-    :param ip_add: list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
-    :type ip_add: list of strings
-    :param config: Name of the YAML file with the cameras configuration
-    :type config: string of the file name
-    :param targ: alpha/delta ra/dec of the sidereal target
-    :type targ: astropy.coordinates.SkyCoord
-    :param kmirr: Kmirr angle in degrees (0 if up, positive with right hand rule along North on bench)
-    :type kmirr: float
-    :param flen: focal length of telescope/siderostat in mm
-                 If not provided it will be taken from the configuration file
-    :type flen: float
-    """
+# async def singleFrame(
+#     exptim,
+#     name,
+#     verb=False,
+#     ip_add=None,
+#     config="cameras.yaml",
+#     targ=None,
+#     kmirr=0.0,
+#     flen=None,
+# ):
+#     """Expose once and write the image to a FITS file.
+#     :param exptim: The exposure time in seconds. Non-negative.
+#     :type exptim: float
+#     :param verb: Verbosity on or off
+#     :type verb: boolean
+#     :param ip_add: list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
+#     :type ip_add: list of strings
+#     :param config: Name of the YAML file with the cameras configuration
+#     :type config: string of the file name
+#     :param targ: alpha/delta ra/dec of the sidereal target
+#     :type targ: astropy.coordinates.SkyCoord
+#     :param kmirr: Kmirr angle in degrees (0 if up, positive with right hand rule along North on bench)
+#     :type kmirr: float
+#     :param flen: focal length of telescope/siderostat in mm
+#                  If not provided it will be taken from the configuration file
+#     :type flen: float
+#     """
 
-    cs = BlackflyCameraSystem(
-        BlackflyCamera, camera_config=config, verbose=verb, ip_list=ip_add
-    )
-    cam = await cs.add_camera(name=name)
-    # print("cameras", cs.cameras)
-    # print("config" ,config)
+#     cs = BlackflyCameraSystem(
+#         BlackflyCamera, camera_config=config, verbose=verb, ip_list=ip_add
+#     )
+#     cam = await cs.add_camera(name=name)
+#     # print("cameras", cs.cameras)
+#     # print("config" ,config)
 
-    exp = await cam.expose(exptim, "LAB TEST")
+#     exp = await cam.expose(exptim, "LAB TEST")
 
-    if targ is not None and kmirr is not None:
-        # if there is already a (partial) header information, keep it,
-        # otherwise create one ab ovo.
-        if exp.wcs is None:
-            wcshdr = astropy.io.fits.Header()
-        else:
-            wcshdr = exp.wcs.to_header()
+#     if targ is not None and kmirr is not None:
+#         # if there is already a (partial) header information, keep it,
+#         # otherwise create one ab ovo.
+#         if exp.wcs is None:
+#             wcshdr = astropy.io.fits.Header()
+#         else:
+#             wcshdr = exp.wcs.to_header()
 
-        key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card("CRVAL1", targ.ra.deg, "[deg] RA at reference pixel")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card(
-            "CRVAL2", targ.dec.deg, "[deg] DEC at reference pixel"
-        )
-        wcshdr.append(key)
+#         key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card("CUNIT2", "deg", "WCS units along axis 2")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card("CTYPE1", "RA---TAN", "WCS type axis 1")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card("CTYPE2", "DEC--TAN", "WCS type axis 2")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card("CRVAL1", targ.ra.deg, "[deg] RA at reference pixel")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card(
+#             "CRVAL2", targ.dec.deg, "[deg] DEC at reference pixel"
+#         )
+#         wcshdr.append(key)
 
-        # field angle: degrees, then radians
-        # direction of NCP on the detectors (where we have already flipped pixels
-        # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
-        # With right-handed-rule: zero if N=up (y-axis), 90 deg if N=right (x-axis)
-        # so the direction is the vector ( sin(f), cos(f)) before the K-mirror.
-        # Action of K-mirror is ( cos(2*m), sin(2*m); sin(2*m), -cos(2*m))
-        # and action of prism is (-1 0 ; 0 1), i.e. to flip the horizontal coordinate.
-        # todo: get starting  value from a siderostat field rotation tracking model
-        fieldrot = 0.0
+#         # field angle: degrees, then radians
+#         # direction of NCP on the detectors (where we have already flipped pixels
+#         # on all detectors so fieldrot=kmirr=0 implies North is up and East is left)
+#         # With right-handed-rule: zero if N=up (y-axis), 90 deg if N=right (x-axis)
+#         # so the direction is the vector ( sin(f), cos(f)) before the K-mirror.
+#         # Action of K-mirror is ( cos(2*m), sin(2*m); sin(2*m), -cos(2*m))
+#         # and action of prism is (-1 0 ; 0 1), i.e. to flip the horizontal coordinate.
+#         # todo: get starting  value from a siderostat field rotation tracking model
+#         fieldrot = 0.0
 
-        if name[-1] == "c":
-            # without prism, assuming center camera placed horizontally
-            if name[:4] == "spec":
-                # without K-mirror
-                pass
-            else:
-                # with K-mirror
-                # in the configuration the y-axis of the image has been flipped,
-                # the combined action of (1, 0; 0, -1) and the K-mirror is (cos(2m), sin(2m); -sin(2m), cos(2m))
-                # and applied to the input vector this is (sin(2m+f), cos(2m+f))
-                fieldrot += 2.0 * kmirr
-        else:
-            # with prism
-            if name[:4] == "spec":
-                # without K-mirror
-                # Applied to input beam this gives (-sin(f), cos(f)) but prism effect
-                # had been undone by vertical flip in the FLIR image.
-                pass
-            else:
-                # with K-mirror
-                # Combined action of K-mirror and prism is (-cos(2*m), -sin(2*m);sin(2*m), -cos(2*m)).
-                # Applied to input beam this gives (-sin(2*m+f), -cos(2*m+f)) = (sin(2*m+f+pi), cos(2*m+f+pi)).
-                fieldrot += 2.0 * kmirr + 180.0
+#         if name[-1] == "c":
+#             # without prism, assuming center camera placed horizontally
+#             if name[:4] == "spec":
+#                 # without K-mirror
+#                 pass
+#             else:
+#                 # with K-mirror
+#                 # in the configuration the y-axis of the image has been flipped,
+#                 # the combined action of (1, 0; 0, -1) and the K-mirror is (cos(2m), sin(2m); -sin(2m), cos(2m))
+#                 # and applied to the input vector this is (sin(2m+f), cos(2m+f))
+#                 fieldrot += 2.0 * kmirr
+#         else:
+#             # with prism
+#             if name[:4] == "spec":
+#                 # without K-mirror
+#                 # Applied to input beam this gives (-sin(f), cos(f)) but prism effect
+#                 # had been undone by vertical flip in the FLIR image.
+#                 pass
+#             else:
+#                 # with K-mirror
+#                 # Combined action of K-mirror and prism is (-cos(2*m), -sin(2*m);sin(2*m), -cos(2*m)).
+#                 # Applied to input beam this gives (-sin(2*m+f), -cos(2*m+f)) = (sin(2*m+f+pi), cos(2*m+f+pi)).
+#                 fieldrot += 2.0 * kmirr + 180.0
 
-            if name[-1] == "w":
-                # Camera is vertically,
-                # so up in the lab is right in the image
-                fieldrot += 90
-            else:
-                # Camera is vertically,
-                # so up in the lab is left in the image
-                fieldrot -= 90
+#             if name[-1] == "w":
+#                 # Camera is vertically,
+#                 # so up in the lab is right in the image
+#                 fieldrot += 90
+#             else:
+#                 # Camera is vertically,
+#                 # so up in the lab is left in the image
+#                 fieldrot -= 90
 
-        fieldrot = math.radians(fieldrot)
+#         fieldrot = math.radians(fieldrot)
 
-        # the section/dictionary of the yaml file for this camera
-        yamlconfig = cs._config[name]
+#         # the section/dictionary of the yaml file for this camera
+#         yamlconfig = cs._config[name]
 
-        if flen is None:
-            flen = yamlconfig["flen"]
+#         if flen is None:
+#             flen = yamlconfig["flen"]
 
-        # pixel scale per arcseconds is focal length *pi/180 /3600
-        # = flen * mm *pi/180 /3600
-        # = flen * um *pi/180 /3.6, so in microns per arcsec...
-        pixscal = math.radians(flen) / 3.6
+#         # pixel scale per arcseconds is focal length *pi/180 /3600
+#         # = flen * mm *pi/180 /3600
+#         # = flen * um *pi/180 /3.6, so in microns per arcsec...
+#         pixscal = math.radians(flen) / 3.6
 
-        # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
-        degperpix = yamlconfig["pixsize"] / pixscal / 3600.0
+#         # degrees per pixel is arcseconds per pixel/3600 = (mu/pix)/(mu/arcsec)/3600
+#         degperpix = yamlconfig["pixsize"] / pixscal / 3600.0
 
-        # for the right handed coordinates
-        # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
-        # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
-        # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
-        # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
-        # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
-        cosperpix = degperpix * math.cos(fieldrot)
-        sinperpix = degperpix * math.sin(fieldrot)
-        key = astropy.io.fits.Card("CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card("CD2_2", cosperpix, "[deg/px] WCS matrix diagonal")
-        wcshdr.append(key)
-        key = astropy.io.fits.Card(
-            "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
-        )
-        wcshdr.append(key)
-        key = astropy.io.fits.Card(
-            "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
-        )
-        wcshdr.append(key)
+#         # for the right handed coordinates
+#         # (pixx,pixy) = (cos f', -sin f'; sin f', cos f')*(DEC,RA) where f' =90deg -fieldrot
+#         # (pixx,pixy) = (sin f, -cos f; cos f , sin f)*(DEC,RA)
+#         # (sin f, cos f; -cos f, sin f)*(pixx,pixy) = (DEC,RA)
+#         # (-cos f, sin f; sin f, cos f)*(pixx,pixy) = (RA,DEC)
+#         # Note that the det of the WCS matrix is negativ (because RA/DEC is left-handed...)
+#         cosperpix = degperpix * math.cos(fieldrot)
+#         sinperpix = degperpix * math.sin(fieldrot)
+#         key = astropy.io.fits.Card("CD1_1", -cosperpix, "[deg/px] WCS matrix diagonal")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card("CD2_2", cosperpix, "[deg/px] WCS matrix diagonal")
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card(
+#             "CD1_2", sinperpix, "[deg/px] WCS matrix outer diagonal"
+#         )
+#         wcshdr.append(key)
+#         key = astropy.io.fits.Card(
+#             "CD2_1", sinperpix, "[deg/px] WCS matrix outer diagonal"
+#         )
+#         wcshdr.append(key)
 
-        exp.wcs = astropy.wcs.WCS(wcshdr)
-        # print(exp.wcs.to_header_string())
-        for headr in wcshdr.cards:
-            exp.fits_model[0].header_model.append(models.Card(headr))
+#         exp.wcs = astropy.wcs.WCS(wcshdr)
+#         # print(exp.wcs.to_header_string())
+#         for headr in wcshdr.cards:
+#             exp.fits_model[0].header_model.append(models.Card(headr))
 
-    await exp.write()
-    if verb:
-        print("wrote ", exp.filename)
+#     await exp.write()
+#     if verb:
+#         print("wrote ", exp.filename)
 
 
-# A debugging aid, demonstrator and simple test run
-# This allows to call this file as an executable from the command line.
-# The last command line argument must be the name of the camera
-# as used in the configuration file.
-# Example
-#    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r 2h10m10s] [-d -20d10m3s]
-#       [-K kmirrdegrees] [-s "LCO"|"MPIA"|"APO"|"KHU"] [-f focallengthmm] {spec.age|spec.agw|...}
-if __name__ == "__main__":
+# # A debugging aid, demonstrator and simple test run
+# # This allows to call this file as an executable from the command line.
+# # The last command line argument must be the name of the camera
+# # as used in the configuration file.
+# # Example
+# #    BlackflyCam.py [-e seconds] [-v] [-c ../etc/cameras.yaml] [-r 2h10m10s] [-d -20d10m3s]
+# #       [-K kmirrdegrees] [-s "LCO"|"MPIA"|"APO"|"KHU"] [-f focallengthmm] {spec.age|spec.agw|...}
+# if __name__ == "__main__":
 
-    import argparse
+#     import argparse
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-e",
-        "--exptime",
-        type=float,
-        default=5.0,
-        help="Expose for for exptime seconds",
-    )
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument(
+#         "-e",
+#         "--exptime",
+#         type=float,
+#         default=5.0,
+#         help="Expose for for exptime seconds",
+#     )
 
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="print some notes to stdout"
-    )
+#     parser.add_argument(
+#         "-v", "--verbose", action="store_true", help="print some notes to stdout"
+#     )
 
-    # With the -i switch we can add an explicit IP-Adress for a
-    # camera if we want to read a camera that is not reachable
-    # by the broadcast scanner.
-    parser.add_argument("-i", "--ip", help="IP address of camera")
+#     # With the -i switch we can add an explicit IP-Adress for a
+#     # camera if we want to read a camera that is not reachable
+#     # by the broadcast scanner.
+#     parser.add_argument("-i", "--ip", help="IP address of camera")
 
-    # Name of an optional YAML file
-    parser.add_argument(
-        "-c", "--cfg", default="cameras.yaml", help="YAML file of lvmt cameras"
-    )
+#     # Name of an optional YAML file
+#     parser.add_argument(
+#         "-c", "--cfg", default="cameras.yaml", help="YAML file of lvmt cameras"
+#     )
 
-    # right ascension in degrees
-    parser.add_argument("-r", "--ra", help="RA J2000 in degrees or in xxhxxmxxs format")
+#     # right ascension in degrees
+#     parser.add_argument("-r", "--ra", help="RA J2000 in degrees or in xxhxxmxxs format")
 
-    # declination in degrees
-    parser.add_argument(
-        "-d", "--dec", help="DEC J2000 in degrees or in +-xxdxxmxxs format"
-    )
+#     # declination in degrees
+#     parser.add_argument(
+#         "-d", "--dec", help="DEC J2000 in degrees or in +-xxdxxmxxs format"
+#     )
 
-    # K-mirror angle in degrees
-    # Note this is only relevant for 3 of the 4 tables/telescopes
-    parser.add_argument("-K", "--Kmirr", type=float, help="K-mirror angle in degrees")
+#     # K-mirror angle in degrees
+#     # Note this is only relevant for 3 of the 4 tables/telescopes
+#     parser.add_argument("-K", "--Kmirr", type=float, help="K-mirror angle in degrees")
 
-    # focal length of telescope in mm
-    # Default is the LCO triple lens configuration of 1.8 meters
-    parser.add_argument(
-        "-f", "--flen", type=float, default=1839.8, help="focal length in mm"
-    )
+#     # focal length of telescope in mm
+#     # Default is the LCO triple lens configuration of 1.8 meters
+#     parser.add_argument(
+#         "-f", "--flen", type=float, default=1839.8, help="focal length in mm"
+#     )
 
-    # shortcut for site coordinates: observatory
-    # parser.add_argument("-s", '--site', default="LCO", help="LCO or MPIA or APO or KHU")
+#     # shortcut for site coordinates: observatory
+#     # parser.add_argument("-s", '--site', default="LCO", help="LCO or MPIA or APO or KHU")
 
-    # the last argument is mandatory: must be the name of exactly one camera
-    # as used in the configuration file
-    parser.add_argument("camname", default="sci.agw")
+#     # the last argument is mandatory: must be the name of exactly one camera
+#     # as used in the configuration file
+#     parser.add_argument("camname", default="sci.agw")
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    ip_cmdLine = []
-    if args.ip is not None:
-        ip_cmdLine.append(args.ip)
+#     ip_cmdLine = []
+#     if args.ip is not None:
+#         ip_cmdLine.append(args.ip)
 
-    # check ranges and combine ra/dec into a single SkyCoord
-    if args.ra is not None and args.dec is not None:
-        if args.ra.find("h") < 0:
-            # apparently simple floating point representation
-            targ = astropy.coordinates.SkyCoord(
-                ra=float(args.ra), dec=float(args.dec), unit="deg"
-            )
-        else:
-            targ = astropy.coordinates.SkyCoord(args.ra + " " + args.dec)
-    else:
-        targ = None
+#     # check ranges and combine ra/dec into a single SkyCoord
+#     if args.ra is not None and args.dec is not None:
+#         if args.ra.find("h") < 0:
+#             # apparently simple floating point representation
+#             targ = astropy.coordinates.SkyCoord(
+#                 ra=float(args.ra), dec=float(args.dec), unit="deg"
+#             )
+#         else:
+#             targ = astropy.coordinates.SkyCoord(args.ra + " " + args.dec)
+#     else:
+#         targ = None
 
-    # print(targ)
+#     # print(targ)
 
-    # The following 2 lines test that listing the connected cameras works...
-    # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
-    # bsys.list_available_cameras()
+#     # The following 2 lines test that listing the connected cameras works...
+#     # bsys = BlackflyCameraSystem(camera_class=BlackflyCamera)
+#     # bsys.list_available_cameras()
 
-    asyncio.run(
-        singleFrame(
-            args.exptime,
-            args.camname,
-            verb=args.verbose,
-            ip_add=ip_cmdLine,
-            config=args.cfg,
-            targ=targ,
-            kmirr=args.Kmirr,
-            flen=args.flen,
-        )
-    )
+#     asyncio.run(
+#         singleFrame(
+#             args.exptime,
+#             args.camname,
+#             verb=args.verbose,
+#             ip_add=ip_cmdLine,
+#             config=args.cfg,
+#             targ=targ,
+#             kmirr=args.Kmirr,
+#             flen=args.flen,
+#         )
+#     )
 
 
 @modules.timeit
