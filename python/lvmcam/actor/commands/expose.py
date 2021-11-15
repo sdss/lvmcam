@@ -90,12 +90,12 @@ async def expose(
         The name of camera to expose.
     compress
         The option of fpack (FITS image compression programs).
-        -c r // fpack -r
-        -c h // fpack -h
-        -c rF // fpack -r -F
-        -c rD // fpack -r -D
-        -c hF // fpack -h -F
-        -c hD // fpack -h -D
+        (-c r == fpack -r)
+        (-c h == fpack -h)
+        (-c rF == fpack -r -F)
+        (-c rD == fpack -r -D)
+        (-c hF == fpack -h -F)
+        (-c hD == fpack -h -D)
     """
     if not connection.camdict:
         return command.error("There are no connected cameras")
