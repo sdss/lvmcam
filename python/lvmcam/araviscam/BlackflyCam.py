@@ -103,7 +103,7 @@ class BlackflyCameraSystem(CameraSystem):
         # debuging: print yaml configuration
         # print(self._config)
 
-    @modules.timeit
+    # @modules.timeit
     def list_available_cameras(self):
         """Gather serial numbers of online Aravis/Genicam devices.
         :return: a list of serial numbers (as strings). This list may be
@@ -316,7 +316,7 @@ class BlackflyCamera(BaseCamera):
         """Close connection to camera."""
         self.device = None
 
-    @modules.atimeit
+    # @modules.atimeit
     async def _expose_grabFrame(self, exposure):
         """Read a single unbinned full frame.
         The class splits the parent class' exposure into this function and
@@ -484,7 +484,7 @@ class BlackflyCamera(BaseCamera):
         # buf.unref()
         return
 
-    @modules.timeit
+    # @modules.timeit
     def _expose_wcs(self, exposure, reg):
         """Gather information for the WCS FITS keywords
         :param exposure:  On entry exposure.exptim is the intended exposure time in [sec]
@@ -777,7 +777,7 @@ class BlackflyImageAreaMixIn(ImageAreaMixIn):
 #     )
 
 
-@modules.timeit
+# @modules.timeit
 def get_wcshdr(
     cs,
     name,

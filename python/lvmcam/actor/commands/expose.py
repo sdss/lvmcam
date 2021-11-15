@@ -26,6 +26,12 @@ __all__ = ["expose"]
 @parser.command()
 @click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
+# compression option
+@click.option(
+    "-c",
+    "--compress",
+    type=click.Choice(["r", "h", "rF", "rD", "hF", "hD"], case_sensitive=True),
+)
 @click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
 # right ascension in degrees
 @click.option("-r", "--ra")
@@ -54,6 +60,7 @@ async def expose(
     exptime: float,
     num: int,
     camname: str,
+    compress: click.Choice,
 ):
     """
     Expose ``num`` times and write the images to a FITS file.
@@ -81,6 +88,8 @@ async def expose(
         The number of exposure times. Natural number.
     camname
         The name of camera to expose.
+    compress
+        The option of fpack (FITS image compression programs)
     """
     if not connection.camdict:
         return command.error("There are no connected cameras")
@@ -100,9 +109,7 @@ async def expose(
         num = 1
 
     if cam.name == "test":
-        filepath, paths = await expose_test_cam(
-            testshot, exptime, num, verbose, filepath, cam
-        )
+        filepath, paths = await expose_test_cam(testshot, exptime, num, filepath, cam)
         # for path in paths:
         #     command.write("i", f"{path}")
         path_dict = {i: paths[i] for i in range(len(paths))}
@@ -110,7 +117,16 @@ async def expose(
         return command.finish()
     else:
         paths = await expose_real_cam(
-            testshot, exptime, num, verbose, targ, kmirr, filepath, camname, cam, flen
+            testshot,
+            exptime,
+            num,
+            targ,
+            kmirr,
+            filepath,
+            camname,
+            cam,
+            flen,
+            compress,
         )
         # for path in paths:
         #     command.write("i", f"{path}")
@@ -119,7 +135,7 @@ async def expose(
         return command.finish()
 
 
-@modules.timeit
+# @modules.timeit
 def make_targ_from_ra_dec(ra, dec):
     if ra is not None and dec is not None:
         if ra.find("h") < 0:
@@ -134,7 +150,7 @@ def make_targ_from_ra_dec(ra, dec):
     return targ
 
 
-@modules.timeit
+# @modules.timeit
 def get_last_exposure(path):
     try:
         with open(path, "r") as f:
@@ -147,13 +163,13 @@ def get_last_exposure(path):
             return 0
 
 
-@modules.timeit
+# @modules.timeit
 def set_last_exposure(path, num):
     with open(path, "w") as f:
         f.write(str(num))
 
 
-@modules.timeit
+# @modules.timeit
 def time_to_jd(times):
     # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
     t = Time(times, format="isot", scale="utc")
@@ -161,7 +177,7 @@ def time_to_jd(times):
     return jd
 
 
-@modules.timeit
+# @modules.timeit
 def jd_to_folder(path, jd):
     jd = set(jd)
     for j in jd:
@@ -174,33 +190,64 @@ def jd_to_folder(path, jd):
 
 @modules.atimeit
 async def expose_real_cam(
-    testshot, exptime, num, verbose, targ, kmirr, filepath, camname, cam, flen
+    testshot,
+    exptime,
+    num,
+    targ,
+    kmirr,
+    filepath,
+    camname,
+    cam,
+    flen,
+    compress,
 ):
 
-    exps, hdrs, status, camera = await expose_cam(exptime, num, verbose, cam, camname)
+    exps, hdrs, status, camera = await expose_cam(exptime, num, cam, camname)
     status[0].update(await flir.status_for_header(camera))
     # print(status)
 
-    hdus, dates = make_header_info(
-        exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
-    )
+    hdus, dates = make_header_info(num, targ, kmirr, camname, exps, hdrs, status, flen)
 
-    paths = await make_file(testshot, num, verbose, filepath, cam, hdus, dates)
+    paths = await make_file(
+        testshot,
+        num,
+        filepath,
+        cam,
+        hdus,
+        dates,
+        compress,
+    )
 
     return paths
 
 
 @modules.atimeit
-async def make_file(testshot, num, verbose, filepath, cam, hdus, dates):
+async def make_file(
+    testshot,
+    num,
+    filepath,
+    cam,
+    hdus,
+    dates,
+    compress,
+):
     configfile, curNum, paths = prepare_write_file(
-        testshot, num, verbose, filepath, cam, hdus, dates
+        testshot, num, filepath, cam, hdus, dates
     )
-    await write_file(testshot, num, verbose, hdus, configfile, curNum, paths)
+    await write_file(
+        testshot,
+        num,
+        hdus,
+        configfile,
+        curNum,
+        paths,
+        compress,
+    )
     return paths
 
 
 @modules.timeit
-def prepare_write_file(testshot, num, verbose, filepath, cam, hdus, dates):
+def prepare_write_file(testshot, num, filepath, cam, hdus, dates):
     filepath = os.path.abspath(filepath)
 
     configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
@@ -231,7 +278,15 @@ def prepare_write_file(testshot, num, verbose, filepath, cam, hdus, dates):
 
 
 @modules.atimeit
-async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
+async def write_file(
+    testshot,
+    num,
+    hdus,
+    configfile,
+    curNum,
+    paths,
+    compress,
+):
     for i in range(num):
 
         if not testshot:
@@ -247,12 +302,40 @@ async def write_file(testshot, num, verbose, hdus, configfile, curNum, paths):
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, writeto_partial)
         set_last_exposure(configfile, curNum)
+        # print(compress)
+        # print(compress == "hD")
+        fpack = os.path.abspath("./python/lvmcam/fpack/fpack")
+        target = os.path.dirname(paths[i])
+        if compress == "r":
+            option = "-r"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            paths[i] = (paths[i], paths[i] + ".fz")
+        elif compress == "h":
+            option = "-h"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            paths[i] = (paths[i], paths[i] + ".fz")
+        elif compress == "rF":
+            option = "-r -F"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            # paths[i] = (paths[i], paths[i] + ".fz")
+        elif compress == "rD":
+            option = "-r -D"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            paths[i] = paths[i] + ".fz"
+        elif compress == "hF":
+            option = "-h -F"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            # paths[i] = (paths[i], paths[i] + ".fz")
+        elif compress == "hD":
+            option = "-h -D"
+            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+            paths[i] = paths[i] + ".fz"
+    # for path in paths:
+    #     os.system(f"tar {paths}")
 
 
 @modules.timeit
-def make_header_info(
-    exptime, num, verbose, targ, kmirr, camname, exps, hdrs, status, flen
-):
+def make_header_info(num, targ, kmirr, camname, exps, hdrs, status, flen):
     wcshdr = blc.get_wcshdr(connection.cs_list[0], camname, targ, kmirr, flen)
     hdus = []
     dates = []
@@ -294,7 +377,7 @@ def make_header_info(
 
 
 @modules.atimeit
-async def expose_cam(exptime, num, verbose, cam, camname):
+async def expose_cam(exptime, num, cam, camname):
     exps = []
     hdrs = []
     status = []
@@ -308,7 +391,7 @@ async def expose_cam(exptime, num, verbose, cam, camname):
 
 
 @modules.atimeit
-async def expose_test_cam(testshot, exptime, num, verbose, filepath, cam):
+async def expose_test_cam(testshot, exptime, num, filepath, cam):
     dates = []
     for i in range(num):
         dates.append(datetime.datetime.utcnow().isoformat())
@@ -331,19 +414,11 @@ async def expose_test_cam(testshot, exptime, num, verbose, filepath, cam):
             await asyncio.sleep(exptime)
             shutil.copyfile(original, paths[i])
 
-            if verbose:
-                print(modules.current_progress(__file__, f"expose for test #={i+1}"))
-
         else:
             if os.path.exists(paths[i]):
                 os.remove(paths[i])
             await asyncio.sleep(exptime)
             shutil.copyfile(original, paths[i])
-
-            if verbose:
-                print(
-                    modules.current_progress(__file__, "expose for test with testshot")
-                )
 
         set_last_exposure(configfile, curNum)
     return filepath, paths

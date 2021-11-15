@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4 - November 15, 2021
+
+### ✨ Improved
+* Add `-c` option in expose command to compress fits file. For more detail, visit [fpack & funpack](https://heasarc.gsfc.nasa.gov/fitsio/fpack/).
+
 ## 0.1.3 - November 2, 2021
 
 ### ✨ Improved

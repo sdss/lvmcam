@@ -274,4 +274,16 @@ Status command
         }
     }
     12:14:51.166 lvmcam : 
-    
+
+Compress option
+---------------
+The lvmcam uses fpack & funpack FITS image compression programs. For more detail, visit https://heasarc.gsfc.nasa.gov/fitsio/fpack/.
+
+.. code-block:: console
+    $ clu
+    lvmcam expose -c r // fpack -r
+    lvmcam expose -c h // fpack -h
+    lvmcam expose -c rF // fpack -r -F
+    lvmcam expose -c rD // fpack -r -D
+    lvmcam expose -c hF // fpack -h -F
+    lvmcam expose -c hD // fpack -h -D
