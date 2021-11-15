@@ -89,7 +89,13 @@ async def expose(
     camname
         The name of camera to expose.
     compress
-        The option of fpack (FITS image compression programs)
+        The option of fpack (FITS image compression programs).
+        -c r // fpack -r
+        -c h // fpack -h
+        -c rF // fpack -r -F
+        -c rD // fpack -r -D
+        -c hF // fpack -h -F
+        -c hD // fpack -h -D
     """
     if not connection.camdict:
         return command.error("There are no connected cameras")
@@ -302,36 +308,35 @@ async def write_file(
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, writeto_partial)
         set_last_exposure(configfile, curNum)
-        # print(compress)
-        # print(compress == "hD")
-        fpack = os.path.abspath("./python/lvmcam/fpack/fpack")
-        target = os.path.dirname(paths[i])
-        if compress == "r":
-            option = "-r"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            paths[i] = (paths[i], paths[i] + ".fz")
-        elif compress == "h":
-            option = "-h"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            paths[i] = (paths[i], paths[i] + ".fz")
-        elif compress == "rF":
-            option = "-r -F"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            # paths[i] = (paths[i], paths[i] + ".fz")
-        elif compress == "rD":
-            option = "-r -D"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            paths[i] = paths[i] + ".fz"
-        elif compress == "hF":
-            option = "-h -F"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            # paths[i] = (paths[i], paths[i] + ".fz")
-        elif compress == "hD":
-            option = "-h -D"
-            os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-            paths[i] = paths[i] + ".fz"
-    # for path in paths:
-    #     os.system(f"tar {paths}")
+        compress_fits(paths, compress, i)
+
+
+@modules.timeit
+def compress_fits(paths, compress, i):
+    fpack = os.path.abspath("./python/lvmcam/fpack/fpack")
+    target = os.path.dirname(paths[i])
+    if compress == "r":
+        option = "-r"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+        paths[i] = (paths[i], paths[i] + ".fz")
+    elif compress == "h":
+        option = "-h"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+        paths[i] = (paths[i], paths[i] + ".fz")
+    elif compress == "rF":
+        option = "-r -F"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+    elif compress == "rD":
+        option = "-r -D"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+        paths[i] = paths[i] + ".fz"
+    elif compress == "hF":
+        option = "-h -F"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+    elif compress == "hD":
+        option = "-h -D"
+        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
+        paths[i] = paths[i] + ".fz"
 
 
 @modules.timeit
