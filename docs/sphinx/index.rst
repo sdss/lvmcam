@@ -96,9 +96,9 @@ Set the python 3.8+ virtual environment.
 
 .. code-block:: console 
 
-  $ pyenv install 3.9.7
-  $ pyenv virtualenv 3.9.7 lvmcam-with-3.9.7
-  $ pyenv local lvmcam-with-3.9.7
+  $ pyenv install 3.9.8
+  $ pyenv virtualenv 3.9.8 lvmcam-with-3.9.8
+  $ pyenv local lvmcam-with-3.9.8
 
 Install poetry and dependencies.
 
