@@ -9,7 +9,7 @@ from clu.command import Command
 
 from lvmcam.actor import modules
 from basecam.actor.commands import camera_parser as parser
-from lvmcam.actor.commands.connection import cam_list
+# from lvmcam.actor.commands.connection import cam_list
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.araviscam.aravis import Aravis
 
@@ -77,8 +77,8 @@ async def connection(
     """
     modules.change_dir_for_normal_actor_start(__file__)
     # cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
-    if cam_list:
-        for cam in cam_list:
+    if modules.variables.cam_list:
+        for cam in modules.variables.cam_list:
             command.info(CONNECTED={"name": cam.name, "uid": cam.uid})
         return command.finish()
     else:

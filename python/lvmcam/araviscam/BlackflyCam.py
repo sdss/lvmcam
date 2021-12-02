@@ -31,6 +31,9 @@ from lvmcam.actor import modules
 # https://pygobject.readthedocs.io/en/latest/
 from lvmcam.araviscam.aravis import Aravis
 
+import basecam.models.card as card
+
+from lvmcam.actor.commands import expose
 
 # https://pypi.org/project/sdss-basecam/
 # https://githum.com/sdss/basecam/
@@ -781,6 +784,11 @@ class BlackflyImageAreaMixIn(ImageAreaMixIn):
 #     )
 
 
+class WcsHdrCards(card.MacroCard):
+    def macro(self, exposure, context={}):
+        wcshdr = get_wcshdr(modules.variables.cs_list[0], modules.variables.camname, modules.variables.targ, modules.variables.kmirr, modules.variables.flen)
+        return wcshdr
+
 # @modules.timeit
 def get_wcshdr(
     cs,
@@ -790,7 +798,8 @@ def get_wcshdr(
     flen,
 ):
     if targ is not None and kmirr is not None:
-        wcshdr = astropy.io.fits.Header()
+        # wcshdr = astropy.io.fits.Header()
+        wcshdr = []
 
         key = astropy.io.fits.Card("CUNIT1", "deg", "WCS units along axis 1")
         wcshdr.append(key)

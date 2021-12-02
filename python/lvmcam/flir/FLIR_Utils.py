@@ -1,106 +1,134 @@
 from lvmcam.araviscam.aravis import Aravis
 from lvmcam.actor import modules
+import basecam.models.card as card
+# from lvmcam.actor.commands import connection
 
 # --------------------------------------------------------------------------------------------
 
 
-async def custom_status(cam, dev):
-    [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
-    [x, y, width, height] = cam.get_region()  # Get RoI details
-    payload = cam.get_payload()  # Get "payload", the size of in bytes
+class CamCards(card.MacroCard):
+    def macro(self, exposure, context={}):
+        camname = modules.variables.camname
+        # print(camname)
+        cam, dev = modules.variables.dev_list[camname]
+        [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+        [x, y, width, height] = cam.get_region()  # Get RoI details
+        payload = cam.get_payload()  # Get "payload", the size of in bytes
 
-    stat = {
-        "Camera model": f"{cam.get_model_name()}",
-        "Camera vendor": f"{cam.get_vendor_name()}",
-        "Camera id": f"{cam.get_device_id()}",
-        "Pixel format": f"{cam.get_pixel_format_as_string()}",
-        "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
-        "Full Frame": f"{fullWidth}x{fullHeight}",
-        "ROI": f"{width}x{height} at {x},{y}",
-        "Frame size": f"{payload} Bytes",
-        "Frame rate": f"{cam.get_frame_rate()} Hz",
-        "Exposure time": f"{cam.get_exposure_time()/1.0E6} seconds",
-        "Gain Conv.": f"{cam.get_string('GainConversion')}",
-        "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
-        "Gamma Value": f"{cam.get_float('Gamma')}",
-        "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
-        "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
-        "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
-        "Gain bounds": f"{cam.get_gain_bounds()}",
-        "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
-        "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
-        "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
-        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
-    }
-    return stat
+        status = [('PXFORMAT', cam.get_pixel_format_as_string(), "Pixel format"),
+                  ('FULLFRAM', f"{fullWidth}x{fullHeight}", "Full Frame"),
+                  ("ROI", f"{width}x{height} at {x},{y}", "ROI"),
+                  ("FRAMSIZE", payload, "Frame size (Bytes)"),
+                  ("FRAMRATE", cam.get_frame_rate(), "Frame rate (Hz)"),
+                  ("EXPTIME", cam.get_exposure_time() / 1.0E6, "Exposure time (seconds)"),
+                  ("GAINCONV", cam.get_string('GainConversion'), "Gain Conv."),
+                  ("GAMMAENA", cam.get_boolean('GammaEnable'), "Gamma Enable"),
+                  ("GAMMAVAL", cam.get_float('Gamma'), "Gamma Value"),
+                  ("ACQUIMOD", Aravis.acquisition_mode_to_string(cam.get_acquisition_mode()), "Acquisition mode"),
+                  ("FRMRATBD", str(cam.get_frame_rate_bounds()), "Framerate bounds"),
+                  ("EXPTIMBD", str(cam.get_exposure_time_bounds()), "Exp. time bounds"),
+                  ("GAINBD", str(cam.get_gain_bounds()), "Gain bounds"),
+                  ("VOLTAGE", cam.get_float('PowerSupplyVoltage'), "Power Supply Voltage (V)"),
+                  ("CURRENT", cam.get_float('PowerSupplyCurrent'), "Power Supply Current (A)"),
+                  ("POWER", cam.get_float('PowerSupplyVoltage') * cam.get_float('PowerSupplyCurrent'), "Total Dissiapted Power (W)"),
+                  ("CAMTEMP", dev.get_float_feature_value('DeviceTemperature'), "Camera Temperature (C)")]
+
+        return status
+
+# --------------------------------------------------------------------------------------------
+
+
+# async def custom_status(cam, dev):
+#     [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+#     [x, y, width, height] = cam.get_region()  # Get RoI details
+#     payload = cam.get_payload()  # Get "payload", the size of in bytes
+
+#     stat = {
+#         "Camera model": f"{cam.get_model_name()}",
+#         "Camera vendor": f"{cam.get_vendor_name()}",
+#         "Camera id": f"{cam.get_device_id()}",
+#         "Pixel format": f"{cam.get_pixel_format_as_string()}",
+#         "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
+#         "Full Frame": f"{fullWidth}x{fullHeight}",
+#         "ROI": f"{width}x{height} at {x},{y}",
+#         "Frame size": f"{payload} Bytes",
+#         "Frame rate": f"{cam.get_frame_rate()} Hz",
+#         "Exposure time": f"{cam.get_exposure_time()/1.0E6} seconds",
+#         "Gain Conv.": f"{cam.get_string('GainConversion')}",
+#         "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
+#         "Gamma Value": f"{cam.get_float('Gamma')}",
+#         "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
+#         "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
+#         "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
+#         "Gain bounds": f"{cam.get_gain_bounds()}",
+#         "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
+#         "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
+#         "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
+#         "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
+#     }
+#     return stat
+
+
+# # --------------------------------------------------------------------------------------------
+
+
+# async def status_for_header(cam):
+#     # [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+#     [x, y, width, height] = cam.get_region()  # Get RoI details
+#     # payload = cam.get_payload()  # Get "payload", the size of in bytes
+
+#     stat = {
+#         "Pixel format": f"{cam.get_pixel_format_as_string()}",
+#         "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
+#         "ROI": f"{width}x{height} at {x},{y}",
+#         "Frame rate": f"{cam.get_frame_rate()} Hz",
+#         "Gain Conv.": f"{cam.get_string('GainConversion')}",
+#         "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
+#         "Gamma Value": f"{cam.get_float('Gamma')}",
+#         "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
+#         "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
+#         "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
+#         "Gain bounds": f"{cam.get_gain_bounds()}",
+#     }
+#     return stat
+
+
+# async def vol_cur_tem(cam, dev):
+#     # [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
+#     # [x, y, width, height] = cam.get_region()  # Get RoI details
+#     # payload = cam.get_payload()  # Get "payload", the size of in bytes
+
+#     stat = {
+#         # "Pixel format": f"{cam.get_pixel_format_as_string()}",
+#         # "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
+#         # "ROI": f"{width}x{height} at {x},{y}",
+#         # "Frame rate": f"{cam.get_frame_rate()} Hz",
+#         # "Gain Conv.": f"{cam.get_string('GainConversion')}",
+#         # "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
+#         # "Gamma Value": f"{cam.get_float('Gamma')}",
+#         # "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
+#         # "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
+#         # "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
+#         # "Gain bounds": f"{cam.get_gain_bounds()}",
+#         "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
+#         "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
+#         # "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
+#         "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
+#     }
+#     return stat
 
 
 # --------------------------------------------------------------------------------------------
 
 
-async def status_for_header(cam):
-    # [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
-    [x, y, width, height] = cam.get_region()  # Get RoI details
-    # payload = cam.get_payload()  # Get "payload", the size of in bytes
-
-    stat = {
-        "Pixel format": f"{cam.get_pixel_format_as_string()}",
-        "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
-        "ROI": f"{width}x{height} at {x},{y}",
-        "Frame rate": f"{cam.get_frame_rate()} Hz",
-        "Gain Conv.": f"{cam.get_string('GainConversion')}",
-        "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
-        "Gamma Value": f"{cam.get_float('Gamma')}",
-        "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
-        "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
-        "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
-        "Gain bounds": f"{cam.get_gain_bounds()}",
-    }
-    return stat
-
-
-async def vol_cur_tem(cam, dev):
-    # [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
-    # [x, y, width, height] = cam.get_region()  # Get RoI details
-    # payload = cam.get_payload()  # Get "payload", the size of in bytes
-
-    stat = {
-        # "Pixel format": f"{cam.get_pixel_format_as_string()}",
-        # "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
-        # "ROI": f"{width}x{height} at {x},{y}",
-        # "Frame rate": f"{cam.get_frame_rate()} Hz",
-        # "Gain Conv.": f"{cam.get_string('GainConversion')}",
-        # "Gamma Enable": f"{cam.get_boolean('GammaEnable')}",
-        # "Gamma Value": f"{cam.get_float('Gamma')}",
-        # "Acquisition mode": f"{Aravis.acquisition_mode_to_string(cam.get_acquisition_mode())}",
-        # "Framerate bounds": f"{cam.get_frame_rate_bounds()}",
-        # "Exp. time bounds": f"{cam.get_exposure_time_bounds()}",
-        # "Gain bounds": f"{cam.get_gain_bounds()}",
-        "Power Supply Voltage": f"{cam.get_float('PowerSupplyVoltage')} V",
-        "Power Supply Current": f"{cam.get_float('PowerSupplyCurrent')} A",
-        # "Total Dissiapted Power": f"{cam.get_float('PowerSupplyVoltage')*cam.get_float('PowerSupplyCurrent')} W",
-        "Camera Temperature": f"{dev.get_float_feature_value('DeviceTemperature')} C",
-    }
-    return stat
-
-
-# --------------------------------------------------------------------------------------------
-
-
-def setup_camera(fakeCam=False):
+def setup_camera():
     Aravis.update_device_list()
-    if fakeCam:
-        # Aravis.enable_interface("Fake")
-        cam = Aravis.FakeCamera.new("-1")
-        dev = Aravis.FakeDevice.new("-1")
-        # print(cam)
-    else:
-        try:
-            cam = Aravis.Camera.new(Aravis.get_device_id(0))
-        except:
-            print("ERROR - No camera found")
-            return None, None
-        dev = cam.get_device()
+    try:
+        cam = Aravis.Camera.new(Aravis.get_device_id(0))
+    except:
+        print("ERROR - No camera found")
+        return None, None
+    dev = cam.get_device()
     return cam, dev
 
 

@@ -26,27 +26,27 @@ def log(message, level=logging.DEBUG, use_header=True):
     logger.log(level, header + message)
 
 
-def timeit(func):
-    async def process(func, *args, **params):
-        if asyncio.iscoroutinefunction(func):
-            # print("this function is a coroutine: {}".format(func.__name__))
-            return await func(*args, **params)
-        else:
-            # print("this is not a coroutine")
-            return func(*args, **params)
+# def timeit(func):
+#     async def process(func, *args, **params):
+#         if asyncio.iscoroutinefunction(func):
+#             # print("this function is a coroutine: {}".format(func.__name__))
+#             return await func(*args, **params)
+#         else:
+#             # print("this is not a coroutine")
+#             return func(*args, **params)
 
-    async def helper(*args, **params):
-        # print("{}.time".format(func.__name__))
-        start = time.time()
-        result = await process(func, *args, **params)
+#     async def helper(*args, **params):
+#         # print("{}.time".format(func.__name__))
+#         start = time.time()
+#         result = await process(func, *args, **params)
 
-        # Test normal function route...
-        # result = await process(lambda *a, **p: print(*a, **p), *args, **params)
+#         # Test normal function route...
+#         # result = await process(lambda *a, **p: print(*a, **p), *args, **params)
 
-        log(f"[{func.__name__}]: {(time.time() - start):.3f} s")
-        return result
+#         log(f"[{func.__name__}]: {(time.time() - start):.3f} s")
+#         return result
 
-    return helper
+#     return helper
 
 
 def atimeit(func):
@@ -125,3 +125,14 @@ def change_dir_for_normal_actor_start(file):
 #         print(func.__name__, "done")
 
 #     return wrapper
+
+class variables():
+    targ = None
+    cs = None
+    cs_list = []
+    cam_list = []
+    dev_list = {}
+    camdict = {}
+    camname = None
+    kmirr = None
+    flen = None
