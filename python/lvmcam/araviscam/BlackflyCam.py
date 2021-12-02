@@ -154,6 +154,8 @@ class BlackflyCameraSystem(CameraSystem):
 
         return ids
 
+from basecam.models.builtin import basic_fz_fits_model
+
 
 class BlackflyCamera(BaseCamera):
     """A FLIR (formerly Point Grey Research) Blackfly camera.
@@ -166,6 +168,8 @@ class BlackflyCamera(BaseCamera):
     the first values in the sequential data are the bottom row).
     So this is not done in this python code but by the camera.
     """
+    
+    fits_model=basic_fz_fits_model
 
     def __init__(
         self,
