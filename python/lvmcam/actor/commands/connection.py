@@ -77,6 +77,13 @@ async def connect(
             *test_camdict.values()
         )
         cam_list.append(test_cam)
+        # camera, device = flir.setup_camera(True)
+        # camera.name, camera.uid = "test", "-1"
+        # cam_list.append(camera)
+        # dev_list[camera.name] = (camera, device)
+        # camdict[camera.name] = camera
+        # command.info(CAMERA={"name": camera.name, "uid": camera.uid})
+        # return command.finish()
 
     else:
         available_cameras_uid, cs = find_all_available_cameras(config, ip)

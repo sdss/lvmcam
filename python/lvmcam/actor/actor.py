@@ -35,6 +35,7 @@ from clu import AMQPActor
 from basecam.actor import BaseCameraActor
 from lvmcam.araviscam import BlackflyCam as blc
 
+
 class LvmcamBaseActor(BaseCameraActor):
     """Lvmcam base actor."""
 

@@ -87,14 +87,20 @@ async def vol_cur_tem(cam, dev):
 # --------------------------------------------------------------------------------------------
 
 
-def setup_camera():
+def setup_camera(fakeCam=False):
     Aravis.update_device_list()
-    try:
-        cam = Aravis.Camera.new(Aravis.get_device_id(0))
-    except:
-        print("ERROR - No camera found")
-        return None, None
-    dev = cam.get_device()
+    if fakeCam:
+        # Aravis.enable_interface("Fake")
+        cam = Aravis.FakeCamera.new("-1")
+        dev = Aravis.FakeDevice.new("-1")
+        # print(cam)
+    else:
+        try:
+            cam = Aravis.Camera.new(Aravis.get_device_id(0))
+        except:
+            print("ERROR - No camera found")
+            return None, None
+        dev = cam.get_device()
     return cam, dev
 
 

@@ -19,7 +19,7 @@ from basecam.actor.commands import camera_parser as parser
 from lvmcam.actor.commands import connection
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.flir import FLIR_Utils as flir
-
+import basecam.exposure as base_exp
 
 __all__ = ["expose"]
 
@@ -400,22 +400,48 @@ async def expose_cam(exptime, num, cam, camname):
 async def expose_test_cam(testshot, exptime, num, filepath, cam):
     dates = []
     for i in range(num):
-        dates.append(datetime.datetime.utcnow().isoformat())
+        # dates.append(datetime.datetime.utcnow().isoformat())
+        dates.append(datetime.datetime.utcnow())
 
     filepath = os.path.abspath(filepath)
-    configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
-    curNum = get_last_exposure(configfile)
-    jd = time_to_jd(dates)
-    jd_to_folder(filepath, jd)
+    # configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
+    # curNum = get_last_exposure(configfile)
+    # print(dates)
+    # print(datetime.date.strftime(dates[0], "%Y%m%d"))
+    dates2 = []
+    for date in dates:
+        # date_obj = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+        date = datetime.datetime.strftime(date, '%Y%m%d')
+        dates2.append(date)
+    # jd = time_to_jd(dates)
+    # jd_to_folder(filepath, jd)
 
+    basename = '{camera.name}-{num:08d}.fits'
+    # dirname = f'{os.path.abspath(filepath)}/{jd[0]}'
+    # dirname = f'{filepath}/{jd[0]}'
+
+    # basename = '{camera.name}-{num:04d}.fits'
+    # dirname = '/data/lvm/sci/ag/{date.mjd}'
+
+    jd_to_folder(filepath, dates2)
     paths = []
     for i in range(num):
-        curNum += 1
-        filename = (
-            f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
-        )
-        paths.append(os.path.join(filepath, filename))
+        # curNum += 1
+        # filename = (
+        #     f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
+        # )
+        # paths.append(os.path.join(filepath, filename))
+
+        # img_path = os.path.join(filepath, filename)
+        # print(type(img_path))
         original = os.path.abspath("python/lvmcam/actor/example")
+
+        dirname = f'{filepath}/{dates2[i]}'
+        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+        img_path = image_namer(cam)
+        # print(str(img_path))
+        # print(img_path)
+        paths.append(str(img_path))
         if not testshot:
             await asyncio.sleep(exptime)
             shutil.copyfile(original, paths[i])
@@ -426,5 +452,5 @@ async def expose_test_cam(testshot, exptime, num, filepath, cam):
             await asyncio.sleep(exptime)
             shutil.copyfile(original, paths[i])
 
-        set_last_exposure(configfile, curNum)
+        # set_last_exposure(configfile, curNum)
     return filepath, paths
