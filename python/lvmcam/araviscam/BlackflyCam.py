@@ -169,7 +169,7 @@ class BlackflyCamera(BaseCamera):
     So this is not done in this python code but by the camera.
     """
     
-    fits_model=basic_fz_fits_model
+    # fits_model=basic_fz_fits_model
 
     def __init__(
         self,
