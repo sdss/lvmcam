@@ -138,8 +138,7 @@ async def expose(
         # for path in paths:
         #     command.write("i", f"{path}")
         path_dict = {i: paths[i] for i in range(len(paths))}
-        command.info(PATH=path_dict)
-        return command.finish()
+        return command.finish(PATH=path_dict)
 
 
 # @modules.timeit
@@ -158,30 +157,30 @@ def make_targ_from_ra_dec(ra, dec):
 
 
 # @modules.timeit
-def get_last_exposure(path):
-    try:
-        with open(path, "r") as f:
-            return int(f.readline())
-    except FileNotFoundError:
-        dirname = os.path.dirname(path)
-        os.makedirs(dirname, exist_ok=True)
-        with open(path, "w") as f:
-            f.write("0")
-            return 0
+# def get_last_exposure(path):
+#     try:
+#         with open(path, "r") as f:
+#             return int(f.readline())
+#     except FileNotFoundError:
+#         dirname = os.path.dirname(path)
+#         os.makedirs(dirname, exist_ok=True)
+#         with open(path, "w") as f:
+#             f.write("0")
+#             return 0
 
 
 # @modules.timeit
-def set_last_exposure(path, num):
-    with open(path, "w") as f:
-        f.write(str(num))
+# def set_last_exposure(path, num):
+#     with open(path, "w") as f:
+#         f.write(str(num))
 
 
 # @modules.timeit
-def time_to_jd(times):
-    # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
-    t = Time(times, format="isot", scale="utc")
-    jd = np.array(np.floor(t.to_value("jd")), dtype=int)
-    return jd
+# def time_to_jd(times):
+#     # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
+#     t = Time(times, format="isot", scale="utc")
+#     jd = np.array(np.floor(t.to_value("jd")), dtype=int)
+#     return jd
 
 
 # @modules.timeit
@@ -238,40 +237,25 @@ async def make_file(
     dates,
     compress,
 ):
-    configfile, curNum, paths = prepare_write_file(
-        testshot, num, filepath, cam, hdus, dates
-    )
-    await write_file(
-        testshot,
-        num,
-        hdus,
-        configfile,
-        curNum,
-        paths,
-        compress,
-    )
+    paths = await write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress)
     return paths
 
 
-@modules.timeit
-def prepare_write_file(testshot, num, filepath, cam, hdus, dates):
+@modules.atimeit
+async def write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress):
     filepath = os.path.abspath(filepath)
-
-    configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
-    curNum = get_last_exposure(configfile)
-
-    jd = time_to_jd(dates)
-    jd_to_folder(filepath, jd)
-
+    dates2 = []
+    for date in dates:
+        date_obj = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
+        dt = datetime.datetime.strftime(date_obj, '%Y%m%d')
+        dates2.append(dt)
+    basename = '{camera.name}-{num:08d}.fits'
+    jd_to_folder(filepath, dates2)
     paths = []
     for i in range(num):
-        curNum += 1
-        filename = (
-            f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
-        )
-        paths.append(os.path.join(filepath, filename))
-
-        # correct fits data/header
+        dirname = f'{filepath}/{dates2[i]}'
+        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+        img_path = str(image_namer(cam))
         _hdusheader = hdus[i].header
         _hdusdata = hdus[i].data[0]
         primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
@@ -280,36 +264,90 @@ def prepare_write_file(testshot, num, filepath, cam, hdus, dates):
                 primary_hdu,
             ]
         )
-
-    return configfile, curNum, paths
-
-
-@modules.atimeit
-async def write_file(
-    testshot,
-    num,
-    hdus,
-    configfile,
-    curNum,
-    paths,
-    compress,
-):
-    for i in range(num):
-
-        if not testshot:
-
+        if testshot:
+            img_path = f"{filepath}/test.fits"
             writeto_partial = functools.partial(
-                hdus[i].writeto, paths[i], checksum=True
+                hdus[i].writeto, img_path, checksum=True, overwrite=True
             )
         else:
-
             writeto_partial = functools.partial(
-                hdus[i].writeto, paths[i], checksum=True, overwrite=True
+                hdus[i].writeto, img_path, checksum=True
             )
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, writeto_partial)
-        set_last_exposure(configfile, curNum)
-        compress_fits(paths, compress, i)
+        paths.append(img_path)
+    return paths
+
+
+# @modules.timeit
+# def prepare_write_file(testshot, num, filepath, cam, hdus, dates):
+#     filepath = os.path.abspath(filepath)
+
+#     # configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
+#     # curNum = get_last_exposure(configfile)
+#     # jd = time_to_jd(dates)
+#     # jd_to_folder(filepath, jd)
+
+#     dates2 = []
+#     for date in dates:
+#         date_obj = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
+#         dt = datetime.datetime.strftime(date_obj, '%Y%m%d')
+#         dates2.append(dt)
+#     basename = '{camera.name}-{num:08d}.fits'
+
+#     jd_to_folder(filepath, dates2)
+#     paths = []
+#     for i in range(num):
+#         # curNum += 1
+#         # filename = (
+#         #     f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
+#         # )
+#         # paths.append(os.path.join(filepath, filename))
+
+#         dirname = f'{filepath}/{dates2[i]}'
+#         image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+#         img_path = image_namer(cam)
+#         # print(img_path)
+#         paths.append(str(img_path))
+
+#         # correct fits data/header
+#         _hdusheader = hdus[i].header
+#         _hdusdata = hdus[i].data[0]
+#         primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
+#         hdus[i] = fits.HDUList(
+#             [
+#                 primary_hdu,
+#             ]
+#         )
+
+#     # return configfile, curNum, paths
+#     return paths
+
+
+# @modules.atimeit
+# async def write_file(
+#     testshot,
+#     num,
+#     hdus,
+#     paths,
+#     compress,
+# ):
+#     for i in range(num):
+
+#         if not testshot:
+
+#             writeto_partial = functools.partial(
+#                 hdus[i].writeto, paths[i], checksum=True
+#             )
+#         else:
+
+#             writeto_partial = functools.partial(
+#                 hdus[i].writeto, paths[i], checksum=True, overwrite=True
+#             )
+#         loop = asyncio.get_event_loop()
+#         await loop.run_in_executor(None, writeto_partial)
+#         # set_last_exposure(configfile, curNum)
+#         compress_fits(paths, compress, i)
 
 
 @modules.timeit
@@ -415,7 +453,6 @@ async def expose_test_cam(testshot, exptime, num, filepath, cam):
         dates2.append(date)
     # jd = time_to_jd(dates)
     # jd_to_folder(filepath, jd)
-
     basename = '{camera.name}-{num:08d}.fits'
     # dirname = f'{os.path.abspath(filepath)}/{jd[0]}'
     # dirname = f'{filepath}/{jd[0]}'
@@ -438,19 +475,19 @@ async def expose_test_cam(testshot, exptime, num, filepath, cam):
 
         dirname = f'{filepath}/{dates2[i]}'
         image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
-        img_path = image_namer(cam)
+        img_path = str(image_namer(cam))
         # print(str(img_path))
         # print(img_path)
-        paths.append(str(img_path))
-        if not testshot:
+        if testshot:
+            img_path = f"{filepath}/test.fits"
+            if os.path.exists(img_path):
+                os.remove(img_path)
             await asyncio.sleep(exptime)
-            shutil.copyfile(original, paths[i])
-
+            shutil.copyfile(original, img_path)
         else:
-            if os.path.exists(paths[i]):
-                os.remove(paths[i])
             await asyncio.sleep(exptime)
-            shutil.copyfile(original, paths[i])
-
+            shutil.copyfile(original, img_path)
+            
         # set_last_exposure(configfile, curNum)
+        paths.append(img_path)
     return filepath, paths
