@@ -15,7 +15,8 @@ from click.decorators import command
 from clu.command import Command
 
 from lvmcam.actor import modules
-from lvmcam.actor.commands import connection, parser
+from basecam.actor.commands import camera_parser as parser
+from lvmcam.actor.commands import connection
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.flir import FLIR_Utils as flir
 

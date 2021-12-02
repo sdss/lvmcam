@@ -8,7 +8,7 @@ from click.decorators import command
 from clu.command import Command
 
 from lvmcam.actor import modules
-from lvmcam.actor.commands import parser
+from basecam.actor.commands import camera_parser as parser
 from lvmcam.actor.commands.connection import cam_list
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.araviscam.aravis import Aravis
