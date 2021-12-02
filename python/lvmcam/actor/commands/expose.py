@@ -30,13 +30,14 @@ __all__ = ["expose"]
 @parser.command()
 @click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
+@click.option("-eh", "--extraheader", is_flag=True)
 # compression option
 @click.option(
     "-c",
     "--compress",
     type=click.Choice(["NO", "R1", "RO", "P1", "G1", "G2", "H1"], case_sensitive=True),
 )
-@click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
+# @click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
 # right ascension in degrees
 @click.option("-r", "--ra")
 # declination in degrees
@@ -56,7 +57,7 @@ async def expose(
     command: Command,
     testshot: bool,
     verbose: bool,
-    filepath: str,
+    # filepath: str,
     ra: float,
     dec: float,
     kmirr: float,
@@ -65,6 +66,7 @@ async def expose(
     num: int,
     camname: str,
     compress: click.Choice,
+    extraheader: bool,
 ):
     """
     Expose ``num`` times and write the images to a FITS file.
@@ -75,8 +77,6 @@ async def expose(
         Test shot on or off
     verbose
         Verbosity on or off
-    filepath
-        The path to save the images captured by the camera
     ra
         RA J2000 in degrees or in xxhxxmxxs format
     dec
@@ -94,6 +94,8 @@ async def expose(
         The name of camera to expose.
     compress
         The option of compression. One of 'None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'.
+    extraheader
+        Extra header in camera.yaml on or off.
     """
     if not modules.variables.camdict:
         return command.error("There are no connected cameras")
@@ -129,12 +131,12 @@ async def expose(
             num,
             targ,
             kmirr,
-            filepath,
             camname,
             cam,
             flen,
             compress,
             command,
+            extraheader,
         )
         # for path in paths:
         #     command.write("i", f"{path}")
@@ -202,12 +204,12 @@ async def expose_real_cam(
     num,
     targ,
     kmirr,
-    filepath,
     camname,
     cam,
     flen,
     compress,
     command,
+    extraheader,
 ):
 
     # exps, hdrs, status, camera = await expose_cam(exptime, num, cam, camname)
@@ -215,13 +217,12 @@ async def expose_real_cam(
     # hdrs = []
     # status = []
     # camera, device = connection.dev_list[camname]
+    path = modules.variables.config['cameras'][camname]['path']
+    basename = path['basename']
+    dirname = path['dirname']
+    filepath = os.path.abspath(path['filepath'])
+    dirname = os.path.join(filepath, dirname)
 
-    today = datetime.date.today()
-    # YYmmdd
-    date = today.strftime("%Y%m%d")
-    filepath = os.path.abspath(filepath)
-    basename = '{camera.name}-{num:08d}.fits'
-    dirname = f'{filepath}/{date}'
     # date = datetime.datetime.now()
     # print(date)
     # fits_model = builtin.basic_fits_model
@@ -241,7 +242,7 @@ async def expose_real_cam(
     else:
         comp = False
 
-    header = fits.HeaderModel([
+    hdrlist = [
         "CAMNAME",
         "CAMUID",
         "IMAGETYP",
@@ -249,7 +250,14 @@ async def expose_real_cam(
         card.Card("DATE-OBS", value="{__exposure__.obstime.tai.isot}", comment="Date (in TIMESYS) the exposure started"),
         flir.CamCards(),
         blc.WcsHdrCards(),
-    ])
+    ]
+
+    if extraheader:
+        config = modules.variables.config
+        cg = card.CardGroup(config['cameras'][camname]['extrahdr'])
+        hdrlist.append(cg)
+
+    header = fits.HeaderModel(hdrlist)
     fits_model = fits.FITSModel([fits.Extension(header_model=header, name="PRIMARY", compressed=comp)])
     paths = []
     for i in range(num):
@@ -292,57 +300,57 @@ async def expose_real_cam(
     return paths
 
 
-@modules.atimeit
-async def make_file(
-    testshot,
-    num,
-    filepath,
-    cam,
-    hdus,
-    dates,
-    compress,
-):
-    paths = await write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress)
-    return paths
+# @modules.atimeit
+# async def make_file(
+#     testshot,
+#     num,
+#     filepath,
+#     cam,
+#     hdus,
+#     dates,
+#     compress,
+# ):
+#     paths = await write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress)
+#     return paths
 
 
-@modules.atimeit
-async def write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress):
-    filepath = os.path.abspath(filepath)
-    dates2 = []
-    for date in dates:
-        date_obj = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
-        dt = datetime.datetime.strftime(date_obj, '%Y%m%d')
-        dates2.append(dt)
-    basename = '{camera.name}-{num:08d}.fits'
-    jd_to_folder(filepath, dates2)
-    paths = []
-    for i in range(num):
-        dirname = f'{filepath}/{dates2[i]}'
-        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
-        img_path = str(image_namer(cam))
+# @modules.atimeit
+# async def write_sep_fits_file(testshot, num, filepath, cam, hdus, dates, compress):
+#     filepath = os.path.abspath(filepath)
+#     dates2 = []
+#     for date in dates:
+#         date_obj = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
+#         dt = datetime.datetime.strftime(date_obj, '%Y%m%d')
+#         dates2.append(dt)
+#     basename = '{camera.name}-{num:08d}.fits'
+#     jd_to_folder(filepath, dates2)
+#     paths = []
+#     for i in range(num):
+#         dirname = f'{filepath}/{dates2[i]}'
+#         image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+#         img_path = str(image_namer(cam))
 
-        _hdusheader = hdus[i].header
-        _hdusdata = hdus[i].data[0]
-        primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
-        hdus[i] = fits.HDUList(
-            [
-                primary_hdu,
-            ]
-        )
-        if testshot:
-            img_path = f"{filepath}/test.fits"
-            writeto_partial = functools.partial(
-                hdus[i].writeto, img_path, checksum=True, overwrite=True
-            )
-        else:
-            writeto_partial = functools.partial(
-                hdus[i].writeto, img_path, checksum=True
-            )
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, writeto_partial)
-        paths.append(img_path)
-    return paths
+#         _hdusheader = hdus[i].header
+#         _hdusdata = hdus[i].data[0]
+#         primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
+#         hdus[i] = fits.HDUList(
+#             [
+#                 primary_hdu,
+#             ]
+#         )
+#         if testshot:
+#             img_path = f"{filepath}/test.fits"
+#             writeto_partial = functools.partial(
+#                 hdus[i].writeto, img_path, checksum=True, overwrite=True
+#             )
+#         else:
+#             writeto_partial = functools.partial(
+#                 hdus[i].writeto, img_path, checksum=True
+#             )
+#         loop = asyncio.get_event_loop()
+#         await loop.run_in_executor(None, writeto_partial)
+#         paths.append(img_path)
+#     return paths
 
 
 # @modules.timeit

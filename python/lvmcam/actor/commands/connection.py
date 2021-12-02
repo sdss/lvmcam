@@ -14,6 +14,7 @@ from lvmcam.actor import modules
 from basecam.actor.commands import camera_parser as parser
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.flir import FLIR_Utils as flir
+from sdsstools import read_yaml_file
 
 __all__ = ["connect", "disconnect"]
 
@@ -49,6 +50,7 @@ async def connect(
         list of explicit IP's (like 192.168.70.51 or lvmt.irws2.mpia.de)
     """
     modules.change_dir_for_normal_actor_start(__file__)
+    modules.variables.config = read_yaml_file(config)
 
     if verbose:
         modules.logger.sh.setLevel(int(verbose))

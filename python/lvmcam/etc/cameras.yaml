@@ -1,5 +1,4 @@
 ---
-
 # sdss/araviscam configuration for the 7 auto-guiders of LVMi-South
 cameras:
     # the sole existing MPIA test camera Blackfly GigE of 2020-12-11, C-mount cut in June
@@ -55,6 +54,18 @@ cameras:
             string:
     
         shutter: false
+        
+        extrahdr: [
+         ['TEST1',               9999, "Extra header test 1"],
+         ['TEST2',                999, "Extra header test 2"],
+         ['TESTHDR3',    -1, "Extra header test 3"],
+         ['TESTHDR4',    -2, "Extra header test 4"]
+        ]
+
+        path:
+            basename: "lvm.{camera.name}-{num:08d}.fits"
+            dirname: "lvm/sci/agw/{date.strftime('%Y%m%d')}"
+            filepath: "python/lvmcam/assets"
 
     # autoguider east of sci telescope
     # the second MPIA test camera Blackfly GigE in 030 2021-07-21 2c:dd:a3:26:3c:ee

@@ -136,3 +136,4 @@ class variables():
     camname = None
     kmirr = None
     flen = None
+    config = None
