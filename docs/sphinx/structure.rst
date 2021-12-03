@@ -8,222 +8,102 @@ Current fits header
 .. code-block:: console
 
     $ clu
-    lvmcam expose -p "foo/bar" -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 3 sci.agw
-    03:32:36.491 lvmcam > 
-    03:32:39.825 lvmcam i {
+    lvmcam expose -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.5 3 sci.agw
+    00:37:43.916 lvmcam > 
+    00:37:47.262 lvmcam : {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000001.fits",
-            "1": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000002.fits",
-            "2": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000003.fits"
+            "0": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
+            "1": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
+            "2": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
-    03:32:39.828 lvmcam : 
     
 The current headers of fits file are as follows.
 
-.. list-table:: 
-   :header-rows: 1
+.. code-block:: console
 
-   * - Header
-     - Value
-     - Comment
-   * - SIMPLE
-     - T
-     - conforms to FITS standard
-   * - BITPIX
-     - 16
-     - array data type
-   * - NAXIS
-     - 2
-     - number of array dimensions
-   * - NAXIS1
-     - 1600
-     - 
-   * - NAXIS2
-     - 1100
-     - 
-   * - VCAM
-     - 0.0.301
-     - Version of the camera library
-   * - CAMNAME
-     - sci.agw
-     - Camera name
-   * - CAMUID
-     - 19283193
-     - Camera UID
-   * - IMAGETYP
-     - object
-     - The image type of the file
-   * - EXPTIME
-     - 0.1
-     - Exposure time of single integration [s]
-   * - EXPTIMEN
-     - 0.1
-     - Total exposure time [s]
-   * - STACK
-     - 1
-     - Number of stacked frames
-   * - STACKFUN
-     - median
-     - Function used for stacking
-   * - TIMESYS
-     - TAI
-     - The time scale system
-   * - DATE-OBS
-     - 2021-11-01T03:31:20.126
-     - Date (in TIMESYS) the exposure started
-   * - BINX
-     - 1
-     - [ct] Horizontal Bin Factor 1, 2 or 4
-   * - BINY
-     - 1
-     - [ct] Vertical Bin Factor 1, 2 or 4
-   * - WIDTH
-     - 1600
-     - [ct] Pixel Columns
-   * - HEIGHT
-     - 1100
-     - [ct] Pixel Rows
-   * - REGX
-     - 1
-     - [ct] Pixel Region Horiz start
-   * - REGY
-     - 1
-     - [ct] Pixel Region Vert start
-   * - GAIN
-     - 0.3998054629726562
-     - Gain
-   * - REVERSEX
-     - F
-     - Flipped left-right
-   * - REVERSEY
-     - T
-     - Flipped up-down
-   * - BINMODEX
-     - Sum
-     - Horiz Bin Mode Sum or Averag
-   * - BINMODEY
-     - Sum
-     - Vert Bin Mode Sum or Averag
-   * - CAMBLCLM
-     - F
-     - Black Level Clamping en/disabled
-   * - CAMTYP
-     - Blackfly S BFS-PGE-16S7M
-     - Camera model
-   * - CRPIX1
-     - 800.0
-     - [px] RA center along axis 1
-   * - CRPIX2
-     - -1238.301111111111
-     - [px] DEC center along axis 2
-   * - VOLTAGE
-     - 9.75341796875 V
-     - Power Supply Voltage
-   * - CURRENT
-     - 0.28466796875 A
-     - Power Supply Current
-   * - CAMERATE
-     - 55.75 C
-     - Camera Temperature
-   * - PIXELFOR
-     - Mono16
-     - Pixel format
-   * - ROI
-     - 1600x1100 at 0,0
-     - ROI
-   * - FRAME
-     - 27.695798215061195 Hz
-     - Frame rate
-   * - GAINCONV
-     - LCG
-     - Gain Conv.
-   * - GAMMAENA
-     - False
-     - Gamma Enable
-   * - GAMMAVAL
-     - 0.800048828125
-     - Gamma Value
-   * - ACQUISIT
-     - SingleFrame
-     - Acquisition mode
-   * - FRAMERAT
-     - (min=1.0, max=31.46968198249933)
-     - Framerate bounds
-   * - EXPTIMEB
-     - (min=14.0, max=30000003.0)
-     - Exp. time bounds
-   * - GAINBOUN
-     - (min=0.0, max=47.994294033026364)
-     - Gain bounds
-   * - CUNIT1
-     - deg
-     - WCS units along axis 1                         
-   * - CUNIT2
-     - deg
-     - WCS units along axis 2                         
-   * - CTYPE1
-     - RA---TAN
-     - WCS type axis 1                                
-   * - CTYPE2
-     - DEC--TAN
-     - WCS type axis 2                                
-   * - CRVAL1
-     - 10.68333333333333
-     - [deg] RA at reference pixel                    
-   * - CRVAL2
-     - 41.26916666666666
-     - [deg] DEC at reference pixel                   
-   * - CD1_1
-     - -9.7981553605101E-05
-     - [deg/px] WCS matrix diagonal                   
-   * - CD2_2
-     - 9.79815536051017E-05
-     - [deg/px] WCS matrix diagonal                   
-   * - CD1_2
-     - -0.00026920210605309
-     - [deg/px] WCS matrix outer diagonal             
-   * - CD2_1
-     - -0.00026920210605309
-     - [deg/px] WCS matrix outer diagonal 
-   * - BSCALE
-     - 1
-     - 
-   * - BZERO
-     - 32768
-     - 
-   * - CHECKSUM
-     - WBi9X9g9WAg9W9g9
-     - HDU checksum updated 2021-11-01T12:30:45
-   * - DATASUM
-     - 2464420802
-     - data unit checksum updated 2021-11-01T12:30:45
-
+    SIMPLE  =                    T / conforms to FITS standard                      
+    BITPIX  =                   16 / array data type                                
+    NAXIS   =                    3 / number of array dimensions                     
+    NAXIS1  =                 1600                                                  
+    NAXIS2  =                 1100                                                  
+    NAXIS3  =                    1                                                  
+    EXTEND  =                    T                                                  
+    BSCALE  =                    1                                                  
+    BZERO   =                32768                                                  
+    CAMNAME = 'sci.agw '           / Camera name                                    
+    CAMUID  =             19283193 / Camera UID                                     
+    IMAGETYP= 'object  '           / The image type of the file                     
+    EXPTIME =                  0.5 / Exposure time of single integration [s]        
+    DATE-OBS= '2021-12-03T00:38:23.151' / Date (in TIMESYS) the exposure started    
+    PXFORMAT= 'Mono16  '           / Pixel format                                   
+    FULLFRAM= '1608x1104'          / Full Frame                                     
+    ROI     = '1600x1100 at 0,0'   / ROI                                            
+    FRAMSIZE=              3520000 / Frame size (Bytes)                             
+    FRAMRATE=    3.392067663337556 / Frame rate (Hz)                                
+    EXPTIME =   0.5000019999999999 / Exposure time (seconds)                        
+    GAINCONV= 'LCG     '           / Gain Conv.                                     
+    GAMMAENA=                    F / Gamma Enable                                   
+    GAMMAVAL=       0.800048828125 / Gamma Value                                    
+    ACQUIMOD= 'SingleFrame'        / Acquisition mode                               
+    FRMRATBD= '(min=1.0, max=3.3953648380635064)' / Framerate bounds                
+    EXPTIMBD= '(min=14.0, max=30000003.0)' / Exp. time bounds                       
+    GAINBD  = '(min=0.0, max=47.994294033026364)' / Gain bounds                     
+    VOLTAGE =        9.75341796875 / Power Supply Voltage (V)                       
+    CURRENT =        0.28271484375 / Power Supply Current (A)                       
+    POWER   =     1.46920382976532 / Total Dissiapted Power (W)                     
+    CAMTEMP =               33.375 / Camera Temperature (C)                         
+    CUNIT1  = 'deg     '           / WCS units along axis 1                         
+    CUNIT2  = 'deg     '           / WCS units along axis 2                         
+    CTYPE1  = 'RA---TAN'           / WCS type axis 1                                
+    CTYPE2  = 'DEC--TAN'           / WCS type axis 2                                
+    CRVAL1  =    10.68333333333333 / [deg] RA at reference pixel                    
+    CRVAL2  =    41.26916666666666 / [deg] DEC at reference pixel                   
+    CD1_1   = -9.7981553605101E-05 / [deg/px] WCS matrix diagonal                   
+    CD2_2   = 9.79815536051017E-05 / [deg/px] WCS matrix diagonal                   
+    CD1_2   = -0.00026920210605309 / [deg/px] WCS matrix outer diagonal             
+    CD2_1   = -0.00026920210605309 / [deg/px] WCS matrix outer diagonal             
+    CHECKSUM= '9HDAHH969HCAEH95'   / HDU checksum updated 2021-12-03T09:37:47       
+    DATASUM = '916223505'          / data unit checksum updated 2021-12-03T09:37:47 
+    END                                                                             
 
 The above headers are created by different sources such as sdss/basecam, sdss/araviscam, and sdss/LVM_FLIR_Software.
 
 Current rule of fits file name
---------------------------
+-------------------------------
+
+The rule is ``filepath/dirname/basename``.
+
 .. code-block:: console
 
     $ clu
-    lvmcam expose -p "foo/bar" -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 3 sci.agw
-    03:32:36.491 lvmcam > 
-    03:32:39.825 lvmcam i {
+    lvmcam expose -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.5 3 sci.agw
+    00:37:43.916 lvmcam > 
+    00:37:47.262 lvmcam : {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000001.fits",
-            "1": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000002.fits",
-            "2": "/home/mgjeon/lvmcam/foo/bar/2459519/sci.agw-00000003.fits"
+            "0": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
+            "1": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
+            "2": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
-    03:32:39.828 lvmcam : 
 
-* (FILEPATH from ``-p``)/(Julian day)/``Camera Name-XXXXXXXX.fits``
-    * ``-p`` default = ``python/lvmcam/assets``
-    * ``XXXXXXXX`` = 8-digit number started from last fits file number
+.. code-block:: console
+  
+  # cameras.yaml
+  cameras:
+    sci.agw:
+      name: "sci.agw"
+      ...
+      path:
+            basename: "lvm.{camera.name}-{num:08d}.fits"
+            dirname: "lvm/sci/agw/{date.strftime('%Y%m%d')}"
+            filepath: "python/lvmcam/assets"
+
 
 Sequence diagram of lvmcam
 --------------------------
+
+The following diagram is for version 0.1.4. (It will be updated.)
 
 .. image:: ./_static/lvmcam_sequence_diagram.png
     :width: 800

@@ -11,20 +11,22 @@ import importlib
 import os
 
 import click
+from basecam.actor.commands import camera_parser as parser
 from clu.parsers.click import CluGroup, help_, ping, version
 
+# # import warnings
 
-# import warnings
 
-
-@click.group(cls=CluGroup)
-def parser(*args):
-    pass
+# @click.group(cls=CluGroup)
+# def parser(*args):
+#     pass
 
 
 parser.add_command(ping)
 parser.add_command(version)
 parser.add_command(help_)
+
+
 
 # Autoimport all modules in this directory so that they are added to the parser.
 

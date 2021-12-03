@@ -27,7 +27,7 @@ import os
 from lvmcam import __version__
 
 # from lvmcam.exceptions import LvmcamUserWarning
-# from basecam.actor.commands import camera_parser as lvmcam_command_parser
+from basecam.actor.commands import camera_parser as parser
 
 __all__ = ["LvmcamBaseActor", "LvmcamActor"]
 
@@ -39,7 +39,7 @@ from lvmcam.araviscam import BlackflyCam as blc
 class LvmcamBaseActor(BaseCameraActor):
     """Lvmcam base actor."""
 
-    # parser = lvmcam_command_parser
+    parser = parser
 
     def __init__(
         self,

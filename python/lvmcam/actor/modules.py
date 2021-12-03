@@ -4,6 +4,7 @@ import os
 import asyncio
 import time
 
+import astropy
 
 from sdsstools import get_logger
 from sdsstools.logger import SDSSLogger
@@ -137,3 +138,18 @@ class variables():
     kmirr = None
     flen = None
     config = None
+
+
+# @modules.timeit
+def make_targ_from_ra_dec(ra, dec):
+    if ra is not None and dec is not None:
+        if ra.find("h") < 0:
+            # apparently simple floating point representation
+            targ = astropy.coordinates.SkyCoord(
+                ra=float(ra), dec=float(dec), unit="deg"
+            )
+        else:
+            targ = astropy.coordinates.SkyCoord(ra + " " + dec)
+    else:
+        targ = None
+    return targ

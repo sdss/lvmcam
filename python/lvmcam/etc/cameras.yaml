@@ -1,6 +1,13 @@
 ---
 # sdss/araviscam configuration for the 7 auto-guiders of LVMi-South
 cameras:
+    test:
+        name: "test"
+        uid: "-1"
+        path:
+            basename: "lvm.{camera.name}-{num:08d}.fits"
+            dirname: "test/{date.strftime('%Y%m%d')}"
+            filepath: "python/lvmcam/assets"
     # the sole existing MPIA test camera Blackfly GigE of 2020-12-11, C-mount cut in June
     sci.agw:
         name: "sci.agw"
