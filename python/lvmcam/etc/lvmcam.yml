@@ -1,4 +1,4 @@
- #Actor configuration for the AMQPActor class
+#Actor configuration for the AMQPActor class
 actor:
   name: lvmcam
   host: localhost

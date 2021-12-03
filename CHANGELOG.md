@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.2.0 - December 3, 2021
+
+### 🚀 New & ✨ Improved
+* Issue #41 (Use the basecam.Actor)
+    * `LvmcamBaseActor(BaseActor)` -> `LvmcamBaseActor(BaseCameraActor)`
+* Issue #42 (Use basecam.Imagenamer)
+    * Remove `--filepath` or `-p` option in `expose` command. Put `path` property in `cameras.yaml`.
+    * Change how to make image name.
+* Issue #43 (Use basecam fits compression through model)
+    * Remove fpack in source code.
+    * Change lists of `-c` option to same lists in astropy’s [CompImageHDU](https://docs.astropy.org/en/latest/io/fits/api/images.html#astropy.io.fits.CompImageHDU).
+* Issue #44 (Add actor command for extra fits header parameters)
+    * Add `-eh` or `--extraheader` option for making extra fits header.
+    * Put `extrahdr` property in `cameras.yaml`
+* Issue #45 (Return of expose)
+    * Put `PATH=path_dict` in `command.finish()` instead of `command.info()`
+* Issue #46 (Indexing for expose testshot mode)
+    * Fix it by using basecam.Imagenamer(#42)
+* Issue #47 (File saving of multiple images)
+    * Remove `make_file` function and Write images to disk immediately.
+
 ## 0.1.4 - November 15, 2021
 
 ### ✨ Improved

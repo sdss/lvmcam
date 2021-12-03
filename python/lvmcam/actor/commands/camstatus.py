@@ -7,7 +7,7 @@ from clu.command import Command
 
 from lvmcam.flir import FLIR_Utils as flir
 
-from . import parser
+from basecam.actor.commands import camera_parser as parser
 
 from lvmcam.actor import modules
 

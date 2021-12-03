@@ -1,21 +1,26 @@
 from __future__ import absolute_import, annotations, division, print_function
 
 import asyncio
-import datetime
-import functools
+# import datetime
+# import functools
 import os
 import shutil
 
+# import astropy
+import basecam.exposure as base_exp
+# import basecam.models.builtin as builtin
+import basecam.models.card as card
+import basecam.models.fits as fits
 import click
-import numpy as np
-import astropy
-from astropy.io import fits
-from astropy.time import Time
-from click.decorators import command
+# import numpy as np
+# from astropy.io import fits
+# from astropy.time import Time
+from basecam.actor.commands import camera_parser as parser
+# from click.decorators import command
 from clu.command import Command
 
 from lvmcam.actor import modules
-from lvmcam.actor.commands import connection, parser
+# from lvmcam.actor.commands import connection
 from lvmcam.araviscam import BlackflyCam as blc
 from lvmcam.flir import FLIR_Utils as flir
 
@@ -26,23 +31,24 @@ __all__ = ["expose"]
 @parser.command()
 @click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
+@click.option("-eh", "--extraheader", is_flag=True)
 # compression option
 @click.option(
     "-c",
     "--compress",
-    type=click.Choice(["r", "h", "rF", "rD", "hF", "hD"], case_sensitive=True),
+    type=click.Choice(["NO", "R1", "RO", "P1", "G1", "G2", "H1"], case_sensitive=True),
 )
-@click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
-# right ascension in degrees
-@click.option("-r", "--ra")
-# declination in degrees
-@click.option("-d", "--dec")
+# @click.option("-p", "--filepath", type=str, default="python/lvmcam/assets")
+# right ascension
+@click.option("-r", "--ra", default=None)
+# declination
+@click.option("-d", "--dec", default=None)
 # K-mirror angle in degrees
 # Note this is only relevant for 3 of the 4 tables/telescopes
-@click.option("-K", "--kmirr", type=float, default=0.0)
+@click.option("-K", "--kmirr", type=float, default=None)
 # focal length of telescope in mm
 # Default is the LCO triple lens configuration of 1.8 meters
-@click.option("-f", "--flen", type=float, default=1839.8)
+@click.option("-f", "--flen", type=float, default=None)
 @click.argument("EXPTIME", type=float)
 @click.argument("NUM", type=int)
 # the last argument is mandatory: must be the name of exactly one camera
@@ -52,15 +58,16 @@ async def expose(
     command: Command,
     testshot: bool,
     verbose: bool,
-    filepath: str,
-    ra: float,
-    dec: float,
+    # filepath: str,
+    ra,
+    dec,
     kmirr: float,
     flen: float,
     exptime: float,
     num: int,
     camname: str,
     compress: click.Choice,
+    extraheader: bool,
 ):
     """
     Expose ``num`` times and write the images to a FITS file.
@@ -71,8 +78,6 @@ async def expose(
         Test shot on or off
     verbose
         Verbosity on or off
-    filepath
-        The path to save the images captured by the camera
     ra
         RA J2000 in degrees or in xxhxxmxxs format
     dec
@@ -89,15 +94,11 @@ async def expose(
     camname
         The name of camera to expose.
     compress
-        The option of fpack (FITS image compression programs).
-        (-c r == fpack -r)
-        (-c h == fpack -h)
-        (-c rF == fpack -r -F)
-        (-c rD == fpack -r -D)
-        (-c hF == fpack -h -F)
-        (-c hD == fpack -h -D)
+        The option of compression. One of 'None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'.
+    extraheader
+        Extra header in camera.yaml on or off.
     """
-    if not connection.camdict:
+    if not modules.variables.camdict:
         return command.error("There are no connected cameras")
 
     modules.change_dir_for_normal_actor_start(__file__)
@@ -107,91 +108,37 @@ async def expose(
     else:
         modules.logger.sh.setLevel(modules.logging.WARNING)
 
-    cam = connection.camdict[camname]
-
-    targ = make_targ_from_ra_dec(ra, dec)
+    cam = modules.variables.camdict[camname]
+    modules.variables.camname = camname
+    modules.variables.kmirr = kmirr
+    modules.variables.flen = flen
+    targ = modules.make_targ_from_ra_dec(ra, dec)
+    modules.variables.targ = targ
+    # print(modules.variables.targ is not None)
 
     if testshot:
         num = 1
 
-    if cam.name == "test":
-        filepath, paths = await expose_test_cam(testshot, exptime, num, filepath, cam)
-        # for path in paths:
-        #     command.write("i", f"{path}")
+    if camname == "test":
+        paths = await expose_test_cam(
+            testshot,
+            exptime,
+            num,
+            cam)
         path_dict = {i: paths[i] for i in range(len(paths))}
-        command.info(PATH=path_dict)
-        return command.finish()
+        return command.finish(PATH=path_dict)
+
     else:
         paths = await expose_real_cam(
             testshot,
             exptime,
             num,
-            targ,
-            kmirr,
-            filepath,
-            camname,
             cam,
-            flen,
             compress,
+            extraheader,
         )
-        # for path in paths:
-        #     command.write("i", f"{path}")
         path_dict = {i: paths[i] for i in range(len(paths))}
-        command.info(PATH=path_dict)
-        return command.finish()
-
-
-# @modules.timeit
-def make_targ_from_ra_dec(ra, dec):
-    if ra is not None and dec is not None:
-        if ra.find("h") < 0:
-            # apparently simple floating point representation
-            targ = astropy.coordinates.SkyCoord(
-                ra=float(ra), dec=float(dec), unit="deg"
-            )
-        else:
-            targ = astropy.coordinates.SkyCoord(ra + " " + dec)
-    else:
-        targ = None
-    return targ
-
-
-# @modules.timeit
-def get_last_exposure(path):
-    try:
-        with open(path, "r") as f:
-            return int(f.readline())
-    except FileNotFoundError:
-        dirname = os.path.dirname(path)
-        os.makedirs(dirname, exist_ok=True)
-        with open(path, "w") as f:
-            f.write("0")
-            return 0
-
-
-# @modules.timeit
-def set_last_exposure(path, num):
-    with open(path, "w") as f:
-        f.write(str(num))
-
-
-# @modules.timeit
-def time_to_jd(times):
-    # times = ["2021-09-07T03:14:43.060", "2021-09-07T04:14:43.060", "2021-09-08T03:14:43.060"]
-    t = Time(times, format="isot", scale="utc")
-    jd = np.array(np.floor(t.to_value("jd")), dtype=int)
-    return jd
-
-
-# @modules.timeit
-def jd_to_folder(path, jd):
-    jd = set(jd)
-    for j in jd:
-        filepath = os.path.abspath(os.path.join(path, str(j)))
-        try:
-            os.makedirs(filepath)
-        except FileExistsError:
-            pass
+        return command.finish(PATH=path_dict)
 
 
 @modules.atimeit
@@ -199,231 +146,107 @@ async def expose_real_cam(
     testshot,
     exptime,
     num,
-    targ,
-    kmirr,
-    filepath,
-    camname,
     cam,
-    flen,
     compress,
+    extraheader,
 ):
+    path = modules.variables.config['cameras'][modules.variables.camname]['path']
+    basename = path['basename']
+    dirname = path['dirname']
+    filepath = os.path.abspath(path['filepath'])
+    dirname = os.path.join(filepath, dirname)
 
-    exps, hdrs, status, camera = await expose_cam(exptime, num, cam, camname)
-    status[0].update(await flir.status_for_header(camera))
-    # print(status)
+    if compress == 'R1':
+        comp = 'RICE_1'
+    elif compress == 'RO':
+        comp = 'RICE_ONE'
+    elif compress == 'P1':
+        comp = 'PLIO_1'
+    elif compress == 'G1':
+        comp = 'GZIP_1'
+    elif compress == 'G2':
+        comp = 'GZIP_2'
+    elif compress == 'H1':
+        comp = 'HCOMPRESS_1'
+    else:
+        comp = False
 
-    hdus, dates = make_header_info(num, targ, kmirr, camname, exps, hdrs, status, flen)
+    hdrlist = [
+        "CAMNAME",
+        "CAMUID",
+        "IMAGETYP",
+        "EXPTIME",
+        card.Card("DATE-OBS", value="{__exposure__.obstime.tai.isot}", comment="Date (in TIMESYS) the exposure started"),
+        flir.CamCards(),
+    ]
 
-    paths = await make_file(
-        testshot,
-        num,
-        filepath,
-        cam,
-        hdus,
-        dates,
-        compress,
-    )
+    if (modules.variables.targ is not None) and (modules.variables.kmirr is not None) and (modules.variables.flen is not None):
+        hdrlist.append(blc.WcsHdrCards())
+
+    if extraheader:
+        config = modules.variables.config
+        cg = card.CardGroup(config['cameras'][modules.variables.camname]['extrahdr'])
+        hdrlist.append(cg)
+
+    header = fits.HeaderModel(hdrlist)
+    fits_model = fits.FITSModel([fits.Extension(header_model=header, name="PRIMARY", compressed=comp)])
+
+    paths = []
+    for i in range(num):
+        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+        img_path = str(image_namer(cam))
+
+        if testshot:
+            img_path = f"{filepath}/testshot.fits"
+            if os.path.exists(img_path):
+                os.remove(img_path)
+
+        try:
+            await cam.expose(exptime=exptime,
+                             fits_model=fits_model,
+                             image_type="object", write=True,
+                             filename=img_path)
+        except RuntimeError as err:
+            os.remove(img_path)
+            img_path = str(err)
+
+        paths.append(img_path)
 
     return paths
 
 
 @modules.atimeit
-async def make_file(
-    testshot,
-    num,
-    filepath,
-    cam,
-    hdus,
-    dates,
-    compress,
-):
-    configfile, curNum, paths = prepare_write_file(
-        testshot, num, filepath, cam, hdus, dates
-    )
-    await write_file(
-        testshot,
-        num,
-        hdus,
-        configfile,
-        curNum,
-        paths,
-        compress,
-    )
-    return paths
+async def expose_test_cam(testshot, exptime, num, cam):
 
-
-@modules.timeit
-def prepare_write_file(testshot, num, filepath, cam, hdus, dates):
-    filepath = os.path.abspath(filepath)
-
-    configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
-    curNum = get_last_exposure(configfile)
-
-    jd = time_to_jd(dates)
-    jd_to_folder(filepath, jd)
+    path = modules.variables.config['cameras'][modules.variables.camname]['path']
+    basename = path['basename']
+    dirname = path['dirname']
+    filepath = os.path.abspath(path['filepath'])
+    dirname = os.path.join(filepath, dirname)
 
     paths = []
     for i in range(num):
-        curNum += 1
-        filename = (
-            f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
-        )
-        paths.append(os.path.join(filepath, filename))
-
-        # correct fits data/header
-        _hdusheader = hdus[i].header
-        _hdusdata = hdus[i].data[0]
-        primary_hdu = fits.PrimaryHDU(data=_hdusdata, header=_hdusheader)
-        hdus[i] = fits.HDUList(
-            [
-                primary_hdu,
-            ]
-        )
-
-    return configfile, curNum, paths
-
-
-@modules.atimeit
-async def write_file(
-    testshot,
-    num,
-    hdus,
-    configfile,
-    curNum,
-    paths,
-    compress,
-):
-    for i in range(num):
-
-        if not testshot:
-
-            writeto_partial = functools.partial(
-                hdus[i].writeto, paths[i], checksum=True
-            )
-        else:
-
-            writeto_partial = functools.partial(
-                hdus[i].writeto, paths[i], checksum=True, overwrite=True
-            )
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, writeto_partial)
-        set_last_exposure(configfile, curNum)
-        compress_fits(paths, compress, i)
-
-
-@modules.timeit
-def compress_fits(paths, compress, i):
-    fpack = os.path.abspath("./python/lvmcam/fpack/fpack")
-    target = os.path.dirname(paths[i])
-    if compress == "r":
-        option = "-r"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-        paths[i] = (paths[i], paths[i] + ".fz")
-    elif compress == "h":
-        option = "-h"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-        paths[i] = (paths[i], paths[i] + ".fz")
-    elif compress == "rF":
-        option = "-r -F"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-    elif compress == "rD":
-        option = "-r -D"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-        paths[i] = paths[i] + ".fz"
-    elif compress == "hF":
-        option = "-h -F"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-    elif compress == "hD":
-        option = "-h -D"
-        os.system(f"cd {target} && {fpack} {option} {paths[i]}")
-        paths[i] = paths[i] + ".fz"
-
-
-@modules.timeit
-def make_header_info(num, targ, kmirr, camname, exps, hdrs, status, flen):
-    wcshdr = blc.get_wcshdr(connection.cs_list[0], camname, targ, kmirr, flen)
-    hdus = []
-    dates = []
-    for i in range(num):
-        hdu = exps[i].to_hdu()[0]
-        dates.append(hdu.header["DATE-OBS"])
-        for item in hdrs[i]:
-            hdr = item[0]
-            val = item[1]
-            com = item[2]
-            hdu.header[hdr] = (val, com)
-        for item in list(status[i].items()):
-            hdr = item[0]
-            val = item[1]
-            if len(val) > 70:
-                # print(val)
-                continue
-            _hdr = ""
-            if "Voltage" in hdr:
-                _hdr = "VOLTAGE"
-            elif "Current" in hdr:
-                _hdr = "CURRENT"
-            elif "Hz" in val:
-                _hdr = "FRAME"
-            else:
-                _hdr = hdr.replace(" ", "")
-                _hdr = _hdr.replace(".", "")
-                _hdr = _hdr.upper()[:8]
-            hdu.header[_hdr] = (val, hdr)
-        if wcshdr is not None:
-            for wcs in wcshdr:
-                headerName = wcs
-                headerValue = wcshdr[wcs]
-                headerComment = wcshdr.comments[wcs]
-                hdu.header[headerName] = (headerValue, headerComment)
-
-        hdus.append(hdu)
-    return hdus, dates
-
-
-@modules.atimeit
-async def expose_cam(exptime, num, cam, camname):
-    exps = []
-    hdrs = []
-    status = []
-    camera, device = connection.dev_list[camname]
-    for i in range(num):
-        exps.append(await cam.expose(exptime=exptime, image_type="object"))
-        # camera, device = flir.setup_camera(verbose)
-        status.append(await flir.vol_cur_tem(camera, device))
-        hdrs.append(cam.header)
-    return exps, hdrs, status, camera
-
-
-@modules.atimeit
-async def expose_test_cam(testshot, exptime, num, filepath, cam):
-    dates = []
-    for i in range(num):
-        dates.append(datetime.datetime.utcnow().isoformat())
-
-    filepath = os.path.abspath(filepath)
-    configfile = os.path.abspath(os.path.join(filepath, "last-exposure.txt"))
-    curNum = get_last_exposure(configfile)
-    jd = time_to_jd(dates)
-    jd_to_folder(filepath, jd)
-
-    paths = []
-    for i in range(num):
-        curNum += 1
-        filename = (
-            f"{jd[i]}/{cam.name}-{curNum:08d}.fits" if not testshot else "test.fits"
-        )
-        paths.append(os.path.join(filepath, filename))
         original = os.path.abspath("python/lvmcam/actor/example")
-        if not testshot:
-            await asyncio.sleep(exptime)
-            shutil.copyfile(original, paths[i])
 
+        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
+        img_path = str(image_namer(cam))
+        img_basepath = os.path.dirname(img_path)
+
+        try:
+            os.makedirs(img_basepath)
+        except FileExistsError:
+            pass
+
+        if testshot:
+            img_path = f"{filepath}/testshot.fits"
+            if os.path.exists(img_path):
+                os.remove(img_path)
+
+            await asyncio.sleep(exptime)
+            shutil.copy(original, img_path)
         else:
-            if os.path.exists(paths[i]):
-                os.remove(paths[i])
             await asyncio.sleep(exptime)
-            shutil.copyfile(original, paths[i])
+            shutil.copy(original, img_path)
 
-        set_last_exposure(configfile, curNum)
-    return filepath, paths
+        paths.append(img_path)
+    return paths
