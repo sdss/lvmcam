@@ -22,20 +22,24 @@ import os
 # from typing import ClassVar, Dict, Type
 
 # import click
-from clu.actor import AMQPActor, BaseActor
+# from clu.actor import AMQPActor, BaseActor
 
 from lvmcam import __version__
 
 # from lvmcam.exceptions import LvmcamUserWarning
-from lvmcam.actor.commands import parser as lvmcam_command_parser
+from basecam.actor.commands import camera_parser as parser
 
 __all__ = ["LvmcamBaseActor", "LvmcamActor"]
 
+from clu import AMQPActor
+from basecam.actor import BaseCameraActor
+from lvmcam.araviscam import BlackflyCam as blc
 
-class LvmcamBaseActor(BaseActor):
+
+class LvmcamBaseActor(BaseCameraActor):
     """Lvmcam base actor."""
 
-    parser = lvmcam_command_parser
+    parser = parser
 
     def __init__(
         self,
@@ -49,7 +53,7 @@ class LvmcamBaseActor(BaseActor):
                 "../etc/schema.json",
             )
 
-        super().__init__(*args, **kwargs)
+        super().__init__(blc.BlackflyCameraSystem(blc.BlackflyCamera), *args, **kwargs)
         self.version = __version__
 
 
