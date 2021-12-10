@@ -32,7 +32,7 @@ generate-setup-file = false
 lvmcam = "lvmcam.__main__:lvmcam"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = ">3.7,<3.10"
 sdss-tree = ">=2.15.2"
 sdss-access = ">=0.2.3"
 sdsstools = ">=0.4.0"
@@ -45,6 +45,7 @@ PyGObject = "^3.40.1"
 sdss-basecam = "^0.5.0"
 opencv-python = "^4.5.3"
 pytest-asyncio = "^0.16.0"
+sdss-skymakercam = ">=0.0.5"
 
 [tool.poetry.dev-dependencies]
 ipython = ">=7.11.0"
