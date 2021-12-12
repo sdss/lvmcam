@@ -1,12 +1,27 @@
 # Changelog
 
+## 0.2.2 - December 13, 2021
+
+### ✨ Improved
+* Issue #49 (Add support for virtual cameras)
+    * Delete `-t`, `-i` option in `connect` command.
+    * Add `camtype.yaml` in `python/lvmcam/etc` for selecting between real(araviscam) and virtual(skymakercam) camera.
+    * Put `type` property in `cameras.yaml`
+
+## 0.2.1 - December 12, 2021
+
+### ✨ Improved
+* Issue #44 (Add actor command for extra fits header parameters)
+    * Add `-h` or `--header` option similar to [archon](https://github.com/sdss/archon/blob/c28080d145072dc80dedff111d6d589a7fd195ff/archon/actor/commands/expose.py#L145)
+
 ## 0.2.0 - December 3, 2021
 
 ### 🚀 New & ✨ Improved
 * Issue #41 (Use the basecam.Actor)
     * `LvmcamBaseActor(BaseActor)` -> `LvmcamBaseActor(BaseCameraActor)`
 * Issue #42 (Use basecam.Imagenamer)
-    * Remove `--filepath` or `-p` option in `expose` command. Put `path` property in `cameras.yaml`.
+    * Remove `--filepath` or `-p` option in `expose` command. 
+    * Put `path` property in `cameras.yaml`.
     * Change how to make image name.
 * Issue #43 (Use basecam fits compression through model)
     * Remove fpack in source code.

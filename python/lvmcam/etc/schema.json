@@ -15,6 +15,9 @@
         },
         "CONNECTED": {
             "type": "object"
+        },
+        "UID": {
+            "type": "string"
         }
     },
     "additionalProperties": false

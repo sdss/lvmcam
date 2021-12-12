@@ -132,12 +132,14 @@ class variables():
     cs = None
     cs_list = []
     cam_list = []
-    dev_list = {}
+    # dev_list = {}
     camdict = {}
     camname = None
     kmirr = None
     flen = None
     config = None
+    Aravis_available_camera = {}
+    # camtypename = None
 
 
 # @modules.timeit
