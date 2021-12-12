@@ -60,26 +60,26 @@ async def test_actor(actor: LvmcamActor):
 
     await actor.invoke_mock_command("show connection")
 
-    command = await actor.invoke_mock_command("connect -t")
-    await command
-    assert command.status.did_succeed
+    # command = await actor.invoke_mock_command("connect")
+    # await command
+    # assert command.status.did_succeed
 
-    command = await actor.invoke_mock_command("show connection")
-    await command
-    assert command.status.did_succeed
-    reply = actor.mock_replies[-2]
-    camname = reply["CONNECTED"]["name"]
+    # command = await actor.invoke_mock_command("show connection")
+    # await command
+    # assert command.status.did_succeed
+    # reply = actor.mock_replies[-2]
+    # camname = reply["CONNECTED"]["name"]
 
-    command = await actor.invoke_mock_command(f"expose -t 0.1 1 {camname}")
-    await command
-    assert command.status.did_succeed
+    # command = await actor.invoke_mock_command(f"expose -t 0.1 1 {camname}")
+    # await command
+    # assert command.status.did_succeed
 
-    command = await actor.invoke_mock_command(
-        f'expose -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 1 {camname}'
-    )
-    await command
-    assert command.status.did_succeed
+    # command = await actor.invoke_mock_command(
+    #     f'expose -r "00h42m44s" -d "41d16m09s" -K 10 -f 1800 0.1 1 {camname}'
+    # )
+    # await command
+    # assert command.status.did_succeed
 
-    command = await actor.invoke_mock_command("disconnect")
-    await command
-    assert command.status.did_succeed
+    # command = await actor.invoke_mock_command("disconnect")
+    # await command
+    # assert command.status.did_succeed
