@@ -12,9 +12,9 @@ Current fits header
     00:37:43.916 lvmcam > 
     00:37:47.262 lvmcam : {
         "PATH": {
-            "0": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
-            "1": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
-            "2": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
     
@@ -81,9 +81,9 @@ The rule is ``filepath/dirname/basename``.
     00:37:43.916 lvmcam > 
     00:37:47.262 lvmcam : {
         "PATH": {
-            "0": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
-            "1": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
-            "2": "/home/sumin/dev_lvmcam/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
 

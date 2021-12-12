@@ -1,5 +1,12 @@
 # Changelog
 
+
+## 0.2.1 - December 12, 2021
+
+### ✨ Improved
+* Issue #44 (Add actor command for extra fits header parameters)
+    * Add `-h` or `--header` option like [archon](https://github.com/sdss/archon/blob/c28080d145072dc80dedff111d6d589a7fd195ff/archon/actor/commands/expose.py#L145)
+
 ## 0.2.0 - December 3, 2021
 
 ### 🚀 New & ✨ Improved

@@ -5,6 +5,7 @@ import asyncio
 # import functools
 import os
 import shutil
+import ast
 
 # import astropy
 import basecam.exposure as base_exp
@@ -32,6 +33,12 @@ __all__ = ["expose"]
 @click.option("-t", "--testshot", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 @click.option("-eh", "--extraheader", is_flag=True)
+@click.option(
+    "-h",
+    "--header",
+    type=str,
+    default="{}",
+)
 # compression option
 @click.option(
     "-c",
@@ -63,11 +70,12 @@ async def expose(
     dec,
     kmirr: float,
     flen: float,
+    compress: click.Choice,
+    extraheader: bool,
+    header: str,
     exptime: float,
     num: int,
     camname: str,
-    compress: click.Choice,
-    extraheader: bool,
 ):
     """
     Expose ``num`` times and write the images to a FITS file.
@@ -87,16 +95,18 @@ async def expose(
     flen
         focal length of telescope/siderostat in mm
         If not provided it will be taken from the configuration file
+    compress
+        The option of compression. One of 'None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'.
+    extraheader
+        Extra header in camera.yaml on or off.
+    header
+        JSON string with additional header keyword-value pairs. Avoid using spaces.
     exptime
         The exposure time in seconds. Non-negative.
     num
         The number of exposure times. Natural number.
     camname
         The name of camera to expose.
-    compress
-        The option of compression. One of 'None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'.
-    extraheader
-        Extra header in camera.yaml on or off.
     """
     if not modules.variables.camdict:
         return command.error("There are no connected cameras")
@@ -136,6 +146,7 @@ async def expose(
             cam,
             compress,
             extraheader,
+            header,
         )
         path_dict = {i: paths[i] for i in range(len(paths))}
         return command.finish(PATH=path_dict)
@@ -149,6 +160,7 @@ async def expose_real_cam(
     cam,
     compress,
     extraheader,
+    header
 ):
     path = modules.variables.config['cameras'][modules.variables.camname]['path']
     basename = path['basename']
@@ -188,8 +200,14 @@ async def expose_real_cam(
         cg = card.CardGroup(config['cameras'][modules.variables.camname]['extrahdr'])
         hdrlist.append(cg)
 
-    header = fits.HeaderModel(hdrlist)
-    fits_model = fits.FITSModel([fits.Extension(header_model=header, name="PRIMARY", compressed=comp)])
+    if header != "{}":
+        ehdr_dict = ast.literal_eval(header)
+        ehdr_list = [[key] + list(value) for key, value in ehdr_dict.items()]
+        ehdr_cg = card.CardGroup(ehdr_list)
+        hdrlist.append(ehdr_cg)
+
+    hdr_ = fits.HeaderModel(hdrlist)
+    fits_model = fits.FITSModel([fits.Extension(header_model=hdr_, name="PRIMARY", compressed=comp)])
 
     paths = []
     for i in range(num):
