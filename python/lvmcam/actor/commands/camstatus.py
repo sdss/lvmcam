@@ -30,13 +30,16 @@ async def status(command: Command, verbose):
         modules.logger.sh.setLevel(int(verbose))
     else:
         modules.logger.sh.setLevel(modules.logging.WARNING)
+
     try:
-        cam, dev = get_cam_dev_for_status()
-        status = await get_status_from_cam_dev(cam, dev)
+        flir.setup_camera()
+        for cam, dev, uid in modules.variables.Aravis_available_camera.values():
+            status = await get_status_from_cam_dev(cam, dev)
+            command.info(UID=uid)
+            command.info(STATUS=status)
     except ValueError:
         command.error("There are not real cameras")
 
-    command.info(STATUS=status)
     return command.finish()
 
 
@@ -44,9 +47,3 @@ async def status(command: Command, verbose):
 async def get_status_from_cam_dev(cam, dev):
     status = await flir.custom_status(cam, dev)
     return status
-
-
-@modules.timeit
-def get_cam_dev_for_status():
-    cam, dev = flir.setup_camera()
-    return cam, dev

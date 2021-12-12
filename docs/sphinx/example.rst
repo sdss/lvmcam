@@ -306,7 +306,7 @@ You can add an extra header in result fits file.
 1. Using ``--header`` or ``-h`` option
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``--header`` option is passed 'JSON header' like `archon <https://github.com/sdss/archon/blob/c28080d145072dc80dedff111d6d589a7fd195ff/archon/actor/commands/expose.py#L145>`_. The rule for 'JSON header' is ``{Header1: (Value1, Comment1), Header2: (Value2, Comment2) ...}``.
+The ``--header`` option is passed 'JSON header' similar to `archon <https://github.com/sdss/archon/blob/c28080d145072dc80dedff111d6d589a7fd195ff/archon/actor/commands/expose.py#L145>`_. The rule for 'JSON header' is ``{Header1: (Value1, Comment1), Header2: (Value2, Comment2) ...}``.
 
 
 .. code-block:: console

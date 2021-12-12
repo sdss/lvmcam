@@ -129,31 +129,21 @@ async def expose(
     if testshot:
         num = 1
 
-    if camname == "test":
-        paths = await expose_test_cam(
-            testshot,
-            exptime,
-            num,
-            cam)
-        path_dict = {i: paths[i] for i in range(len(paths))}
-        return command.finish(PATH=path_dict)
-
-    else:
-        paths = await expose_real_cam(
-            testshot,
-            exptime,
-            num,
-            cam,
-            compress,
-            extraheader,
-            header,
-        )
-        path_dict = {i: paths[i] for i in range(len(paths))}
-        return command.finish(PATH=path_dict)
+    paths = await expose_cam(
+        testshot,
+        exptime,
+        num,
+        cam,
+        compress,
+        extraheader,
+        header,
+    )
+    path_dict = {i: paths[i] for i in range(len(paths))}
+    return command.finish(PATH=path_dict)
 
 
 @modules.atimeit
-async def expose_real_cam(
+async def expose_cam(
     testshot,
     exptime,
     num,
@@ -189,8 +179,10 @@ async def expose_real_cam(
         "IMAGETYP",
         "EXPTIME",
         card.Card("DATE-OBS", value="{__exposure__.obstime.tai.isot}", comment="Date (in TIMESYS) the exposure started"),
-        flir.CamCards(),
     ]
+
+    if modules.variables.Aravis_available_camera != {}:
+        hdrlist.append(flir.CamCards())
 
     if (modules.variables.targ is not None) and (modules.variables.kmirr is not None) and (modules.variables.flen is not None):
         hdrlist.append(blc.WcsHdrCards())
@@ -230,41 +222,4 @@ async def expose_real_cam(
 
         paths.append(img_path)
 
-    return paths
-
-
-@modules.atimeit
-async def expose_test_cam(testshot, exptime, num, cam):
-
-    path = modules.variables.config['cameras'][modules.variables.camname]['path']
-    basename = path['basename']
-    dirname = path['dirname']
-    filepath = os.path.abspath(path['filepath'])
-    dirname = os.path.join(filepath, dirname)
-
-    paths = []
-    for i in range(num):
-        original = os.path.abspath("python/lvmcam/actor/example")
-
-        image_namer = base_exp.ImageNamer(basename=basename, dirname=dirname)
-        img_path = str(image_namer(cam))
-        img_basepath = os.path.dirname(img_path)
-
-        try:
-            os.makedirs(img_basepath)
-        except FileExistsError:
-            pass
-
-        if testshot:
-            img_path = f"{filepath}/testshot.fits"
-            if os.path.exists(img_path):
-                os.remove(img_path)
-
-            await asyncio.sleep(exptime)
-            shutil.copy(original, img_path)
-        else:
-            await asyncio.sleep(exptime)
-            shutil.copy(original, img_path)
-
-        paths.append(img_path)
     return paths
