@@ -10,7 +10,8 @@ class CamCards(card.MacroCard):
     def macro(self, exposure, context={}):
         camname = modules.variables.camname
         # print(camname)
-        cam, dev = modules.variables.dev_list[camname]
+
+        cam, dev, _ = modules.variables.Aravis_available_camera[camname]
         [fullWidth, fullHeight] = cam.get_sensor_size()  # Full frame size
         [x, y, width, height] = cam.get_region()  # Get RoI details
         payload = cam.get_payload()  # Get "payload", the size of in bytes
@@ -44,9 +45,9 @@ async def custom_status(cam, dev):
     payload = cam.get_payload()  # Get "payload", the size of in bytes
 
     stat = {
+        "Camera id": f"{cam.get_device_id()}",
         "Camera model": f"{cam.get_model_name()}",
         "Camera vendor": f"{cam.get_vendor_name()}",
-        "Camera id": f"{cam.get_device_id()}",
         "Pixel format": f"{cam.get_pixel_format_as_string()}",
         "Available Formats": f"{cam.dup_available_pixel_formats_as_display_names()}",
         "Full Frame": f"{fullWidth}x{fullHeight}",
@@ -121,15 +122,25 @@ async def custom_status(cam, dev):
 # --------------------------------------------------------------------------------------------
 
 
+# def setup_camera():
+#     Aravis.update_device_list()
+#     try:
+#         cam = Aravis.Camera.new(Aravis.get_device_id(0))
+#     except:
+#         print("ERROR - No camera found")
+#         return None, None
+#     dev = cam.get_device()
+#     return cam, dev
+
+
 def setup_camera():
     Aravis.update_device_list()
-    try:
-        cam = Aravis.Camera.new(Aravis.get_device_id(0))
-    except:
-        print("ERROR - No camera found")
-        return None, None
-    dev = cam.get_device()
-    return cam, dev
+    Ndev = Aravis.get_n_devices()
+    for i in range(Ndev):
+        cam = Aravis.Camera.new(Aravis.get_device_id(i))
+        dev = cam.get_device()
+        uid = cam.get_string("DeviceSerialNumber")
+        modules.variables.Aravis_available_camera[i] = (cam, dev, uid)
 
 
 # def setup_camera(verbose, fakeCam=False):

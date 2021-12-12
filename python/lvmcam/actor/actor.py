@@ -33,7 +33,31 @@ __all__ = ["LvmcamBaseActor", "LvmcamActor"]
 
 from clu import AMQPActor
 from basecam.actor import BaseCameraActor
-from lvmcam.araviscam import BlackflyCam as blc
+
+# from lvmcam.araviscam import BlackflyCam as blc
+# from skymakercam.camera import SkymakerCameraSystem, SkymakerCamera
+import sys
+from sdsstools import read_yaml_file
+
+from lvmcam.actor import modules
+
+from lvmcam.araviscam import BlackflyCameraSystem, BlackflyCamera
+from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
+camera_types = {"araviscam": lambda: BlackflyCameraSystem(BlackflyCamera),
+                "skymakercam": lambda: SkyCameraSystem(SkyCamera)}
+
+config = read_yaml_file("python/lvmcam/etc/camtype.yaml")
+camtype = config["camtype"]
+
+is_True_gt_1 = sum(value is True for value in camtype.values()) > 1
+if is_True_gt_1:
+    print("The number of True in camtype.yaml is greater than 1")
+    print("Only one True is allowed")
+    sys.exit()
+
+for item in camtype.items():
+    if item[1] is True:
+        modules.variables.camtypename = item[0]
 
 
 class LvmcamBaseActor(BaseCameraActor):
@@ -53,7 +77,7 @@ class LvmcamBaseActor(BaseCameraActor):
                 "../etc/schema.json",
             )
 
-        super().__init__(blc.BlackflyCameraSystem(blc.BlackflyCamera), *args, **kwargs)
+        super().__init__(camera_types[modules.variables.camtypename](), *args, **kwargs)
         self.version = __version__
 
 

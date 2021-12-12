@@ -1,9 +1,18 @@
----
 # sdss/araviscam configuration for the 7 auto-guiders of LVMi-South
 cameras:
-    test:
-        name: "test"
-        uid: "-1"
+    # virtual camera (cam_type = skymakercam)
+    lvm.sci.agw.cam:
+        type: "skymakercam"
+        uid: "lvm.sci.agw.cam"
+        descr: "Guider Camera Science"
+        default:
+            gain: 5.0
+            binning: [4, 4]
+        instpar: lvm_sci_agw_cam
+        focus_stage: "lvm.sci.foc"
+        kmirror: "lvm.sci.km"
+        tcs: "lvm.sci.pwi"
+        catalog_path: "$HOME/data/catalog/gaia"
         path:
             basename: "lvm.{camera.name}-{num:08d}.fits"
             dirname: "test/{date.strftime('%Y%m%d')}"
