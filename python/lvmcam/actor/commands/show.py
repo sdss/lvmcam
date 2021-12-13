@@ -82,4 +82,5 @@ async def connection(
             command.info(CONNECTED={"name": cam.name, "uid": cam.uid})
         return command.finish()
     else:
-        return command.error("There are no connected cameras")
+        command.error("There are no connected cameras")
+        return command.fail()

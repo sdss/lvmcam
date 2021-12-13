@@ -109,7 +109,8 @@ async def expose(
         The name of camera to expose.
     """
     if not modules.variables.camdict:
-        return command.error("There are no connected cameras")
+        command.error("There are no connected cameras")
+        return command.fail()
 
     modules.change_dir_for_normal_actor_start(__file__)
 

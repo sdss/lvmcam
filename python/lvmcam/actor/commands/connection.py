@@ -46,7 +46,8 @@ async def connect(
         modules.logger.sh.setLevel(modules.logging.WARNING)
 
     if (modules.variables.cs is not None) or (modules.variables.cam_list != []):
-        return command.error("Cameras are already connected")
+        command.error("Cameras are already connected")
+        return command.fail()
 
     modules.variables.config = read_yaml_file(config)
 
@@ -63,14 +64,16 @@ async def connect(
     available_cameras_uid = find_all_available_cameras(config, CameraSystem, Camera, verbose)
 
     if available_cameras_uid == []:
-        return command.error("There are not real cameras to connect")
+        command.error("There are not real cameras to connect")
+        return command.fail()
 
     try:
         for item in list(modules.variables.cs._config.items()):
             if item[1]["uid"] in available_cameras_uid:
                 await connect_available_camera(item)
     except gi.repository.GLib.GError:
-        return command.error("Cameras are already connected")
+        command.error("Cameras are already connected")
+        return command.fail()
 
     flir.setup_camera()
     _dict = {}
@@ -133,4 +136,5 @@ async def disconnect(
         command.info("Cameras have been removed")
         return command.finish()
     else:
-        return command.error("There is nothing to remove")
+        command.error("There is nothing to remove")
+        return command.fail()
