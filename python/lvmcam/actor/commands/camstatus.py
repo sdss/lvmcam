@@ -16,31 +16,23 @@ __all__ = ["status"]
 
 
 @parser.command()
-@click.option("-v", "--verbose", is_flag=True)
-async def status(command: Command, verbose):
+async def status(command: Command):
     """
     Show status of camera
-
-    Parameters
-    ----------
-    verbose
-        Verbosity on or off
     """
-    if verbose:
-        modules.logger.sh.setLevel(int(verbose))
-    else:
-        modules.logger.sh.setLevel(modules.logging.WARNING)
-
     try:
         flir.setup_camera()
+        if modules.variables.Aravis_available_camera == {}:
+            raise ValueError
         for cam, dev, uid in modules.variables.Aravis_available_camera.values():
             status = await get_status_from_cam_dev(cam, dev)
             command.info(UID=uid)
             command.info(STATUS=status)
+        command.finish()
     except ValueError:
         command.error("There are not real cameras")
-
-    return command.finish()
+        command.fail()
+    return
 
 
 @modules.atimeit
