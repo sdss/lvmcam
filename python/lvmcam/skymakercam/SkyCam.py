@@ -1,5 +1,4 @@
 from skymakercam.camera import SkymakerCameraSystem, SkymakerCamera
-from sdsstools import read_yaml_file
 
 
 class SkyCameraSystem(SkymakerCameraSystem):
