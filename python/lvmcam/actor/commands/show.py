@@ -46,7 +46,15 @@ async def all(command: Command, config: str, verbose: bool):
     else:
         modules.logger.sh.setLevel(modules.logging.WARNING)
 
-    cs, available_cameras_uid = find_all_available_cameras_for_show(config)
+    from lvmcam.araviscam import BlackflyCameraSystem, BlackflyCamera
+    from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
+
+    camera_types = {"araviscam": (BlackflyCameraSystem, BlackflyCamera),
+                    "skymakercam": (SkyCameraSystem, SkyCamera)}
+    CameraSystem = camera_types[modules.variables.camtypename][0]
+    Camera = camera_types[modules.variables.camtypename][1]
+
+    cs, available_cameras_uid = find_all_available_cameras_for_show(config, CameraSystem, Camera, verbose)
 
     cameras_dict = {}
     for item in list(cs._config.items()):
@@ -60,8 +68,9 @@ async def all(command: Command, config: str, verbose: bool):
 
 
 @modules.timeit
-def find_all_available_cameras_for_show(config):
-    cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+def find_all_available_cameras_for_show(config, CameraSystem, Camera, verbose):
+    config = os.path.abspath(config)
+    cs = CameraSystem(Camera, camera_config=config, verbose=verbose)
     available_cameras_uid = cs.list_available_cameras()
     return cs, available_cameras_uid
 

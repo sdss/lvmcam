@@ -2,5 +2,5 @@
 # For virtual cam, set skymakercam True
 # Setting all of them True/False is forbidden
 camtype:
-    araviscam: False
-    skymakercam: True
+    araviscam: True
+    skymakercam: False
