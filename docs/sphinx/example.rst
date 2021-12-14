@@ -85,7 +85,7 @@ In ``lvmcam start --debug`` terminal, you can see verbosity.
 Exposure test with virtual camera
 ----------------------------------
 
-Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml`.
+Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml``.
 
 .. code-block:: console
 
