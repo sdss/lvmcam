@@ -6,6 +6,15 @@ Example
 Exposure test with real camera
 -------------------------------
 
+Set ``araviscam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/camtype.yaml``.
+
+.. code-block:: console
+
+    camtype:
+        araviscam: True
+        skymakercam: False
+
+
 Start the actor (in debug mode).
 
 .. code-block:: console
@@ -71,8 +80,48 @@ In ``lvmcam start --debug`` terminal, you can see verbosity.
     [DEBUG]: [4.821 s]: async expose_real_cam
 
 
+
+
 Exposure test with virtual camera
 ----------------------------------
+
+Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/camtype.yaml``.
+
+.. code-block:: console
+
+    camtype:
+        araviscam: False
+        skymakercam: True
+
+Start `lvmtan <https://github.com/sdss/lvmtan>`_, `lvmpwi <https://github.com/sdss/lvmpwi>`_, and `skymakercam <https://github.com/sdss/skymakercam>`_ as follows.
+
+For lvmtan:
+
+.. code-block:: console
+
+    $ git clone https://github.com/sdss/lvmtan
+    $ cd lvmtan
+    $ poetry install
+    $ poetry run container_start --name=lvm.all
+
+
+For lvmpwi:
+
+.. code-block:: console
+
+    $ git clone https://github.com/sdss/lvmpwi
+    $ cd lvmpwi
+    $ poetry install
+    $ poetry run container_start --name=lvm.sci.pwi --simulator
+
+For skymakercam:
+
+.. code-block:: console
+
+    $ git clone https://github.com/sdss/skymakercam
+    $ cd skymakercam
+    $ poetry install
+    $ poetry run python utils/plot_skymakercam.py -v -c python/skymakercam/etc/cameras.yaml lvm.sci.agw.cam
 
 Start the actor (in debug mode).
 
@@ -86,41 +135,75 @@ In another terminal, start ``clu``.
 
    $ clu 
 
-In ``clu`` terminal, type following commands step-by-step. The ``--test`` or ``-t`` option in ``connect`` command makes a 'test' camera.
+In ``clu`` terminal, type following commands step-by-step.
 
 .. code-block:: console
 
     $ clu
-    lvmcam connect -t
-    00:25:42.254 lvmcam > 
-    00:25:42.295 lvmcam i {
+    lvmcam connect -v
+    10:07:35.459 lvmcam >
+    10:07:36.592 lvmcam i {
         "CAMERA": {
-            "name": "test",
-            "uid": "-1"
+            "name": "lvm.sci.agw.cam",
+            "uid": "lvm.sci.agw.cam"
         }
     }
-    00:25:42.296 lvmcam : 
-    lvmcam expose 0.1 3 test
-    00:25:49.450 lvmcam > 
-    00:25:49.772 lvmcam : {
+    10:07:36.603 lvmcam :
+    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 lvm.sci.agw.cam
+    10:07:52.756 lvmcam >
+    10:07:57.813 lvmcam : {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000001.fits",
-            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000002.fits",
-            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000003.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000001.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000002.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000003.fits"
         }
     }
-    lvmcam expose 1 3 test
-    00:25:54.139 lvmcam > 
-    00:25:57.165 lvmcam : {
+    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 lvm.sci.agw.cam
+    10:08:03.555 lvmcam >
+    10:08:04.503 lvmcam : {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000004.fits",
-            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000005.fits",
-            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211203/lvm.test-00000006.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000004.fits",
+            "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000005.fits",
+            "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000006.fits"
         }
     }
-    
+               
+In ``lvmcam start --debug`` terminal, you can see verbosity.
 
-The 'test' camera is fake camera. All images captured by the 'test' camera are just files copied from `python/lvmcam/actor/example`.
+.. code-block:: console
+
+    $ lvmcam start --debug
+    [DEBUG]: [SKYCAMERASYSTEM]: read configuration file from /home/mgjeon/lvmcam/python/lvmcam/etc/cameras.yaml
+    [DEBUG]: [0.033 s]: find_all_available_cameras
+    [DEBUG]: [SKYCAMERASYSTEM]: adding camera 'lvm.sci.agw.cam' with parameters {'type': 'skymakercam', 'uid': 'lvm.sci.agw.cam', 'descr': 'Guider Camera Science', 'default': {'gain': 5.0, 'binning': [4, 4]}, 'instpar': 'lvm_sci_agw_cam', 'focus_stage': 'lvm.sci.foc', 'kmirror': 'lvm.sci.km', 'tcs': 'lvm.sci.pwi', 'catalog_path': '$HOME/data/catalog/gaia', 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283193', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False, 'extrahdr': [['TEST1', 9999, 'Extra header test 1'], ['TEST2', 999, 'Extra header test 2'], ['TESTHDR3', -1, 'Extra header test 3'], ['TESTHDR4', -2, 'Extra header test 4']], 'path': {'basename': 'lvm.{camera.name}-{num:08d}.fits', 'dirname': "test/{date.strftime('%Y%m%d')}", 'filepath': 'python/lvmcam/assets'}}
+    [DEBUG]: [LVM.SCI.AGW.CAM]: [1600, 1100]
+    [DEBUG]: [LVM.SCI.AGW.CAM]: connecting ...
+    [DEBUG]: [LVM.SCI.AGW.CAM]: camera connected.
+    [DEBUG]: [0.048 s]: async connect_available_camera
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 6.068631324108885
+    Gaia query:  SELECT source_id, ra,dec,phot_g_mean_mag FROM gaiaedr3.gaia_source WHERE phot_g_mean_mag <= 17 AND 1=CONTAINS(POINT('ICRS',ra,dec), CIRCLE('ICRS',48.198614693649,-58.535399463189, 0.692887394120578))
+    INFO: Query finished. [astroquery.utils.tap.core]
+    1163 stars found within 0.692887394120578 deg
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 1.5447622919059536
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 1.6575005324400047
+    [DEBUG]: [5.046 s]: async expose_cam
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 3.82851967502365
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 3.9465993299925985
+    [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
+    [DEBUG]: [LVM.SCI.AGW.CAM]: separation 4.062583024766025
+    [DEBUG]: [0.954 s]: async expose_cam
+
 
 
 Test shot
@@ -132,44 +215,35 @@ The ``NUM`` argument of ``expose`` is ignored.
 .. code-block:: console
 
     $ clu
-    lvmcam connect -t
-    00:26:48.589 lvmcam > 
-    00:26:48.637 lvmcam i {
+    lvmcam connect
+    10:14:07.696 lvmcam >
+    10:14:08.828 lvmcam i {
         "CAMERA": {
-            "name": "test",
-            "uid": "-1"
+            "name": "lvm.sci.agw.cam",
+            "uid": "lvm.sci.agw.cam"
         }
     }
-    00:26:48.642 lvmcam : 
-    lvmcam expose -t 0.1 3 test
-    00:26:57.522 lvmcam > 
-    00:26:57.636 lvmcam : {
+    10:14:08.842 lvmcam :
+    lvmcam expose -t 0.1 3 lvm.sci.agw.cam
+    10:14:15.496 lvmcam >
+    10:14:19.892 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/testshot.fits"
         }
     }
+    lvmcam connect
+    10:14:26.887 lvmcam >
+    10:14:26.888 lvmcam e {
+        "error": "Cameras are already connected"
+    }
+    10:14:26.890 lvmcam f
     lvmcam disconnect
-    00:27:02.609 lvmcam > 
-    00:27:02.610 lvmcam i {
+    10:14:29.898 lvmcam >
+    10:14:29.899 lvmcam i {
         "text": "Cameras have been removed"
     }
-    00:27:02.611 lvmcam : 
-    lvmcam connect
-    00:27:05.834 lvmcam > 
-    00:27:10.100 lvmcam i {
-        "CAMERA": {
-            "name": "sci.agw",
-            "uid": "19283193"
-        }
-    }
-    00:27:10.107 lvmcam : 
-    lvmcam expose -t -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 sci.agw
-    00:27:35.791 lvmcam > 
-    00:27:37.398 lvmcam : {
-        "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/testshot.fits"
-        }
-    }
+    10:14:29.901 lvmcam :
+    
  
 
 
@@ -182,11 +256,11 @@ The 'Available' means that the camera can be connected.
 
     $ clu
     lvmcam show all
-    00:28:19.037 lvmcam > 
-    00:28:20.374 lvmcam i {
+    10:14:55.454 lvmcam >
+    10:14:55.491 lvmcam i {
         "ALL": {
-            "test": "Unavailable | uid: -1",
-            "sci.agw": "Available | uid: 19283193",
+            "lvm.sci.agw.cam": "Available | uid: lvm.sci.agw.cam",
+            "sci.agw": "Unavailable | uid: 19283193",
             "sci.age": "Unavailable | uid: 19283182",
             "sci.agc": "Unavailable | uid: -100",
             "skyw.agw": "Unavailable | uid: -2",
@@ -200,7 +274,8 @@ The 'Available' means that the camera can be connected.
             "spec.agc": "Unavailable | uid: -103"
         }
     }
-    00:28:20.385 lvmcam : 
+    10:14:55.507 lvmcam :
+ 
  
 
 ``lvmcam show connection`` shows all connected cameras. This reply is similar to that of ``lvmcam connect``.
@@ -209,57 +284,29 @@ The 'Available' means that the camera can be connected.
 
     $ clu
     lvmcam show connection
-    00:28:45.824 lvmcam > 
-    00:28:45.825 lvmcam e {
-        "text": "There are no connected cameras"
+    10:15:19.205 lvmcam >
+    10:15:19.206 lvmcam e {
+        "error": "There are no connected cameras"
     }
-    lvmcam connect -t
-    00:28:52.466 lvmcam > 
-    00:28:52.514 lvmcam i {
-        "CAMERA": {
-            "name": "test",
-            "uid": "-1"
-        }
-    }
-    00:28:52.515 lvmcam : 
-    lvmcam show connection
-    00:28:56.137 lvmcam > 
-    00:28:56.138 lvmcam i {
-        "CONNECTED": {
-            "name": "test",
-            "uid": "-1"
-        }
-    }
-    00:28:56.139 lvmcam : 
+    10:15:19.207 lvmcam f
     lvmcam connect
-    00:28:58.914 lvmcam > 
-    00:28:58.962 lvmcam e {
-        "text": "Cameras are already connected"
-    }
-    lvmcam disconnect
-    00:29:01.823 lvmcam > 
-    00:29:01.825 lvmcam i {
-        "text": "Cameras have been removed"
-    }
-    00:29:01.826 lvmcam : 
-    lvmcam connect
-    00:29:06.434 lvmcam > 
-    00:29:10.680 lvmcam i {
+    10:15:24.475 lvmcam >
+    10:15:25.614 lvmcam i {
         "CAMERA": {
-            "name": "sci.agw",
-            "uid": "19283193"
+            "name": "lvm.sci.agw.cam",
+            "uid": "lvm.sci.agw.cam"
         }
     }
-    00:29:10.688 lvmcam : 
+    10:15:25.624 lvmcam :
     lvmcam show connection
-    00:29:13.998 lvmcam > 
-    00:29:14.000 lvmcam i {
+    10:15:28.656 lvmcam >
+    10:15:28.657 lvmcam i {
         "CONNECTED": {
-            "name": "sci.agw",
-            "uid": "19283193"
+            "name": "lvm.sci.agw.cam",
+            "uid": "lvm.sci.agw.cam"
         }
     }
-    00:29:14.002 lvmcam : 
+    10:15:28.658 lvmcam :
  
 
 Status command
