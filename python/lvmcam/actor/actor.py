@@ -47,6 +47,7 @@ camera_types = {"araviscam": lambda: BlackflyCameraSystem(BlackflyCamera),
                 "skymakercam": lambda: SkyCameraSystem(SkyCamera)}
 
 config = os.path.dirname(__file__)[:-6] + "/etc/camtype.yaml"
+config = read_yaml_file(config)
 camtype = config["camtype"]
 
 is_True_gt_1 = sum(value is True for value in camtype.values()) > 1
