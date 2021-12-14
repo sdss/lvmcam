@@ -3,3 +3,4 @@ actor:
   name: lvmcam
   host: localhost
   port: 5672
+  log_dir: '~/tmp/log'

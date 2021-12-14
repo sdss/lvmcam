@@ -13,10 +13,63 @@ cameras:
         kmirror: "lvm.sci.km"
         tcs: "lvm.sci.pwi"
         catalog_path: "$HOME/data/catalog/gaia"
+        pixsize: 9.0
+        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
+        pixscal: 8.920
+        connection:
+            uid: "19283193"
+            # gain factor; a value =0 is interpreted to set autogain
+            # a value <0 is interpreted to not to set any gain but leave it as is.
+            gain: 1.0
+
+            # horizontal and vertical binning factors (must be 1,2 or 4 for the BlackFly)
+            binning: [1, 1]
+
+            autoconnect: True
+
+            # The following 4 dict must follow exactly the
+            # name structure and types as in the araviscam/etc/*.xml file
+            bool:
+                # flip vertically (reverse Y) so image in numpy is ordered according to
+                # FITS standards, where the bottom line is first in sequence of bytes
+                ReverseY: True
+                ReverseX: False
+
+                # No blacklevel clamping, added 2021-02-18
+                # Disabled for support of astrometry in dark sky exposures
+                BlackLevelClampingEnable: False
+            
+                # No gamma correction, added 2021-02-18
+                GammaEnable: False
+            
+                # sharpeningEnable is not writable on the FLIR (!)
+                # SharpeningEnable: False
+
+            int:
+                # the binning modes are enumerations: 0 = mean, 1=sum
+                # The sum is what most astronomers would expect...
+                BinningHorizontalMode: 1
+                BinningVerticalMode: 1
+
+            float:
+
+            string:
+    
+        shutter: false
+        
+        extrahdr: [
+         ['TEST1',               9999, "Extra header test 1"],
+         ['TEST2',                999, "Extra header test 2"],
+         ['TESTHDR3',    -1, "Extra header test 3"],
+         ['TESTHDR4',    -2, "Extra header test 4"]
+        ]
+
         path:
             basename: "lvm.{camera.name}-{num:08d}.fits"
             dirname: "test/{date.strftime('%Y%m%d')}"
             filepath: "python/lvmcam/assets"
+
+        
     # the sole existing MPIA test camera Blackfly GigE of 2020-12-11, C-mount cut in June
     sci.agw:
         name: "sci.agw"
