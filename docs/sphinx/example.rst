@@ -6,7 +6,7 @@ Example
 Exposure test with real camera
 -------------------------------
 
-Set ``araviscam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/camtype.yaml``.
+Set ``araviscam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml``.
 
 .. code-block:: console
 
@@ -85,7 +85,7 @@ In ``lvmcam start --debug`` terminal, you can see verbosity.
 Exposure test with virtual camera
 ----------------------------------
 
-Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/camtype.yaml``.
+Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml`.
 
 .. code-block:: console
 
@@ -167,15 +167,25 @@ In ``clu`` terminal, type following commands step-by-step.
             "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000006.fits"
         }
     }
-               
+
+
 In ``lvmcam start --debug`` terminal, you can see verbosity.
+
 
 .. code-block:: console
 
     $ lvmcam start --debug
     [DEBUG]: [SKYCAMERASYSTEM]: read configuration file from /home/mgjeon/lvmcam/python/lvmcam/etc/cameras.yaml
     [DEBUG]: [0.033 s]: find_all_available_cameras
-    [DEBUG]: [SKYCAMERASYSTEM]: adding camera 'lvm.sci.agw.cam' with parameters {'type': 'skymakercam', 'uid': 'lvm.sci.agw.cam', 'descr': 'Guider Camera Science', 'default': {'gain': 5.0, 'binning': [4, 4]}, 'instpar': 'lvm_sci_agw_cam', 'focus_stage': 'lvm.sci.foc', 'kmirror': 'lvm.sci.km', 'tcs': 'lvm.sci.pwi', 'catalog_path': '$HOME/data/catalog/gaia', 'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283193', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False, 'extrahdr': [['TEST1', 9999, 'Extra header test 1'], ['TEST2', 999, 'Extra header test 2'], ['TESTHDR3', -1, 'Extra header test 3'], ['TESTHDR4', -2, 'Extra header test 4']], 'path': {'basename': 'lvm.{camera.name}-{num:08d}.fits', 'dirname': "test/{date.strftime('%Y%m%d')}", 'filepath': 'python/lvmcam/assets'}}
+    [DEBUG]: [SKYCAMERASYSTEM]: adding camera 'lvm.sci.agw.cam' with parameters {'type': 'skymakercam', 'uid': 'lvm.sci.agw.cam', 
+    'descr': 'Guider Camera Science', 'default': {'gain': 5.0, 'binning': [4, 4]}, 'instpar': 'lvm_sci_agw_cam', 
+    'focus_stage': 'lvm.sci.foc', 'kmirror': 'lvm.sci.km', 'tcs': 'lvm.sci.pwi', 'catalog_path': '$HOME/data/catalog/gaia', 
+    'pixsize': 9.0, 'pixscal': 8.92, 'connection': {'uid': '19283193', 'gain': 1.0, 'binning': [1, 1], 'autoconnect': True, 
+    'bool': {'ReverseY': True, 'ReverseX': False, 'BlackLevelClampingEnable': False, 'GammaEnable': False}, 
+    'int': {'BinningHorizontalMode': 1, 'BinningVerticalMode': 1}, 'float': None, 'string': None}, 'shutter': False, 
+    'extrahdr': [['TEST1', 9999, 'Extra header test 1'], ['TEST2', 999, 'Extra header test 2'], ['TESTHDR3', -1, 'Extra header test 3'], 
+    ['TESTHDR4', -2, 'Extra header test 4']], 'path': {'basename': 'lvm.{camera.name}-{num:08d}.fits', 
+    'dirname': "test/{date.strftime('%Y%m%d')}", 'filepath': 'python/lvmcam/assets'}}
     [DEBUG]: [LVM.SCI.AGW.CAM]: [1600, 1100]
     [DEBUG]: [LVM.SCI.AGW.CAM]: connecting ...
     [DEBUG]: [LVM.SCI.AGW.CAM]: camera connected.
@@ -183,7 +193,8 @@ In ``lvmcam start --debug`` terminal, you can see verbosity.
     [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
     [DEBUG]: [LVM.SCI.AGW.CAM]: kmirror angle (deg): 0.0
     [DEBUG]: [LVM.SCI.AGW.CAM]: separation 6.068631324108885
-    Gaia query:  SELECT source_id, ra,dec,phot_g_mean_mag FROM gaiaedr3.gaia_source WHERE phot_g_mean_mag <= 17 AND 1=CONTAINS(POINT('ICRS',ra,dec), CIRCLE('ICRS',48.198614693649,-58.535399463189, 0.692887394120578))
+    Gaia query:  SELECT source_id, ra,dec,phot_g_mean_mag FROM gaiaedr3.gaia_source WHERE phot_g_mean_mag <= 17 AND 1=CONTAINS(POINT('ICRS',ra,dec), 
+    CIRCLE('ICRS',48.198614693649,-58.535399463189, 0.692887394120578))
     INFO: Query finished. [astroquery.utils.tap.core]
     1163 stars found within 0.692887394120578 deg
     [DEBUG]: [LVM.SCI.AGW.CAM]: defocus 0.0
