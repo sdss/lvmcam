@@ -46,7 +46,7 @@ from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
 camera_types = {"araviscam": lambda: BlackflyCameraSystem(BlackflyCamera),
                 "skymakercam": lambda: SkyCameraSystem(SkyCamera)}
 
-config = read_yaml_file("python/lvmcam/etc/camtype.yaml")
+config = os.path.dirname(__file__)[:-6] + "/etc/camtype.yaml"
 camtype = config["camtype"]
 
 is_True_gt_1 = sum(value is True for value in camtype.values()) > 1
