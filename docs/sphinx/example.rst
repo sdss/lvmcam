@@ -531,14 +531,6 @@ You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respective
             "uid": "19283193"
         }
     }
-    05:28:30.896 lvmcam : 
-    lvmcam expose 0.1 1 sci.agw
-    05:28:32.941 lvmcam > 
-    05:28:33.656 lvmcam : {
-        "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000001.fits"
-        }
-    }
     lvmcam expose -v -c NO 0.5 1 sci.agw
     05:28:59.416 lvmcam > 
     05:29:00.515 lvmcam : {
