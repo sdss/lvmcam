@@ -5,13 +5,12 @@
 [![Documentation Status](https://readthedocs.org/projects/sdss-lvmcam/badge/?version=latest)](https://sdss-lvmcam.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/sdss/lvmcam/branch/main/graph/badge.svg)](https://codecov.io/gh/sdss/lvmcam)
 
-The package for lvmagp.
+The package for [lvmagp](https://github.com/sdss/lvmagp).
 
 # See also
 - [clu](https://github.com/sdss/clu)
 - [archon](https://github.com/sdss/archon)
 - [basecam](https://github.com/sdss/basecam)
 - [araviscam](https://github.com/sdss/araviscam)
+- [skymakercam](https://github.com/sdss/skymakercam)
 - [LVM_FLIR_Software](https://github.com/sdss/LVM_FLIR_Software)
-- [lvmagp](https://github.com/sdss/lvmagp)
-
