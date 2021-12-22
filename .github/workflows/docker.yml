@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       USER: sdss
-      APP: lvmtan
+      APP: lvmcam
     steps:
       - name: Set docker tags
         id: set-tags
