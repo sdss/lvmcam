@@ -38,18 +38,64 @@ RUN mkdir -p /root/aravis && \
     apt-get upgrade -y && \
     apt-get install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli && \
     rm -rf /root/aravis
-    
+
+########## virtualenv
+# RUN cd /root && \
+#     git clone https://github.com/sdss/lvmcam.git && \
+#     cd lvmcam && \
+#     sed -i '/    araviscam/c\    araviscam: False' python/lvmcam/etc/camtype.yaml && \
+#     sed -i '/    skymakercam/c\    skymakercam: True' python/lvmcam/etc/camtype.yaml
+
+# RUN cd /root/lvmcam && \
+#     pip install virtualenv && \
+#     virtualenv venv --python=python3.8 && \
+#     source venv/bin/activate && \
+#     pip install poetry && \
+#     poetry install
+
+# ENV VIRTUAL_ENV=${HOME}/lvmcam/venv
+# ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+########## virtualenv
+
+########## pyenv
+RUN curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+RUN apt -y install make build-essential libssl-dev zlib1g-dev libbz2-dev \
+                           libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+                           xz-utils tk-dev libffi-dev
+
+RUN echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+RUN echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+RUN echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+
+RUN source ~/.bashrc
+
+ENV PATH=/root/.pyenv/bin:$PATH
+
 RUN cd /root && \
     git clone https://github.com/sdss/lvmcam.git && \
     cd lvmcam && \
-    pip install virtualenv && \
-    virtualenv venv --python=python3.8 && \
-    source venv/bin/activate && \
-    pip install poetry && \
-    poetry install
+    sed -i '/    araviscam/c\    araviscam: False' python/lvmcam/etc/camtype.yaml && \
+    sed -i '/    skymakercam/c\    skymakercam: True' python/lvmcam/etc/camtype.yaml
 
-ENV VIRTUAL_ENV=/root/lvmcam/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN cd /root/lvmcam && \
+    pyenv install 3.9.8 && \
+    pyenv virtualenv 3.9.8 lc && \
+    pyenv local lc
+
+RUN cd /root/lvmcam && \
+    bash -i -c "\
+    source ~/.bashrc && \
+    pyenv activate lc && \
+    pip install --upgrade pip && \
+    pip install poetry && \
+    poetry install"
+    
+RUN pyenv rehash
+ENV PATH=/root/.pyenv/shims:$PATH
+ENV PATH=/root/.pyenv/versions/lc/bin/:$PATH
+########## pyenv
 
 WORKDIR /root/lvmcam
 
