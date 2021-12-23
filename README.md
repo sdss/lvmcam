@@ -20,8 +20,6 @@ The package for [lvmagp](https://github.com/sdss/lvmagp).
 ## Build (skymakercam) & Run
 
 ```
-$ git clone https://github.com/sdss/lvmcam
-$ cd lvmcam
 $ podman build -t sdss/lvmcam ./container --format docker
 ```
 
@@ -34,7 +32,7 @@ $ podman run -it --network=host --name=lvm.cam.sci.agw localhost/sdss/lvmcam sta
 ```
 
 ```
-$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/user/python/lvmcam:rw localhost/sdss/lvmcam start --debug
+$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/lvmcam/python/lvmcam:rw localhost/sdss/lvmcam start --debug
 ```
 
 ## Pull (skymakercam) & Run
@@ -52,7 +50,7 @@ $ podman run -it --network=host --name=lvm.cam.sci.agw ghcr.io/sdss/lvmcam start
 ```
 
 ```
-$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/user/python/lvmcam:rw ghcr.io/sdss/lvmcam start --debug
+$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/lvmcam/python/lvmcam:rw ghcr.io/sdss/lvmcam start --debug
 ```
 
 ## Delete
