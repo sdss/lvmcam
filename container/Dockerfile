@@ -97,7 +97,7 @@ ENV PATH=/root/.pyenv/versions/lc/bin/:$PATH
 
 WORKDIR /root/lvmcam
 
-COPY run-cam.sh /root/lvmcam/container
+COPY ./container/run-cam.sh /root/lvmcam/container
 
 RUN chmod +x ./container/run-cam.sh
 
