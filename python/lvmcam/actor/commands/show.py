@@ -47,7 +47,7 @@ async def all(command: Command, config: str, verbose: bool):
         modules.logger.sh.setLevel(modules.logging.WARNING)
 
     from lvmcam.araviscam import BlackflyCameraSystem, BlackflyCamera
-    from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
+    from lvmcam.skymakerca import SkyCameraSystem, SkyCamera
 
     camera_types = {"araviscam": (BlackflyCameraSystem, BlackflyCamera),
                     "skymakercam": (SkyCameraSystem, SkyCamera)}

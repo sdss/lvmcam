@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sdss-lvmcam"
-version = "0.2.2"
+version = "0.2.3"
 description = "The package for lvmagp"
 authors = ["Mingyu Jeon <mgjeon@khu.ac.kr>", "Sumin Lee <lxmark888@khu.ac.kr>"]
 license = "BSD-3-Clause"
@@ -30,6 +30,11 @@ generate-setup-file = false
 
 [tool.poetry.scripts]
 lvmcam = "lvmcam.__main__:lvmcam"
+container_build ="container:build"
+container_start ="container:start"
+container_stop ="container:stop"
+container_isRunning ="container:isRunning"
+container_autotuner ="container:autotuner"
 
 [tool.poetry.dependencies]
 python = ">3.7,<3.10"

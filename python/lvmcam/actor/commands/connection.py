@@ -3,6 +3,7 @@ from __future__ import absolute_import, annotations, division, print_function
 import asyncio
 import collections
 import datetime
+from logging import raiseExceptions
 import os
 
 import click
@@ -23,10 +24,12 @@ __all__ = ["connect", "disconnect"]
 @click.option("-v", "--verbose", is_flag=True)
 # Name of an optional YAML file
 @click.option("-c", "--config", type=str, default="python/lvmcam/etc/cameras.yaml")
+@click.option("-n", "--name", type=str, default="all")
 async def connect(
     command: Command,
     verbose: bool,
     config: str,
+    name: str,
 ):
     """
     Connect all available cameras
@@ -37,6 +40,8 @@ async def connect(
         Verbosity on or off
     config
         Name of the YAML file with the cameras configuration
+    name
+        Name of camera to connect
     """
     modules.change_dir_for_normal_actor_start(__file__)
 
@@ -52,7 +57,7 @@ async def connect(
     modules.variables.config = read_yaml_file(config)
 
     from lvmcam.araviscam import BlackflyCameraSystem, BlackflyCamera
-    from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
+    from lvmcam.skymakerca import SkyCameraSystem, SkyCamera
 
     camera_types = {"araviscam": (BlackflyCameraSystem, BlackflyCamera),
                     "skymakercam": (SkyCameraSystem, SkyCamera)}
@@ -60,20 +65,45 @@ async def connect(
     Camera = camera_types[modules.variables.camtypename][1]
 
     # modules.variables.cam_list.append(await modules.variables.cs.add_camera(uid=modules.variables.cs._config[camname]["uid"]))
+    available_cameras_uid = []
 
     available_cameras_uid = find_all_available_cameras(config, CameraSystem, Camera, verbose)
 
     if available_cameras_uid == []:
+        modules.variables.cs = None
+        modules.variables.cam_list.clear()
         command.error("There are not real cameras to connect")
         return command.fail()
 
     try:
-        for item in list(modules.variables.cs._config.items()):
-            if item[1]["uid"] in available_cameras_uid:
-                await connect_available_camera(item)
+        config_file = list(modules.variables.cs._config.items())
+
+        if name == 'all':
+            for camera_name, props in config_file:
+                if props["uid"] in available_cameras_uid:
+                    await connect_available_camera(props)
+            raise Exception
+
+        target_props = None
+        is_name_in = False
+        for camera_name, props in config_file:
+            if camera_name == name:
+                is_name_in = True
+                target_props = props
+                break
+
+        if is_name_in is True:
+            await connect_available_camera(target_props)
+        else:
+            modules.variables.cs = None
+            modules.variables.cam_list.clear()
+            command.error("There is no camera to match the given name")
+            return command.fail()
     except gi.repository.GLib.GError:
         command.error("Cameras are already connected")
         return command.fail()
+    except Exception:
+        pass
 
     flir.setup_camera()
     _dict = {}
@@ -91,8 +121,8 @@ async def connect(
 
 
 @modules.atimeit
-async def connect_available_camera(item):
-    modules.variables.cam_list.append(await modules.variables.cs.add_camera(uid=item[1]["uid"]))
+async def connect_available_camera(props):
+    modules.variables.cam_list.append(await modules.variables.cs.add_camera(uid=props["uid"]))
 
 
 # @modules.timeit
@@ -125,8 +155,7 @@ async def disconnect(
     if modules.variables.cam_list:
         for cam in modules.variables.cam_list:
             try:
-                if cam.name != "test":
-                    await modules.variables.cs.remove_camera(uid=cam.uid)
+                await modules.variables.cs.remove_camera(uid=cam.uid)
             except AttributeError:
                 pass
         modules.variables.cs = None

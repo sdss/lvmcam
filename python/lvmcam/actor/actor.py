@@ -42,7 +42,7 @@ from sdsstools import read_yaml_file
 from lvmcam.actor import modules
 
 from lvmcam.araviscam import BlackflyCameraSystem, BlackflyCamera
-from lvmcam.skymakercam import SkyCameraSystem, SkyCamera
+from lvmcam.skymakerca import SkyCameraSystem, SkyCamera
 camera_types = {"araviscam": lambda: BlackflyCameraSystem(BlackflyCamera),
                 "skymakercam": lambda: SkyCameraSystem(SkyCamera)}
 
