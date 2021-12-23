@@ -15,60 +15,53 @@ The package for [lvmagp](https://github.com/sdss/lvmagp).
 - [skymakercam](https://github.com/sdss/skymakercam)
 - [LVM_FLIR_Software](https://github.com/sdss/LVM_FLIR_Software)
 
-# Docker (Alpha version)
+# Docker (Beta version)
 
-## Build (skymakercam) & Run
-
+## Download
 ```
-$ podman build -t sdss/lvmcam ./container --format docker
-```
-
-```
-$ podman run -d --network=host --name=lvm.cam.sci.agw localhost/sdss/lvmcam
+$ git clone https://github.com/sdss/lvmcam
+$ cd lvmcam
+$ poetry install
 ```
 
+## Run
 ```
-$ podman run -it --network=host --name=lvm.cam.sci.agw localhost/sdss/lvmcam start --debug
-```
-
-```
-$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/lvmcam/python/lvmcam:rw localhost/sdss/lvmcam start --debug
+$ poetry run container_start
 ```
 
-## Pull (skymakercam) & Run
-
+Run container with killing current instance
 ```
-$ podman pull ghcr.io/sdss/lvmcam
-```
-
-```
-$ podman run -d --network=host --name=lvm.cam.sci.agw ghcr.io/sdss/lvmcam
+$ poetry run container_start --kill
 ```
 
+Run container with custom name (default name = lvm.cam)
 ```
-$ podman run -it --network=host --name=lvm.cam.sci.agw ghcr.io/sdss/lvmcam start --debug
-```
-
-```
-$ podman run -it --network=host --name=lvm.cam.sci.agw -v /home/user/lvmcam/python/lvmcam:/root/lvmcam/python/lvmcam:rw ghcr.io/sdss/lvmcam start --debug
+$ poetry run container_start --name=lvm.cam.sci.agw
 ```
 
-## Delete
-
+Run container with lvmcam debug mode
 ```
-$ podman kill lvm.cam.sci.agw
-$ podman rm lvm.cam.sci.agw
+$ poetry run container_start --debug
 ```
 
-## Start & Stop
-
+Run container with virtual camera (skymakercam) mode
 ```
-$ podman start lvm.cam.sci.agw
-$ podman stop lvm.cam.sci.agw
+$ poetry run container_start --virtual
 ```
 
-## Status
-
+Run multiple containers
 ```
-$ podman ps (-a)
+$ poetry run container_start --name=lvm.cam.sci.agw
+$ poetry run container_start --name=lvm.cam.sci.age
+$ poetry run container_start --name=lvm.cam.sci.agc
+```
+
+## Build
+```
+$ poetry run container_build
+```
+
+Build from scratch
+```
+$ poetry run container_build --no-cache
 ```

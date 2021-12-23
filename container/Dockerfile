@@ -75,9 +75,7 @@ ENV PATH=/root/.pyenv/bin:$PATH
 
 RUN cd /root && \
     git clone https://github.com/sdss/lvmcam.git && \
-    cd lvmcam && \
-    sed -i '/    araviscam/c\    araviscam: False' python/lvmcam/etc/camtype.yaml && \
-    sed -i '/    skymakercam/c\    skymakercam: True' python/lvmcam/etc/camtype.yaml
+    cd lvmcam
 
 RUN cd /root/lvmcam && \
     pyenv install 3.9.8 && \
@@ -92,13 +90,15 @@ RUN cd /root/lvmcam && \
     pip install poetry && \
     poetry install"
     
-RUN pyenv rehash
+# RUN pyenv rehash
 ENV PATH=/root/.pyenv/shims:$PATH
 ENV PATH=/root/.pyenv/versions/lc/bin/:$PATH
 ########## pyenv
 
 WORKDIR /root/lvmcam
 
-ENTRYPOINT ["lvmcam"] 
+COPY run-cam.sh /root/lvmcam/container
 
-CMD ["start"]
+RUN chmod +x ./container/run-cam.sh
+
+CMD ["/root/lvmcam/container/run-cam.sh"]

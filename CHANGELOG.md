@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.3 - December 23, 2021
+
+### ✨ Improved
+* Add Docker
+
 ## 0.2.2 - December 13, 2021
 
 ### ✨ Improved
