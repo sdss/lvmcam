@@ -593,3 +593,71 @@ You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respective
     -rw-rw-r-- 1 mgjeon mgjeon 1.9M Dec 12 14:29 lvm.sci.agw-00000004.fits
     -rw-rw-r-- 1 mgjeon mgjeon 1.8M Dec 12 14:29 lvm.sci.agw-00000005.fits
     -rw-rw-r-- 1 mgjeon mgjeon 1.7M Dec 12 14:29 lvm.sci.agw-00000006.fits
+
+
+
+Docker
+------
+
+Download
+^^^^^^^^
+
+.. code-block:: console
+
+    $ git clone https://github.com/sdss/lvmcam
+    $ cd lvmcam
+    $ poetry install
+
+Run
+^^^
+
+.. code-block:: console
+
+    $ poetry run container_start
+
+
+Run container with killing current instance
+
+.. code-block:: console
+
+    $ poetry run container_start --kill
+
+Run container with custom name (default name = lvm.cam)
+
+.. code-block:: console
+
+    $ poetry run container_start --name=lvm.cam.sci.agw
+
+Run container with lvmcam debug mode
+
+.. code-block:: console
+
+    $ poetry run container_start --debug
+
+
+Run container with virtual camera (skymakercam) mode
+
+.. code-block:: console
+
+    $ poetry run container_start --virtual
+
+Run multiple containers
+
+.. code-block:: console
+
+    $ poetry run container_start --name=lvm.cam.sci.agw
+    $ poetry run container_start --name=lvm.cam.sci.age
+    $ poetry run container_start --name=lvm.cam.sci.agc
+
+Build
+^^^^^
+
+.. code-block:: console
+
+    $ poetry run container_build
+
+Build from scratch
+
+.. code-block:: console
+
+    $ poetry run container_build --no-cache
