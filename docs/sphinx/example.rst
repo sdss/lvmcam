@@ -6,20 +6,11 @@ Example
 Exposure test with real camera
 -------------------------------
 
-Set ``araviscam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml``.
+Start lvmcam.
 
 .. code-block:: console
 
-    camtype:
-        araviscam: True
-        skymakercam: False
-
-
-Start the actor (in debug mode).
-
-.. code-block:: console
-
-    $ lvmcam start (--debug)
+    $ poetry run container_start --kill --name=lvm.cam.real
 
 In another terminal, start ``clu``.
 
@@ -32,27 +23,27 @@ In ``clu`` terminal, type following commands step-by-step.
 .. code-block:: console
 
     $ clu
-    lvmcam connect -v
-    00:34:52.026 lvmcam > 
-    00:34:56.271 lvmcam i {
+    lvm.cam.real connect -v -n sci.agw
+    00:34:52.026 lvm.cam.real > 
+    00:34:56.271 lvm.cam.real i {
         "CAMERA": {
             "name": "sci.agw",
             "uid": "19283193"
         }
     }
-    00:34:56.282 lvmcam : 
-    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 sci.agw
-    00:35:15.462 lvmcam > 
-    00:35:17.716 lvmcam : {
+    00:34:56.282 lvm.cam.real : 
+    lvm.cam.real expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 sci.agw
+    00:35:15.462 lvm.cam.real > 
+    00:35:17.716 lvm.cam.real : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000001.fits",
             "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000002.fits",
             "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
-    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 sci.agw
-    00:35:22.831 lvmcam > 
-    00:35:27.655 lvmcam : {
+    lvm.cam.real expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 sci.agw
+    00:35:22.831 lvm.cam.real > 
+    00:35:27.655 lvm.cam.real : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000004.fits",
             "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000005.fits",
@@ -61,11 +52,11 @@ In ``clu`` terminal, type following commands step-by-step.
     }
  
 
-In ``lvmcam start --debug`` terminal, you can see verbosity.
+If you start lvmcam with ``--debug`` option, you can see verbosity.
 
 .. code-block:: console
 
-    $ lvmcam start --debug
+    $ poetry run container_start --debug --kill --name=lvm.cam.real
     [DEBUG]: [1.307 s]: find_all_available_cameras
     [DEBUG]: [1.640 s]: async _connect_internal
     [DEBUG]: [1.641 s]: async connect_available_camera
@@ -84,14 +75,6 @@ In ``lvmcam start --debug`` terminal, you can see verbosity.
 
 Exposure test with virtual camera
 ----------------------------------
-
-Set ``askymakercam: True`` in ``python/lvmcam/etc/camtype.yaml``. The path where the images are saved can be changed in ``python/lvmcam/etc/cameras.yaml``.
-
-.. code-block:: console
-
-    camtype:
-        araviscam: False
-        skymakercam: True
 
 Start `lvmtan <https://github.com/sdss/lvmtan>`_, `lvmpwi <https://github.com/sdss/lvmpwi>`_, and `skymakercam <https://github.com/sdss/skymakercam>`_ as follows.
 
@@ -123,11 +106,11 @@ For skymakercam:
     $ poetry install
     $ poetry run python utils/plot_skymakercam.py -v -c python/skymakercam/etc/cameras.yaml lvm.sci.agw.cam
 
-Start the actor (in debug mode).
+Start lvmcam with ``--virtual`` option.
 
 .. code-block:: console
 
-   $ lvmcam start (--debug)
+   $ poetry run container_start --kill --virtual --name=lvm.cam.virtual
 
 In another terminal, start ``clu``.
 
@@ -140,27 +123,27 @@ In ``clu`` terminal, type following commands step-by-step.
 .. code-block:: console
 
     $ clu
-    lvmcam connect -v
-    10:07:35.459 lvmcam >
-    10:07:36.592 lvmcam i {
+    lvm.cam.virtual connect -n lvm.sci.agw.cam
+    10:07:35.459 lvm.cam.virtual >
+    10:07:36.592 lvm.cam.virtual i {
         "CAMERA": {
             "name": "lvm.sci.agw.cam",
             "uid": "lvm.sci.agw.cam"
         }
     }
-    10:07:36.603 lvmcam :
-    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 lvm.sci.agw.cam
-    10:07:52.756 lvmcam >
-    10:07:57.813 lvmcam : {
+    10:07:36.603 lvm.cam.virtual :
+    lvm.cam.virtual expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 lvm.sci.agw.cam
+    10:07:52.756 lvm.cam.virtual >
+    10:07:57.813 lvm.cam.virtual : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000001.fits",
             "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000002.fits",
             "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000003.fits"
         }
     }
-    lvmcam expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 lvm.sci.agw.cam
-    10:08:03.555 lvmcam >
-    10:08:04.503 lvmcam : {
+    lvm.cam.virtual expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 lvm.sci.agw.cam
+    10:08:03.555 lvm.cam.virtual >
+    10:08:04.503 lvm.cam.virtual : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000004.fits",
             "1": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000005.fits",
@@ -169,12 +152,12 @@ In ``clu`` terminal, type following commands step-by-step.
     }
 
 
-In ``lvmcam start --debug`` terminal, you can see verbosity.
+If you start lvmcam with ``--debug`` option, you can see verbosity.
 
 
 .. code-block:: console
 
-    $ lvmcam start --debug
+    $ poetry run container_start --debug --kill --virtual --name=lvm.cam.virtual
     [DEBUG]: [SKYCAMERASYSTEM]: read configuration file from /home/mgjeon/lvmcam/python/lvmcam/etc/cameras.yaml
     [DEBUG]: [0.033 s]: find_all_available_cameras
     [DEBUG]: [SKYCAMERASYSTEM]: adding camera 'lvm.sci.agw.cam' with parameters {'type': 'skymakercam', 'uid': 'lvm.sci.agw.cam', 
@@ -499,7 +482,7 @@ Compression
 -----------
 The ``-c`` or ``--compress`` option is to choose one of the `compression algorithms <https://docs.astropy.org/en/latest/io/fits/api/images.html#astropy.io.fits.CompImageHDU>`_.
 
-You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respectively represents ['None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'].
+You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respectively represent ['None', 'RICE_1', 'RICE_ONE', 'PLIO_1', 'GZIP_1', 'GZIP_2', 'HCOMPRESS_1'].
 
 .. code-block:: console
 
@@ -599,8 +582,7 @@ You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respective
 Docker
 ------
 
-Download
-^^^^^^^^
+Clone the lvmcam repository.
 
 .. code-block:: console
 
@@ -608,40 +590,39 @@ Download
     $ cd lvmcam
     $ poetry install
 
-Run
-^^^
+Run container.
 
 .. code-block:: console
 
     $ poetry run container_start
 
 
-Run container with killing current instance
+Run container with killing current instance.
 
 .. code-block:: console
 
     $ poetry run container_start --kill
 
-Run container with custom name (default name = lvm.cam)
+Run container with custom name (default name = lvm.cam).
 
 .. code-block:: console
 
     $ poetry run container_start --name=lvm.cam.sci.agw
 
-Run container with lvmcam debug mode
+Run container with lvmcam debug mode.
 
 .. code-block:: console
 
     $ poetry run container_start --debug
 
 
-Run container with virtual camera (skymakercam) mode
+Run container with virtual camera (skymakercam) mode.
 
 .. code-block:: console
 
     $ poetry run container_start --virtual
 
-Run multiple containers
+Run multiple containers.
 
 .. code-block:: console
 
@@ -649,14 +630,13 @@ Run multiple containers
     $ poetry run container_start --name=lvm.cam.sci.age
     $ poetry run container_start --name=lvm.cam.sci.agc
 
-Build
-^^^^^
+Build.
 
 .. code-block:: console
 
     $ poetry run container_build
 
-Build from scratch
+Build from scratch.
 
 .. code-block:: console
 

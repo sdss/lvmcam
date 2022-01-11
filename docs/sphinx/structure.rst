@@ -99,6 +99,13 @@ The rule is ``filepath/dirname/basename``.
             dirname: "lvm/sci/agw/{date.strftime('%Y%m%d')}"
             filepath: "python/lvmcam/assets"
 
+About files 
+-----------
+
+Cameras setting file is ``lvmcam/python/lvmcam/etc/cameras.yaml``.
+
+Default file path where images are saved is  ``lvmcam/python/lvmcam/assets/...``.
+    
 
 Sequence diagram of lvmcam
 --------------------------

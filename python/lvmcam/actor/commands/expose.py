@@ -139,7 +139,8 @@ async def expose(
         extraheader,
         header,
     )
-    path_dict = {i: paths[i] for i in range(len(paths))}
+    home_path = os.environ['HOME_PATH']
+    path_dict = {i: os.path.join(home_path, path[13:]) for i, path in enumerate(paths)}
     return command.finish(PATH=path_dict)
 
 
