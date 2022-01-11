@@ -73,7 +73,7 @@ def start(lvmt_root:str, name: str, virtual:bool, debug:bool, kill:bool):
     if kill:
         subprocess.run(shlex.split(f"podman kill {name}"))
         
-    run_base = f"--rm -td --network=host --name={name}"
+    run_base = f"--rm -td --network=host --name={name} -e HOME_PATH={os.getcwd()}"
     
     run_base += f" -e LVMT_RMQ={socket.gethostname()}"
 

@@ -78,12 +78,18 @@ Install Aravis 0.8.
   $ cd ..
   $ sudo dpkg -i *.deb
   $ sudo apt-get update
-  $ sudo apt-get -y upgrade
-  $ sudo apt-get -y install gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
+  $ sudo apt-get upgrade -y
+  $ sudo apt-get install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
 
 
-Install 
-^^^^^^^
+Install podman.
+
+.. code-block:: console
+
+  $ sudo apt-get install -y podman
+
+Start & Ping-pong test
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Clone the repository.
 
@@ -104,16 +110,15 @@ Install poetry and dependencies.
 
 .. code-block:: console
 
+  $ pip install --upgrade pip
   $ pip install poetry
   $ poetry install
 
-Ping-pong test
-^^^^^^^^^^^^^^^
-Start lvmcam actor.
+Start lvmcam actor. It'll take long time for the first time because of downloading lvmcam package.
 
 .. code-block:: console
 
-  $ lvmcam start
+  $ poetry run container_start --kill --name=lvmcam
 
 In another terminal, type ``clu`` and ``lvmcam ping`` for test.
 
@@ -126,27 +131,25 @@ In another terminal, type ``clu`` and ``lvmcam ping`` for test.
           "text": "Pong."
           }
 
-Stop lvmcam actor.
+If errors occur when running ``$ poetry run ...``, run a command below to check whether there are some lvmcam containers.
 
 .. code-block:: console
 
-  $ lvmcam stop
+  $ podman ps -a
 
-Update
-^^^^^^^
-
-Pull the repository.
+If there are some containers, run a command below to delete a specific container.
 
 .. code-block:: console
 
-  $ git pull
+  $ podman rm -f <CONTAINER ID>
 
-Update by using poetry.
+If the error similar to below occurs, check whether ``python/lvmcam/etc/<ActorName>.yml`` is empty.
 
 .. code-block:: console
 
-  $ poetry install
+  TypeError: __init__() missing 1 required positional argument: 'name'
 
+  All children are gone. Parent is exiting...
 
 
 .. toctree::
