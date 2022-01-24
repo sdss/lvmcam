@@ -88,6 +88,7 @@ RUN cd /root/lvmcam && \
     pyenv activate lc && \
     pip install --upgrade pip && \
     pip install poetry && \
+    pip install wheel && \
     poetry install"
     
 # RUN pyenv rehash

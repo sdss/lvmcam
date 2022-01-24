@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.4 - January 24, 2021
+## 0.2.4 - January 24, 2022
 
 ### ✨ Improved
 * Add [cluplus](https://github.com/sdss/cluplus)
