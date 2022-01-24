@@ -13,6 +13,7 @@ import os
 import click
 from basecam.actor.commands import camera_parser as parser
 from clu.parsers.click import CluGroup, help_, ping, version
+from cluplus.parsers.click import __commands
 
 # # import warnings
 
@@ -25,6 +26,7 @@ from clu.parsers.click import CluGroup, help_, ping, version
 parser.add_command(ping)
 parser.add_command(version)
 parser.add_command(help_)
+parser.add_command(__commands)
 
 
 
