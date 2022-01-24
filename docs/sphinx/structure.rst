@@ -110,8 +110,35 @@ Default file path where images are saved is  ``lvmcam/python/lvmcam/assets/...``
 Sequence diagram of lvmcam
 --------------------------
 
-The following diagram is for version 0.1.4. (It will be updated.)
-
 .. image:: ./_static/lvmcam_sequence_diagram.png
     :width: 800
 
+Development
+-----------
+For developing lvmcam, you can start lvmcam by typing commands below.
+
+Debug mode
+
+.. code-block:: console 
+
+    $ lvmcam start --debug
+
+Normal mode
+
+.. code-block:: console 
+
+    $ lvmcam start 
+    $ lvmcam stop 
+
+If you want to build lvmcam docker package, use following command.
+
+.. code-block:: console 
+
+    $ poetry run container_build --no-cache
+
+If you want to make lvmcam document page, use following commands.
+
+.. code-block:: console 
+
+    $ cd docs/sphinx/
+    $ make html
