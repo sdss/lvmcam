@@ -89,7 +89,7 @@ async def connection(
     cameras_dict = {}
     if modules.variables.cam_list:
         for i, cam in enumerate(modules.variables.cam_list):
-            cameras_dict[i]={"name": cam.name, "uid": cam.uid}
+            cameras_dict[i] = {"name": cam.name, "uid": cam.uid}
             # command.info(CONNECTED={"name": cam.name, "uid": cam.uid})
         return command.finish(CONNECTED=cameras_dict)
     else:
