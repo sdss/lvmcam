@@ -99,6 +99,10 @@ For lvmpwi:
 
 For skymakercam:
 
+.. code-block:: console 
+
+    $ sudo apt-get install -y libxcb-xinerama0
+
 .. code-block:: console
 
     $ git clone https://github.com/sdss/skymakercam
@@ -641,3 +645,29 @@ Build from scratch.
 .. code-block:: console
 
     $ poetry run container_build --no-cache
+
+
+cluplus
+-------
+
+.. code-block:: python
+
+    from clu.client import AMQPClient
+    from cluplus.proxy import Proxy
+
+    amqpc = AMQPClient(name="my_client")
+
+    _foc = Proxy(amqpc, "lvm.cam.virtual")
+    _foc.start()
+
+    # print(_foc.ping())
+    # print(_foc.help())
+    # print(_foc.version())
+
+    print(_foc.show("all"))
+    print(_foc.connect(name="lvm.sci.agw.cam"))
+    print(_foc.expose(0.5, 3, "lvm.sci.agw.cam", verbose="", compress="R1"))
+    print(_foc.show("connection"))
+    print(_foc.disconnect())
+
+    
