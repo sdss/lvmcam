@@ -46,7 +46,7 @@ async def test_actor(actor: LvmcamActor):
     if command.status.did_succeed:
         assert command.status.did_succeed
         reply = actor.mock_replies
-        assert isinstance(reply[-2]['ALL'], dict)
+        assert isinstance(reply[-1]['ALL'], dict)
     elif command.status.did_fail:
         assert command.status.did_fail
 
