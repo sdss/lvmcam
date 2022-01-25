@@ -63,8 +63,8 @@ async def all(command: Command, config: str, verbose: bool):
             cameras_dict[item[0]] = f"Available | uid: {uid}"
         else:
             cameras_dict[item[0]] = f"Unavailable | uid: {uid}"
-    command.info(ALL=cameras_dict)
-    return command.finish()
+    # command.info(ALL=cameras_dict)
+    return command.finish(ALL=cameras_dict)
 
 
 @modules.timeit
@@ -86,10 +86,12 @@ async def connection(
     """
     modules.change_dir_for_normal_actor_start(__file__)
     # cs = blc.BlackflyCameraSystem(blc.BlackflyCamera, camera_config=config)
+    cameras_dict = {}
     if modules.variables.cam_list:
-        for cam in modules.variables.cam_list:
-            command.info(CONNECTED={"name": cam.name, "uid": cam.uid})
-        return command.finish()
+        for i, cam in enumerate(modules.variables.cam_list):
+            cameras_dict[i]={"name": cam.name, "uid": cam.uid}
+            # command.info(CONNECTED={"name": cam.name, "uid": cam.uid})
+        return command.finish(CONNECTED=cameras_dict)
     else:
         command.error("There are no connected cameras")
         return command.fail()
