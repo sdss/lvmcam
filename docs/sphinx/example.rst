@@ -85,6 +85,9 @@ For lvmtan:
     $ git clone https://github.com/sdss/lvmtan
     $ cd lvmtan
     $ poetry install
+
+.. code-block:: console
+
     $ poetry run container_start --name=lvm.all
 
 
@@ -95,6 +98,9 @@ For lvmpwi:
     $ git clone https://github.com/sdss/lvmpwi
     $ cd lvmpwi
     $ poetry install
+
+.. code-block:: console
+
     $ poetry run container_start --name=lvm.sci.pwi --simulator
 
 For skymakercam:
@@ -108,6 +114,9 @@ For skymakercam:
     $ git clone https://github.com/sdss/skymakercam
     $ cd skymakercam
     $ poetry install
+
+.. code-block:: console
+
     $ poetry run python utils/plot_skymakercam.py -v -c python/skymakercam/etc/cameras.yaml lvm.sci.agw.cam
 
 Start lvmcam with ``--virtual`` option.
