@@ -51,7 +51,7 @@ Install poetry and dependencies.
   $ pip install poetry
   $ poetry install
 
-Start lvmcam actor. It'll take long time for the first time because of downloading lvmcam package.
+Start lvmcam actor.
 
 .. code-block:: console
 
