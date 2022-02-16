@@ -22,75 +22,6 @@ This is the documentation for the SDSS Python product lvmcam. The current versio
 Quick Start
 -----------
 
-Prerequisite
-^^^^^^^^^^^^
-
-Install RabbitMQ.
-
-.. code-block:: console
-
-  $ sudo apt-get install -y erlang rabbitmq-server
-  $ sudo systemctl enable rabbitmq-server
-  $ sudo systemctl start rabbitmq-server
-
-Install pyenv by using pyenv installer.
-
-.. code-block:: console
-
-  $ curl https://pyenv.run | bash
-
-You should add the code below to ``~/.bashrc`` or ``~/.zshrc`` by using your preferred editor.
-
-.. code-block::
-
-  # pyenv
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv init --path)"
-  eval "$(pyenv virtualenv-init -)"
-
-Install the dependencies for pyenv, poetry, and Aravis.
-
-.. code-block:: console
-
-  $ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev
-  $ sudo apt-get install -y libbz2-dev libreadline-dev libsqlite3-dev wget llvm libncurses5-dev
-  $ sudo apt-get install -y libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl
-  $ sudo apt-get install -y libcairo2-dev libjpeg-dev libgif-dev debhelper cmake gtk-doc-tools
-  $ sudo apt-get install -y libusb-1.0-0-dev libaudit-dev libgirepository1.0-dev libglib2.0-dev
-  $ sudo apt-get install -y libnotify-dev libgtk-3-dev libgstreamer-plugins-base1.0-dev meson
-  $ sudo apt-get install -y python3-pip python3-dev intltool libxml2-dev
-
-Install Aravis 0.8.
-
-.. code-block:: console
-
-  $ mkdir aravis
-  $ cd aravis
-  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6.orig.tar.xz
-  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.dsc
-  $ wget http://ftp.br.debian.org/debian/pool/main/a/aravis/aravis_0.8.6-1.debian.tar.xz
-  $ tar xvJf aravis_0.8.6.orig.tar.xz
-  $ cd aravis-0.8.6
-  $ tar xvJf ../aravis_0.8.6-1.debian.tar.xz
-  $ dpkg-buildpackage -rfakeroot -b -uc -us
-  $ cd ..
-  $ sudo dpkg -i *.deb
-  $ sudo apt-get update
-  $ sudo apt-get upgrade -y
-  $ sudo apt-get install -y gir1.2-aravis-0.8 aravis-tools aravis-tools-cli 
-
-
-Install podman.
-
-.. code-block:: console
-
-  $ sudo apt-get install -y podman
-
-Start & Ping-pong test
-^^^^^^^^^^^^^^^^^^^^^^^
-
 Clone the repository.
 
 .. code-block:: console
@@ -98,13 +29,19 @@ Clone the repository.
   $ git clone https://github.com/sdss/lvmcam
   $ cd lvmcam 
 
+Run install script. 
+
+.. code-block:: console
+
+  $ $SHELL install.sh
+
 Set the python 3.8+ virtual environment.
 
 .. code-block:: console 
 
-  $ pyenv install 3.9.8
-  $ pyenv virtualenv 3.9.8 lvmcam-with-3.9.8
-  $ pyenv local lvmcam-with-3.9.8
+  $ pyenv install 3.8.12
+  $ pyenv virtualenv 3.8.12 lvmcam-with-3.8.12
+  $ pyenv local lvmcam-with-3.8.12
 
 Install poetry and dependencies.
 
@@ -118,16 +55,16 @@ Start lvmcam actor. It'll take long time for the first time because of downloadi
 
 .. code-block:: console
 
-  $ poetry run container_start --kill --name=lvmcam
+  $ poetry run container_start --kill --name=lvm.cam
 
-In another terminal, type ``clu`` and ``lvmcam ping`` for test.
+In another terminal, type ``clu`` and ``lvm.cam ping`` for test.
 
 .. code-block:: console
 
   $ clu
-  lvmcam ping
-      07:41:22.636 lvmcam > 
-      07:41:22.645 lvmcam : {
+  lvm.cam ping
+      07:41:22.636 lvm.cam > 
+      07:41:22.645 lvm.cam : {
           "text": "Pong."
           }
 
