@@ -141,4 +141,5 @@ If you want to make lvmcam document page, use following commands.
 .. code-block:: console 
 
     $ cd docs/sphinx/
+    $ pip install -r requirements.txt
     $ make html
