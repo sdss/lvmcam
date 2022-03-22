@@ -42,16 +42,3 @@ sudo apt-get -y install podman
 
 # Install lvmcam image.
 podman pull ghcr.io/sdss/lvmcam:latest
-
-# Install pyenv by using pyenv installer.
-curl https://pyenv.run | bash
-
-echo '
-You should add the code below to ~/.bashrc or ~/.zshrc by using your preferred editor.
-
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv init --path)"
-eval "$(pyenv virtualenv-init -)"'

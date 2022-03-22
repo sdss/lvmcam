@@ -35,13 +35,13 @@ Run install script.
 
   $ $SHELL install.sh
 
-Install pyenv.
+Install pyenv by using pyenv installer.
 
 .. code-block:: console
 
   $ curl https://pyenv.run | bash
 
-You should add the text below to ``~/.bashrc``.
+You should add the code below to ``~/.bashrc`` or ``~/.zshrc`` by using your preferred editor.
 
 .. code-block::
 
