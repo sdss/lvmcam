@@ -99,8 +99,8 @@ async def connect(
             modules.variables.cam_list.clear()
             command.error("There is no camera to match the given name")
             return command.fail()
-    except gi.repository.GLib.GError:
-        command.error("Cameras are already connected")
+    except gi.repository.GLib.GError as e:
+        command.error(f"{e}")
         return command.fail()
     except Exception:
         pass

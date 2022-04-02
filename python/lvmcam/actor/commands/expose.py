@@ -209,7 +209,7 @@ async def expose_cam(
         img_path = str(image_namer(cam))
 
         if testshot:
-            img_path = f"{filepath}/testshot.fits"
+            img_path = f"{filepath}/testshot_{modules.variables.camname}.fits"
             if os.path.exists(img_path):
                 os.remove(img_path)
 
