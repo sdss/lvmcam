@@ -30,9 +30,9 @@ __all__ = ["expose"]
 
 
 @parser.command()
-@click.option("-t", "--testshot", is_flag=True)
-@click.option("-v", "--verbose", is_flag=True)
-@click.option("-eh", "--extraheader", is_flag=True)
+@click.option("-t", "--testshot", default=False)
+@click.option("-v", "--verbose", default=False)
+@click.option("-eh", "--extraheader", default=False)
 @click.option(
     "-h",
     "--header",
@@ -139,7 +139,7 @@ async def expose(
         extraheader,
         header,
     )
-    home_path = os.environ['HOME_PATH']
+    home_path = os.environ['HOME']
     path_dict = {i: os.path.join(home_path, path[13:]) for i, path in enumerate(paths)}
     return command.finish(PATH=path_dict)
 

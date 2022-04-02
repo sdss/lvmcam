@@ -23,7 +23,7 @@ In ``clu`` terminal, type following commands step-by-step.
 .. code-block:: console
 
     $ clu
-    lvm.cam.real connect -v -n sci.agw
+    lvm.cam.real connect -v True -n sci.agw
     00:34:52.026 lvm.cam.real > 
     00:34:56.271 lvm.cam.real i {
         "CAMERA": {
@@ -32,7 +32,7 @@ In ``clu`` terminal, type following commands step-by-step.
         }
     }
     00:34:56.282 lvm.cam.real : 
-    lvm.cam.real expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 sci.agw
+    lvm.cam.real expose -v True -r 00h42m44s -d 41d16m09s -K 10 -f 1800 0.1 3 sci.agw
     00:35:15.462 lvm.cam.real > 
     00:35:17.716 lvm.cam.real : {
         "PATH": {
@@ -41,7 +41,7 @@ In ``clu`` terminal, type following commands step-by-step.
             "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211203/lvm.sci.agw-00000003.fits"
         }
     }
-    lvm.cam.real expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 sci.agw
+    lvm.cam.real expose -v True -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 sci.agw
     00:35:22.831 lvm.cam.real > 
     00:35:27.655 lvm.cam.real : {
         "PATH": {
@@ -154,7 +154,7 @@ In ``clu`` terminal, type following commands step-by-step.
             "2": "/home/mgjeon/lvmcam/python/lvmcam/assets/test/20211214/lvm.lvm.sci.agw.cam-00000003.fits"
         }
     }
-    lvm.cam.virtual expose -v -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 lvm.sci.agw.cam
+    lvm.cam.virtual expose -v True -r 00h42m44s -d 41d16m09s -K 10 -f 1800 1 3 lvm.sci.agw.cam
     10:08:03.555 lvm.cam.virtual >
     10:08:04.503 lvm.cam.virtual : {
         "PATH": {
@@ -216,7 +216,7 @@ If you start lvmcam with ``--debug`` option, you can see verbosity.
 Test shot
 ---------  
 
-The ``--testshot`` or ``-t`` option in ``expose`` command makes one ``testshot.fits`` file that is always overwritten. 
+The ``--testshot`` or ``-t`` option in ``expose`` command makes one ``testshot_<camname>.fits`` file that is always overwritten. 
 The ``NUM`` argument of ``expose`` is ignored.
 
 .. code-block:: console
@@ -231,11 +231,11 @@ The ``NUM`` argument of ``expose`` is ignored.
         }
     }
     10:14:08.842 lvmcam :
-    lvmcam expose -t 0.1 3 lvm.sci.agw.cam
+    lvmcam expose 0.1 3 lvm.sci.agw.cam -t True
     10:14:15.496 lvmcam >
     10:14:19.892 lvmcam : {
         "PATH": {
-            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/testshot.fits"
+            "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/testshot_lvm.sci.agw.cam.fits"
         }
     }
     lvmcam connect
@@ -439,7 +439,7 @@ The ``--extraheader`` option allows extrahdr in cameras.yaml to be added.
 .. code-block:: console
 
     $ clu
-    lvmcam expose 0.1 1 sci.agw --extraheader
+    lvmcam expose 0.1 1 sci.agw --extraheader True
     04:57:15.148 lvmcam > 
     04:57:15.850 lvmcam : {
         "PATH": {
@@ -527,49 +527,49 @@ You can choose one of ['NO', 'R1', 'RO', 'P1', 'G1', 'G2', 'H1'] that respective
             "uid": "19283193"
         }
     }
-    lvmcam expose -v -c NO 0.5 1 sci.agw
+    lvmcam expose -v True -c NO 0.5 1 sci.agw
     05:28:59.416 lvmcam > 
     05:29:00.515 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000001.fits"
         }
     }
-    lvmcam expose -v -c R1 0.5 1 sci.agw
+    lvmcam expose -v True -c R1 0.5 1 sci.agw
     05:29:06.219 lvmcam > 
     05:29:07.404 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000002.fits"
         }
     }
-    lvmcam expose -v -c RO 0.5 1 sci.agw
+    lvmcam expose -v True -c RO 0.5 1 sci.agw
     05:29:11.742 lvmcam > 
     05:29:12.912 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000003.fits"
         }
     }
-    lvmcam expose -v -c P1 0.5 1 sci.agw
+    lvmcam expose -v True -c P1 0.5 1 sci.agw
     05:29:17.297 lvmcam > 
     05:29:18.389 lvmcam : {
         "PATH": {
             "0": "data out of range for PLIO compression (0 - 2**24)"
         }
     }
-    lvmcam expose -v -c G1 0.5 1 sci.agw
+    lvmcam expose -v True -c G1 0.5 1 sci.agw
     05:29:24.555 lvmcam > 
     05:29:25.778 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000004.fits"
         }
     }
-    lvmcam expose -v -c G2 0.5 1 sci.agw
+    lvmcam expose -v True -c G2 0.5 1 sci.agw
     05:29:29.583 lvmcam > 
     05:29:30.801 lvmcam : {
         "PATH": {
             "0": "/home/mgjeon/lvmcam/python/lvmcam/assets/lvm/sci/agw/20211212/lvm.sci.agw-00000005.fits"
         }
     }
-    lvmcam expose -v -c H1 0.5 1 sci.agw
+    lvmcam expose -v True -c H1 0.5 1 sci.agw
     05:29:35.534 lvmcam > 
     05:29:36.712 lvmcam : {
         "PATH": {
