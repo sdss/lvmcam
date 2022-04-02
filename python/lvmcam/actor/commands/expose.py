@@ -139,7 +139,7 @@ async def expose(
         extraheader,
         header,
     )
-    home_path = os.environ['HOME']
+    home_path = os.environ['HOME_PATH']
     path_dict = {i: os.path.join(home_path, path[13:]) for i, path in enumerate(paths)}
     return command.finish(PATH=path_dict)
 
