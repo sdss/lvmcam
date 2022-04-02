@@ -35,6 +35,23 @@ Run install script.
 
   $ $SHELL install.sh
 
+Install pyenv by using pyenv installer.
+
+.. code-block:: console
+
+  $ curl https://pyenv.run | bash
+
+You should add the code below to ``~/.bashrc`` or ``~/.zshrc`` by using your preferred editor.
+
+.. code-block::
+
+  # pyenv
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv init --path)"
+  eval "$(pyenv virtualenv-init -)"
+
 Set the python 3.8+ virtual environment.
 
 .. code-block:: console 
