@@ -50,7 +50,7 @@ PyGObject = "^3.40.1"
 sdss-basecam = "^0.5.0"
 opencv-python = "^4.5.3"
 pytest-asyncio = "^0.16.0"
-sdss-skymakercam = ">=0.0.5"
+sdss-skymakercam = ">=0.0.6"
 sdss-cluplus = ">=0.0.17"
 sdss-araviscam = ">=0.1.91"
 

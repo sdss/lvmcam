@@ -13,6 +13,7 @@ camtype: skymakercam
 
 basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
 dirname: "$HOME/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+site: "LCO"
 
 cameras:
     east:
