@@ -10,7 +10,7 @@ The package for [lvmagp](https://github.com/sdss/lvmagp).
 
 # Quickstart
 
-    poetry run lvm.sci.agcam --config python/lvmcam/etc/lvm.sci.agcam.yml start --debug
+    poetry run lvmcam --config python/lvmcam/etc/lvm.sci.agcam.yml start --debug
 
 # See also
 - [clu](https://github.com/sdss/clu)
