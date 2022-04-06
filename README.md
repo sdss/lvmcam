@@ -11,6 +11,7 @@ The package for [lvmagp](https://github.com/sdss/lvmagp).
 # Quickstart
 
     poetry run lvmcam --config python/lvmcam/etc/lvm.sci.agcam.yml start --debug
+    poetry run python utils/simple_camui.py
 
 # See also
 - [clu](https://github.com/sdss/clu)
