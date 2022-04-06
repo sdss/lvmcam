@@ -10,6 +10,7 @@
 import asyncio
 import os
 import sys
+from logging import DEBUG
 
 import click
 from click_default_group import DefaultGroup
@@ -17,8 +18,12 @@ from clu.tools import cli_coro as cli_coro_lvm
 
 from sdsstools.daemonizer import DaemonGroup
 
-from lvmcam.actor.actor import LvmcamActor as lvmcamInstance
+from sdsstools.logger import StreamFormatter  
+from sdsstools import get_logger, read_yaml_file
+from sdsstools.logger import SDSSLogger
 
+
+from lvmcam.actor.actor import LvmcamActor
 
 @click.group(cls=DefaultGroup, default="actor", default_if_no_args=True)
 @click.option(
@@ -49,11 +54,10 @@ async def actor(ctx):
 
     default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvmcam.yml")
     config_file = ctx.obj["config_file"] or default_config_file
+    lvmcam_obj = LvmcamActor.from_config(config_file, verbose=ctx.obj["verbose"])
 
-    lvmcam_obj = lvmcamInstance.from_config(config_file)
-    if ctx.obj["verbose"]:
-        lvmcam_obj.log.fh.setLevel(0)
-        lvmcam_obj.log.sh.setLevel(0)
+    lvmcam_obj.log.debug("Hello world")
+
     await lvmcam_obj.start()
     await lvmcam_obj.run_forever()
 
