@@ -1,0 +1,54 @@
+#Actor configuration for the AMQPActor class
+
+actor:
+    name: lvm.sci.agcam
+    host: localhost
+    port: 5672
+    log_dir: '~/tmp/log'
+    #default_cameras:
+       #- west
+
+#camtype: araviscam
+camtype: skymakercam
+
+basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
+dirname: "$HOME/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+
+cameras:
+    east:
+        uid: east
+        autoconnect: true
+        type: "skymakercam"
+        descr: "Guider Camera Science East"
+        # skymakercam
+        default:
+            gain: 5.0
+            binning: [4, 4]
+        instpar: lvm_sci_age_cam
+        focus_stage: "lvm.sci.foc"
+        kmirror: "lvm.sci.km"
+        tcs: "lvm.sci.pwi"
+        catalog_path: "$HOME/data/catalog/gaia"
+        # araviscam
+        pixsize: 9.0
+        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
+        pixscal: 8.920
+
+    west:
+        uid: west
+        autoconnect: true
+        descr: "Guider Camera Science West"
+        ## skymakercam
+        default:
+            gain: 5.0
+            binning: [4, 4]
+        instpar: lvm_sci_agw_cam
+        focus_stage: "lvm.sci.foc"
+        kmirror: "lvm.sci.km"
+        tcs: "lvm.sci.pwi"
+        catalog_path: "$HOME/data/catalog/gaia"
+        ## araviscam
+        pixsize: 9.0
+        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
+        pixscal: 8.920
+
