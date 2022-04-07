@@ -117,7 +117,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
     async def stop(self):
         """Stop actor and remove cameras."""
-        await super().start()
+        await super().stop()
 
         for camera in self.camera_system._config:
             cam = await self.camera_system.remove_camera(name=self.camera_system._config[camera]["uid"])
