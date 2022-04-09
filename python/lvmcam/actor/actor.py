@@ -8,7 +8,6 @@
 
 from logging import DEBUG
 
-from lvmcam import __version__
 from os.path import expandvars
 
 
@@ -20,6 +19,9 @@ from clu import AMQPActor
 
 from basecam.actor import BaseCameraActor
 from basecam import BaseCamera
+
+from lvmcam import __version__
+from lvmcam.actor.commands import camera_parser
 
 
 from araviscam import BlackflyCameraSystem, BlackflyCamera
@@ -88,11 +90,21 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.version = __version__
         self.dirname = config_get(config, "dirname", None)
         self.basename =config_get(config, "basename", None)
-        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, **kwargs)
+        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, **kwargs)
 
+        self.schema = {
+                    "type": "object",
+                    "properties": {
+                     },
+                     "additionalProperties": True,
+        }
+
+        self.load_schema(self.schema, is_file=False)
         if kwargs['verbose']:
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
+
+        self.log.debug(str(self.model.schema))
 
 
     async def start(self):
@@ -114,7 +126,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             #self.log.debug(f"{cam.image_namer.get_dirname()}")
 
         self.log.debug("Start done")
-
+        
     async def stop(self):
         """Stop actor and remove cameras."""
         await super().stop()

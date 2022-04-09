@@ -11,26 +11,24 @@ import importlib
 import os
 
 import click
-from basecam.actor.commands import camera_parser as parser
+#from basecam.actor.commands import camera_parser
 from clu.parsers.click import CluGroup, help_, ping, version
 from cluplus.parsers.click import __commands
 
 # # import warnings
 
 
-# @click.group(cls=CluGroup)
-# def parser(*args):
-#     pass
+@click.group(cls=CluGroup)
+def camera_parser():
+    pass
 
 
-parser.add_command(ping)
-parser.add_command(version)
-parser.add_command(help_)
-parser.add_command(__commands)
+camera_parser.add_command(ping)
+camera_parser.add_command(version)
+camera_parser.add_command(help_)
+camera_parser.add_command(__commands)
 
-
-
-# Autoimport all modules in this directory so that they are added to the parser.
+# Autoimport all modules in this directory so that they are added to the camera_parser.
 
 exclusions = ["__init__.py"]
 
@@ -48,3 +46,8 @@ for file_ in files:
     )  # changged by CK 2021/03/30
 
 os.chdir(cwd)
+_MIXIN_TO_COMMANDS = {
+    "ShutterMixIn": [shutter],
+    "CoolerMixIn": [temperature],
+    "ImageAreaMixIn": [binning, area],
+}
