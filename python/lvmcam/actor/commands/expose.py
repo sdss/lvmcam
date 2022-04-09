@@ -15,10 +15,9 @@ from basecam.events import CameraEvent
 from basecam.exceptions import ExposureError
 
 from basecam.actor.tools import get_cameras
-
 from . import camera_parser
 
-__all__ = ["expose", "EXPOSURE_STATE"]
+__all__ = ["expose"]
 
 
 EXPOSURE_STATE = {}
@@ -34,21 +33,26 @@ def report_exposure_state(command, event, payload):
     if not name:
         return
 
+#    print(f"report_exposure_state {event} {type(event)} {payload}")
+
     if name not in EXPOSURE_STATE:
         EXPOSURE_STATE[name] = {}
 
-    EXPOSURE_STATE[name].update({k: v for k, v in payload.items() if k not in ['name', 'camera']})
+    EXPOSURE_STATE[name].update(payload)
 
     if event == CameraEvent.EXPOSURE_INTEGRATING:
-        EXPOSURE_STATE[name]["state"] = "integrating"
+        state = "integrating"
+    elif event == CameraEvent.EXPOSURE_FLUSHING:
+        state = "flushing"
+        EXPOSURE_STATE[name]["state"] = state
     elif event == CameraEvent.EXPOSURE_READING:
+        state = "reading"
         EXPOSURE_STATE[name].update({"remaining_time": 0.0})
-        EXPOSURE_STATE[name]["state"] = "reading"
     elif event == CameraEvent.EXPOSURE_DONE:
-        EXPOSURE_STATE[name]["state"] = "done"
+        state = "done"
         EXPOSURE_STATE[name].update({"remaining_time": 0.0})
     elif event == CameraEvent.EXPOSURE_FAILED:
-        EXPOSURE_STATE[name]["state"] = "failed"
+        state = "failed"
         EXPOSURE_STATE[name].update(
             {
                 "remaining_time": 0.0,
@@ -57,9 +61,9 @@ def report_exposure_state(command, event, payload):
             }
         )
     elif event == CameraEvent.EXPOSURE_IDLE:
-        EXPOSURE_STATE[name]["state"] = "idle"
         EXPOSURE_STATE[name].update(
             {
+                "state": "idle",
                 "remaining_time": 0.0,
                 "current_stack": 0,
                 "n_stack": 0,
@@ -67,21 +71,54 @@ def report_exposure_state(command, event, payload):
                 "image_type": "NA",
             }
         )
+        return
     elif event == CameraEvent.EXPOSURE_WRITTEN:
-        return command.info({name: {"filename":payload.get("filename", "UNKNOWN")}})
+        filename = payload.get("filename", "UNKNOWN")
+        info = { name:
+          {   
+               "state": "written",
+               "filename": filename, 
+          }
+        }
+        command.info(info)
+        EXPOSURE_STATE[name].update(info)
+        return
     elif event == CameraEvent.EXPOSURE_POST_PROCESSING:
-        return command.info({name: {"state": "post_processing", "image_type": EXPOSURE_STATE[name].get("image_type", "NA")}})
+        command.info(
+          { name:
+            {   
+              "state":"post_processing",
+              "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
+            }
+          }
+        )
+        return
     elif event == CameraEvent.EXPOSURE_POST_PROCESS_FAILED:
         command.warning(
-            state = "post_process_failed",
-            image_type=EXPOSURE_STATE[name].get("image_type", "NA"),
-            error=payload.get("error", "Error unknown"),
+          { name:
+             {  
+               "state": "post_process_failed",
+               "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
+               "error": payload.get("error", "Error unknown"),
+             }
+          }
         )
         return
     else:
         return
-    
-    return command.info({name: EXPOSURE_STATE[name]})
+
+    command.info(
+        { name:
+           {
+            "state": state,
+            "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
+            "remaining_time": EXPOSURE_STATE[name].get("remaining_time", 0),
+            "exposure_time": EXPOSURE_STATE[name].get("exptime", 0),
+            "current_stack": EXPOSURE_STATE[name].get("current_stack", 0),
+            "n_stack": EXPOSURE_STATE[name].get("n_stack", 0),
+           }
+        }
+    )
 
 async def expose_one_camera(
     command,
@@ -93,9 +130,6 @@ async def expose_one_camera(
     no_postprocess,
     **extra_kwargs,
 ):
-    global EXPOSURE_STATE
-    
-    command.info(text=f"exposing camera {camera.name!r}")
     obj = click.get_current_context().obj
     try:
         exposure = await camera.expose(
@@ -111,7 +145,6 @@ async def expose_one_camera(
         if post_process_cb:
             await post_process_cb(command, exposure)
         return True
-
     except ExposureError as ee:
         command.error(error={"camera": camera.name, "error": str(ee)})
         return False
@@ -221,7 +254,7 @@ async def expose(
     if not all(results):
         return command.failed("one or more cameras failed to expose.")
     else:
-        status={}
+        status = {}
         for camera in cameras:
             # Reset cameras to idle
             report_exposure_state(
@@ -229,5 +262,14 @@ async def expose(
                 CameraEvent.EXPOSURE_IDLE,
                 {"name": camera.name},
             )
-            status[camera.name]=EXPOSURE_STATE[camera.name]
+            status.update(
+                { 
+                    camera.name:
+                    {
+                            "state": "idle",
+                            "filename": EXPOSURE_STATE[camera.name].get("filename", "UNKNOWN"),
+                    }
+                }
+            )
+
         return command.finish(status)
