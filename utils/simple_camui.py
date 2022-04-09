@@ -38,7 +38,6 @@ class AMQPClientUI(AMQPClient):
        self.camactor = argv.camera_actor
        self.camnames = {argv.west: 0, argv.east: 1}
        self.plotit = ploit
-       self.camfileslast = ["",""]
 
        super().__init__(f"{self.camactor}_ui-{uuid.uuid4().hex[:8]}", *args, **kwargs)
 
@@ -48,32 +47,14 @@ class AMQPClientUI(AMQPClient):
         reply = AMQPReply(message, log=self.log)
         if self.camactor == reply.sender:
             for camreply in reply.body:
-                if "filename" in reply.body[camreply]:
-                    filename_new = reply.body[camreply]["filename"]
-                    filename_last = self.camfileslast[self.camnames[camreply]]
-                    if filename_new != filename_last:
-                        self.camfileslast[self.camnames[camreply]] = filename_new
-                        print(f"{self.camactor} {camreply} {filename_last} {filename_new}")
-                        data = fits.open(filename_new)[0].data
-                        #print(f"{self.camactor} {camera} {filename} {data.shape}")
-#                if "filename" in d and cameraself.filename[camera] != camera["filename"]
-#            print(f"{dt.now()} {reply.sender} {reply.body}")
-            #cameraname = reply.body["filename"]["camera"]
-            #filename = reply.body["filename"]["filename"]
-            #data = fits.open(filename)[0].data
-            #print(f"{self.camactor} {cameraname} {filename} {data.shape}")
-            #self.plotit.update(self.camnames[cameraname], data)
-        #if self.camactor == reply.sender and "filename" in reply.body:
-##            print(f"{dt.now()} {reply.sender} {reply.body}")
-            #cameraname = reply.body["filename"]["camera"]
-            #filename = reply.body["filename"]["filename"]
-            #data = fits.open(filename)[0].data
-            #print(f"{self.camactor} {cameraname} {filename} {data.shape}")
-            #self.plotit.update(self.camnames[cameraname], data)
+                if reply.body[camreply].get("state", None) == "written":
+                    filename = reply.body[camreply].get("filename", None)
+                    data = fits.open(filename)[0].data
+                    self.plotit.update(self.camnames[camreply], data)
+
 
 async def main(loop, args):
-#   plotit = PlotIt(title=[f"{args.camera} {args.west}", f"{args.camera} {args.east}"])
-   plotit = None
+   plotit = PlotIt(title=[f"{args.camera_actor} {args.west}", f"{args.camera_actor} {args.east}"])
    client = await AMQPClientUI(args, plotit, host='localhost').start()
 
 
