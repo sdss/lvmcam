@@ -15,9 +15,7 @@ import click
 from clu.parsers.click import CluGroup, help_, ping, version
 from cluplus.parsers.click import __commands
 
-# # import warnings
-
-
+# we do create our own parser to remove the basecam caommands
 @click.group(cls=CluGroup)
 def camera_parser():
     pass
