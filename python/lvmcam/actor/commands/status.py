@@ -31,7 +31,6 @@ async def status(command, cameras):
         for camera in cameras:
             
             status[camera.name] = camera.get_status(update=True)
-            status[camera.name]["shutter"] = "open" if await camera.get_shutter() else "closed"
 #        status.update(EXPOSURE_STATE)
 
         return command.finish(status)
