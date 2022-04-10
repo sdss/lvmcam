@@ -37,6 +37,9 @@ class AMQPClientUI(AMQPClient):
     ):
        self.camactor = argv.camera_actor
        self.camnames = {argv.west: 0, argv.east: 1}
+
+       self.kmactor = argv.km_actor
+
        self.plotit = ploit
 
        super().__init__(f"{self.camactor}_ui-{uuid.uuid4().hex[:8]}", *args, **kwargs)
@@ -51,17 +54,24 @@ class AMQPClientUI(AMQPClient):
                     filename = reply.body[camreply].get("filename", None)
                     data = fits.open(filename)[0].data
                     self.plotit.update(self.camnames[camreply], data)
-
+        elif self.kmactor == reply.sender:
+            print(reply.body)
 
 async def main(loop, args):
    plotit = PlotIt(title=[f"{args.camera_actor} {args.west}", f"{args.camera_actor} {args.east}"])
    client = await AMQPClientUI(args, plotit, host='localhost').start()
+   
+   while(True):
+        await asyncio.sleep(0.001)
+        plotit.start_event_loop(0.001)
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", '--camera_actor', type=str, default="lvm.sci.agcam", help="Choose your camera")
+    args = parser.parse_args()
+    parser.add_argument("-k", '--km_actor', type=str, default="lvm.sci.km", help="Choose your kmirror")
     args = parser.parse_args()
     parser.add_argument("-w", '--west', type=str, default="west", help="Choose your west camera name")
     args = parser.parse_args()

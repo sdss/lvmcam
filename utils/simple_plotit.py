@@ -56,3 +56,5 @@ class PlotIt:
         self.fig.canvas.draw_idle()
         self.fig.canvas.start_event_loop(0.001)
 
+    def start_event_loop(self, time):
+        self.fig.canvas.start_event_loop(time)
