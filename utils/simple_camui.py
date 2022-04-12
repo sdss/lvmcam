@@ -12,8 +12,8 @@ import string
 import uuid
 import argparse
 
-from astropy.utils import iers
-iers.conf.auto_download = False 
+#from astropy.utils import iers
+#iers.conf.auto_download = False 
 
 import asyncio
 from datetime import datetime as dt
