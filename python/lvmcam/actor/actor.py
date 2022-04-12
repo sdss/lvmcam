@@ -87,10 +87,9 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         *args,
         **kwargs,
     ):   
-        self.version = __version__
         self.dirname = config_get(config, "dirname", None)
         self.basename =config_get(config, "basename", None)
-        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, **kwargs)
+        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         self.schema = {
                     "type": "object",
@@ -117,13 +116,6 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             cam = await self.camera_system.add_camera(name=self.camera_system._config[camera]["uid"])
             cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
             cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
-
-        #for camera in self.camera_system.list_available_cameras():
-            #cam = self.camera_system.get_camera(camera)
-            #cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
-            #cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
-            #self.log.debug(f"{cam.image_namer.dirname}")
-            #self.log.debug(f"{cam.image_namer.get_dirname()}")
 
         self.log.debug("Start done")
         

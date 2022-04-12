@@ -16,6 +16,8 @@ from basecam.actor.tools import get_cameras
 
 from . import camera_parser
 
+from math import nan
+
 __all__ = ["temperature"]
 
 
@@ -28,45 +30,41 @@ async def temperature(command, cameras, temperature):
     If called without a temperature value, returns the current temperature.
     """
 
-    cameras = get_cameras(command, cameras=cameras, fail_command=True)
-    if not cameras:  # pragma: no cover
-        return
+    try:
+        cameras = get_cameras(command, cameras=cameras, fail_command=True)
+        if not cameras:  # pragma: no cover
+            return
 
-    temperature_tasks = []
+        temperature_tasks = []
 
-    status = {}
-    for camera in cameras:
+        status = {}
+        for camera in cameras:
+            if not hasattr(camera,"get_temperature"):
+                status[camera.name] = {"temperature": nan}
+                continue
+
+            if not temperature:
+                status[camera.name] = {"ccd_temp": await camera.get_temperature()}
+            else:
+                temperature_tasks.append(camera.set_temperature(temperature))
+                command.info(status)
+
         if not temperature:
-            #command.info(
-                #temperature=dict(
-                    #camera=camera.name,
-                    #ccd_temp=await camera.get_temperature(),
-                #)
-            #)
-            status[camera.name] = {"ccd_temp": await camera.get_temperature()}
+            return command.finish(status)
+
+        results = await asyncio.gather(*temperature_tasks, return_exceptions=True)
+        failed = False
+        for ii, result in enumerate(results):
+            if isinstance(result, CameraError):
+                command.error(error=dict(camera = cameras[ii].name, error=str(result)))
+                failed = True
+            else:
+                status[camera.name] = {"ccd_temp": await camera.get_temperature()}
+
+        if failed:
+            return command.fail(status)
         else:
-            temperature_tasks.append(camera.set_temperature(temperature))
-    command.info(status)
+            return command.finish(status)
 
-    if not temperature:
-        return command.finish()
-
-    results = await asyncio.gather(*temperature_tasks, return_exceptions=True)
-    failed = False
-    for ii, result in enumerate(results):
-        if isinstance(result, CameraError):
-            command.error(error=dict(camera=cameras[ii].name, error=str(result)))
-            failed = True
-        else:
-            #command.info(
-                #temperature=dict(
-                    #camera=cameras[ii].name,
-                    #ccd_temp=await cameras[ii].get_temperature(),
-                #)
-            #)
-            status[camera.name] = {"ccd_temp": await camera.get_temperature()}
-
-    if failed:
-        return command.fail(status)
-    else:
-        return command.finish(status)
+    except Exception as ex:
+        return command.error(error=ex)

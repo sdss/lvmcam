@@ -28,26 +28,34 @@ async def shutter(command, cameras, shutter_position):
     of the shutter.
     """
 
-    cameras = get_cameras(command, cameras=cameras, fail_command=True)
-    if not cameras:  # pragma: no cover
-        return
+    try:
+        cameras = get_cameras(command, cameras=cameras, fail_command=True)
+        if not cameras:  # pragma: no cover
+            return
 
-    failed = False
-    status = {}
-    for camera in cameras:
-        if shutter_position is None:
-            shutter_now = await camera.get_shutter()
-            status[camera.name] = {"shutter":"open" if shutter_now else "closed"}
+        failed = False
+        status = {}
+        for camera in cameras:
+            if not hasattr(camera,"get_shutter"):
+                status[camera.name] = {"shutter": "unavailable"}
+                continue
+                
+            if shutter_position is None:
+                shutter_now = await camera.get_shutter()
+                status[camera.name] = {"shutter": "open" if shutter_now else "closed"}
+            else:
+                try:
+                    await camera.set_shutter(shutter_position == "open")
+                    status[camera.name] = {"shutter": "open" if shutter_now else "closed"}
+
+                except CameraError as ee:
+                    status[camera.name] = {"shutter": "unknown"}
+                    failed = True
+
+        if failed:
+            return command.fail(status)
         else:
-            try:
-                await camera.set_shutter(shutter_position == "open")
-                status[camera.name] = {"shutter":"open" if shutter_now else "closed"}
+            return command.finish(status)
 
-            except CameraError as ee:
-                status[camera.name] = {"shutter":"unknown"}
-                failed = True
-
-    if failed:
-        return command.fail(status)
-    else:
-        return command.finish(status)
+    except Exception as ex:
+        return command.error(error=ex)

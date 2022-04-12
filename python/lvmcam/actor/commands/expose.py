@@ -33,7 +33,7 @@ def report_exposure_state(command, event, payload):
     if not name:
         return
 
-#    print(f"report_exposure_state {event} {type(event)} {payload}")
+    print(f"report_exposure_state {event} {type(event)} {payload}")
 
     if name not in EXPOSURE_STATE:
         EXPOSURE_STATE[name] = {}
@@ -215,61 +215,66 @@ async def expose(
 ):
     """Exposes and writes an image to disk."""
 
-    cameras = get_cameras(command, cameras=cameras, fail_command=True)
-    if not cameras:  # pragma: no cover
-        return
+    try:
+        cameras = get_cameras(command, cameras=cameras, fail_command=True)
+        if not cameras:  # pragma: no cover
+            return
 
-    if image_type == "bias":
-        if exptime and exptime > 0:
-            command.warning("setting exposure time for bias to 0 seconds.")
-        exptime = 0.0
+        if image_type == "bias":
+            if exptime and exptime > 0:
+                command.warning("setting exposure time for bias to 0 seconds.")
+            exptime = 0.0
 
-    if filename and len(cameras) > 1:
-        return command.fail(
-            "--filename can only be used when exposing a single camera."
-        )
+        if filename and len(cameras) > 1:
+            return command.fail(
+                "--filename can only be used when exposing a single camera."
+            )
 
-    report_exposure_state_partial = partial(report_exposure_state, command)
+        report_exposure_state_partial = partial(report_exposure_state, command)
 
-    command.actor.listener.register_callback(report_exposure_state_partial)
-    jobs = []
-    for camera in cameras:
-        jobs.append(
-            asyncio.create_task(
-                expose_one_camera(
-                    command,
-                    camera,
-                    exptime,
-                    image_type,
-                    stack,
-                    filename,
-                    no_postprocess,
-                    **exposure_kwargs,
+        command.actor.listener.register_callback(report_exposure_state_partial)
+        jobs = []
+        for camera in cameras:
+            jobs.append(
+                asyncio.create_task(
+                    expose_one_camera(
+                        command,
+                        camera,
+                        exptime,
+                        image_type,
+                        stack,
+                        filename,
+                        no_postprocess,
+                        **exposure_kwargs,
+                    )
                 )
             )
-        )
-    results = await asyncio.gather(*jobs)
-    command.actor.listener.remove_callback(report_exposure_state_partial)
+        results = await asyncio.gather(*jobs)
+        command.actor.listener.remove_callback(report_exposure_state_partial)
 
-    if not all(results):
-        return command.failed("one or more cameras failed to expose.")
-    else:
-        status = {}
-        for camera in cameras:
-            # Reset cameras to idle
-            report_exposure_state(
-                command,
-                CameraEvent.EXPOSURE_IDLE,
-                {"name": camera.name},
-            )
-            status.update(
-                { 
-                    camera.name:
-                    {
+        if not all(results):
+            return command.failed("one or more cameras failed to expose.")
+        else:
+            status = {}
+            for camera in cameras:
+                # Reset cameras to idle
+                report_exposure_state(
+                    command,
+                    CameraEvent.EXPOSURE_IDLE,
+                    {"name": camera.name},
+                )
+                status.update(
+                    { 
+                        camera.name:
+                        {
                             "state": "idle",
                             "filename": EXPOSURE_STATE[camera.name].get("filename", "UNKNOWN"),
+                        }
                     }
-                }
-            )
+                )
 
-        return command.finish(status)
+            return command.finish(status)
+        
+    except Exception as ex:
+        return command.error(error=ex)
+

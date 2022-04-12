@@ -12,7 +12,7 @@ import os
 
 import click
 #from basecam.actor.commands import camera_parser
-from clu.parsers.click import CluGroup, help_, ping, version
+from clu.parsers.click import CluGroup, help_, ping, version, get_schema
 from cluplus.parsers.click import __commands
 
 # we do create our own parser to remove the basecam caommands
@@ -25,6 +25,7 @@ camera_parser.add_command(ping)
 camera_parser.add_command(version)
 camera_parser.add_command(help_)
 camera_parser.add_command(__commands)
+camera_parser.add_command(get_schema)
 
 # Autoimport all modules in this directory so that they are added to the camera_parser.
 

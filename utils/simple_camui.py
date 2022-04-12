@@ -12,6 +12,9 @@ import string
 import uuid
 import argparse
 
+from astropy.utils import iers
+iers.conf.auto_download = False 
+
 import asyncio
 from datetime import datetime as dt
 import aio_pika as apika

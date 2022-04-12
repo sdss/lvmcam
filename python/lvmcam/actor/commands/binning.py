@@ -14,10 +14,11 @@ from basecam.exceptions import CameraError
 
 from basecam.actor.tools import get_cameras
 
+from . import camera_parser
+
 __all__ = ["binning"]
 
-
-@click.command(cls=CluCommand)
+@camera_parser.command()
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
 @click.argument("BINNING", nargs=2, type=int, required=False)
 async def binning(command, cameras, binning):
@@ -26,25 +27,16 @@ async def binning(command, cameras, binning):
     If called without a binning value, returns the current value.
     """
 
-    cameras = get_cameras(command, cameras=cameras, fail_command=True)
-    if not cameras:  # pragma: no cover
-        return
+    try:
+        cameras = get_cameras(command, cameras=cameras, fail_command=True)
+        if not cameras:  # pragma: no cover
+            return
 
-    failed = False
-    for camera in cameras:
+        failed = False
+        for camera in cameras:
 
-        if not binning:
-            binning = list(await camera.get_binning())
-            command.info(
-                binning=dict(
-                    camera=camera.name,
-                    horizontal=binning[0],
-                    vertical=binning[1],
-                )
-            )
-        else:
-            try:
-                await camera.set_binning(*binning)
+            if not binning:
+                binning = list(await camera.get_binning())
                 command.info(
                     binning=dict(
                         camera=camera.name,
@@ -52,11 +44,24 @@ async def binning(command, cameras, binning):
                         vertical=binning[1],
                     )
                 )
-            except (CameraError, AssertionError) as ee:
-                command.error(error=dict(camera=camera.name, error=str(ee)))
-                failed = True
+            else:
+                try:
+                    await camera.set_binning(*binning)
+                    command.info(
+                        binning=dict(
+                            camera=camera.name,
+                            horizontal=binning[0],
+                            vertical=binning[1],
+                        )
+                    )
+                except (CameraError, AssertionError) as ee:
+                    command.error(error=dict(camera=camera.name, error=str(ee)))
+                    failed = True
 
-    if failed:
-        return command.fail("failed to set binning for one or more cameras.")
-    else:
-        return command.finish()
+        if failed:
+            return command.fail("failed to set binning for one or more cameras.")
+        else:
+            return command.finish()
+
+    except Exception as ex:
+        return command.error(error=ex)
