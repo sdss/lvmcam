@@ -91,6 +91,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.basename =config_get(config, "basename", None)
         super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
 
+        self.exposure_state = {}
+
         self.schema = {
                     "type": "object",
                     "properties": {

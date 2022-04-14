@@ -20,11 +20,7 @@ from . import camera_parser
 __all__ = ["expose"]
 
 
-EXPOSURE_STATE = {}
-
-
 def report_exposure_state(command, event, payload):
-    global EXPOSURE_STATE
 
     if event not in CameraEvent:
         return
@@ -35,25 +31,24 @@ def report_exposure_state(command, event, payload):
 
     print(f"report_exposure_state {event} {type(event)} {payload}")
 
-    if name not in EXPOSURE_STATE:
-        EXPOSURE_STATE[name] = {}
 
-    EXPOSURE_STATE[name].update(payload)
+    if name not in command.actor.exposure_state:
+        command.actor.exposure_state[name] = {}
+
+    command.actor.exposure_state[name]["state"] = event.value
+
+    command.actor.exposure_state[name].update(payload)
 
     if event == CameraEvent.EXPOSURE_INTEGRATING:
-        state = "integrating"
+        pass
     elif event == CameraEvent.EXPOSURE_FLUSHING:
-        state = "flushing"
-        EXPOSURE_STATE[name]["state"] = state
+        pass
     elif event == CameraEvent.EXPOSURE_READING:
-        state = "reading"
-        EXPOSURE_STATE[name].update({"remaining_time": 0.0})
+        command.actor.exposure_state[name].update({"remaining_time": 0.0})
     elif event == CameraEvent.EXPOSURE_DONE:
-        state = "done"
-        EXPOSURE_STATE[name].update({"remaining_time": 0.0})
+        command.actor.exposure_state[name].update({"remaining_time": 0.0})
     elif event == CameraEvent.EXPOSURE_FAILED:
-        state = "failed"
-        EXPOSURE_STATE[name].update(
+        command.actor.exposure_state[name].update(
             {
                 "remaining_time": 0.0,
                 "current_stack": 0,
@@ -61,9 +56,8 @@ def report_exposure_state(command, event, payload):
             }
         )
     elif event == CameraEvent.EXPOSURE_IDLE:
-        EXPOSURE_STATE[name].update(
+        command.actor.exposure_state[name].update(
             {
-                "state": "idle",
                 "remaining_time": 0.0,
                 "current_stack": 0,
                 "n_stack": 0,
@@ -76,19 +70,19 @@ def report_exposure_state(command, event, payload):
         filename = payload.get("filename", "UNKNOWN")
         info = { name:
           {   
-               "state": "written",
-               "filename": filename, 
+              "state": command.actor.exposure_state[name].get("state", "NA"),
+              "filename": filename, 
           }
         }
         command.info(info)
-        EXPOSURE_STATE[name].update(info)
+        command.actor.exposure_state[name].update(info)
         return
     elif event == CameraEvent.EXPOSURE_POST_PROCESSING:
         command.info(
           { name:
             {   
-              "state":"post_processing",
-              "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
+              "state": command.actor.exposure_state[name].get("state", "NA"),
+              "image_type": command.actor.exposure_state[name].get("image_type", "NA"),
             }
           }
         )
@@ -97,8 +91,8 @@ def report_exposure_state(command, event, payload):
         command.warning(
           { name:
              {  
-               "state": "post_process_failed",
-               "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
+               "state": command.actor.exposure_state[name].get("state", "NA"),
+               "image_type": command.actor.exposure_state[name].get("image_type", "NA"),
                "error": payload.get("error", "Error unknown"),
              }
           }
@@ -110,12 +104,12 @@ def report_exposure_state(command, event, payload):
     command.info(
         { name:
            {
-            "state": state,
-            "image_type": EXPOSURE_STATE[name].get("image_type", "NA"),
-            "remaining_time": EXPOSURE_STATE[name].get("remaining_time", 0),
-            "exposure_time": EXPOSURE_STATE[name].get("exptime", 0),
-            "current_stack": EXPOSURE_STATE[name].get("current_stack", 0),
-            "n_stack": EXPOSURE_STATE[name].get("n_stack", 0),
+            "state": command.actor.exposure_state[name].get("state", "NA"),
+            "image_type": command.actor.exposure_state[name].get("image_type", "NA"),
+            "remaining_time": command.actor.exposure_state[name].get("remaining_time", 0),
+            "exposure_time": command.actor.exposure_state[name].get("exptime", 0),
+            "current_stack": command.actor.exposure_state[name].get("current_stack", 0),
+            "n_stack": command.actor.exposure_state[name].get("n_stack", 0),
            }
         }
     )
@@ -267,8 +261,8 @@ async def expose(
                     { 
                         camera.name:
                         {
-                            "state": "idle",
-                            "filename": EXPOSURE_STATE[camera.name].get("filename", "UNKNOWN"),
+                            "state": command.actor.exposure_state[camera.name].get("state", "NA"),
+                            "filename": command.actor.exposure_state[camera.name].get("filename", "UNKNOWN"),
                         }
                     }
                 )

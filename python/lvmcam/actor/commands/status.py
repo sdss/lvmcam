@@ -10,7 +10,6 @@ import click
 
 from basecam.actor.tools import get_cameras
 from . import camera_parser
-from .expose import EXPOSURE_STATE
 
 
 __all__ = ["status"]
@@ -20,7 +19,6 @@ __all__ = ["status"]
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
 async def status(command, cameras):
     """Returns the status of a camera."""
-    global EXPOSURE_STATE
 
     try:
         cameras = get_cameras(command, cameras=cameras, fail_command=True)

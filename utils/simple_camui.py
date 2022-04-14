@@ -62,7 +62,7 @@ class AMQPClientUI(AMQPClient):
             for cam_reply in reply.body:
                 if reply.body[cam_reply].get("state", None) == "written":
                     filename = reply.body[cam_reply].get("filename", None)
-                    data = fits.open(filename)[0].data
+                    data = fits.open(filename)[0].data.byteswap().newbyteorder()
                     self.plotit.update(self.cam_names[cam_reply], data, self.radec, self.kmangle)
 
         elif self.km_actor == reply.sender:
