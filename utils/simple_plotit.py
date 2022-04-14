@@ -57,6 +57,8 @@ class PlotIt:
         self.site = site
         self.sid = Siderostat()
         self.geoloc = Site(name = self.site)
+        
+        self.imgsize = [None, None]
 
 
     def update(self, num, data, radec, kmangle):
@@ -64,6 +66,7 @@ class PlotIt:
         mean, sigma = np.mean(data), np.std(data)
         lperc, uperc = np.percentile(data, 0.5), np.percentile(data, 99.8)
         
+        self.imgshape = data.shape
         if self.ax_img[num]:
             self.ax_img[num].set_data(data)
         else:
@@ -94,14 +97,16 @@ class PlotIt:
         if self.annoN[num]: self.annoN[num].remove()
         if self.annoE[num]: self.annoE[num].remove()
         
-        x,y,l, = 200, 900, 150
+        l = self.imgshape[0]/10
+        x,y, = l+20, self.imgshape[0]-l-20
+        print(f"{self.imgshape} {x} {y} {l}")
         lx, ly = rotate(sky_angle, (0, l))
-        self.annoN[num] = self.ax[num].annotate('N', xy=(x, y),xytext=(x+lx, y+ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
+        self.annoN[num] = self.ax[num].annotate('N', xy=(x, y), xytext=(x+lx, y+ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
         lx, ly = rotate(sky_angle, (l, 0))
-        self.annoE[num] = self.ax[num].annotate('E', xy=(x, y),xytext=(x-lx, y-ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
+        self.annoE[num] = self.ax[num].annotate('E', xy=(x, y), xytext=(x-lx, y-ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
         
         self.fig.canvas.draw_idle()
-        self.fig.canvas.start_event_loop(0.001)
+        self.fig.canvas.start_event_loop(0.01)
         
 
 
