@@ -27,9 +27,7 @@ async def status(command, cameras):
 
         status = {}
         for camera in cameras:
-            
             status[camera.name] = camera.get_status(update=True)
-#        status.update(EXPOSURE_STATE)
 
         return command.finish(status)
 
