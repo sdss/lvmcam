@@ -12,7 +12,7 @@ sudo apt-get install -y libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev 
 sudo apt-get install -y libcairo2-dev libjpeg-dev libgif-dev debhelper cmake gtk-doc-tools
 sudo apt-get install -y libusb-1.0-0-dev libaudit-dev libgirepository1.0-dev libglib2.0-dev
 sudo apt-get install -y libnotify-dev libgtk-3-dev libgstreamer-plugins-base1.0-dev meson
-sudo apt-get install -y python3-pip python3-dev intltool libxml2-dev
+sudo apt-get install -y python3-pip python3-dev intltool libxml2-dev libxcb-xinerama0
 
 # Install Aravis 0.8.
 mkdir aravis
