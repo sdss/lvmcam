@@ -33,27 +33,17 @@ async def binning(command, cameras, binning):
             return
 
         failed = False
-        for camera in cameras:
 
+        status = {}
+        for camera in cameras:
             if not binning:
                 binning = list(await camera.get_binning())
-                command.info(
-                    binning=dict(
-                        camera=camera.name,
-                        horizontal=binning[0],
-                        vertical=binning[1],
-                    )
-                )
+                status[camera.name] = { "binning": binning }
             else:
                 try:
                     await camera.set_binning(*binning)
-                    command.info(
-                        binning=dict(
-                            camera=camera.name,
-                            horizontal=binning[0],
-                            vertical=binning[1],
-                        )
-                    )
+                    status[camera.name] = { "binning": binning }
+
                 except (CameraError, AssertionError) as ee:
                     command.error(error=dict(camera=camera.name, error=str(ee)))
                     failed = True
@@ -61,7 +51,7 @@ async def binning(command, cameras, binning):
         if failed:
             return command.fail("failed to set binning for one or more cameras.")
         else:
-            return command.finish()
+            return command.finish(status)
 
     except Exception as ex:
         return command.error(error=ex)

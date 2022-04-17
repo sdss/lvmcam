@@ -33,7 +33,7 @@ cameras:
         # araviscam
         pixsize: 9.0
         # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-        pixscal: 8.920
+        pixscale: 8.920
 
     west:
         uid: west
@@ -51,5 +51,5 @@ cameras:
         ## araviscam
         pixsize: 9.0
         # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-        pixscal: 8.920
+        pixscale: 8.920
 
