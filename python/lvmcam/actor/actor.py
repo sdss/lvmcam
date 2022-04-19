@@ -93,14 +93,24 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         self.exposure_state = {}
 
+
+        #TODO: fix schema
+        self.schemaCamera = {
+                       "type": "object",
+                       "properties": {
+                            "binning": {"type": "array"},
+                            "area": {"type": "array"},
+                        }
+                  }
+
         self.schema = {
                     "type": "object",
                     "properties": {
                      },
-                     "additionalProperties": True,
+                     "additionalProperties": False,
         }
 
-        self.load_schema(self.schema, is_file=False)
+
         if kwargs['verbose']:
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
@@ -118,7 +128,10 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             cam = await self.camera_system.add_camera(name=self.camera_system._config[camera]["uid"])
             cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
             cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
+            self.schema["properties"][camera] = self.schemaCamera
 
+        self.load_schema(self.schema, is_file=False)
+ 
         self.log.debug("Start done")
         
     async def stop(self):
