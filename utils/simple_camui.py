@@ -83,8 +83,8 @@ async def main(loop, args):
    client = await AMQPClientUI(args, plotit, host='localhost').start()
    
    while(True):
-        await asyncio.sleep(0.001)
-        plotit.start_event_loop(0.001)
+        await asyncio.sleep(0.01)
+        plotit.start_event_loop(0.01)
 
 
 if __name__ == '__main__':

@@ -11,7 +11,7 @@ import math
 import numpy as np
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import LogNorm
+from matplotlib.colors import LogNorm, PowerNorm
 from matplotlib.patches import Ellipse, Rectangle, Arrow
 from matplotlib import use as plt_use
 
@@ -21,8 +21,6 @@ import scipy.ndimage
 import sep
 
 from sdsstools.logger import get_logger
-
-
 
 from lvmtipo.site import Site
 from lvmtipo.siderostat import Siderostat
@@ -59,21 +57,37 @@ class PlotIt:
         self.geoloc = Site(name = self.site)
         
         self.imgsize = [None, None]
-
+        self.mean, self.sigma , self.lperc, self.uperc = [0,0], [0,0], [0,0], [0,0]
 
     def update(self, num, data, radec, kmangle):
 
-        mean, sigma = np.mean(data), np.std(data)
-        lperc, uperc = np.percentile(data, 0.5), np.percentile(data, 99.8)
+        mean, sigma, min, max = np.mean(data), np.std(data), np.min(data), np.max(data)
+        lperc, uperc = np.percentile(data, 5), np.percentile(data, 99.95)
+        gamma=0.6
+        vmin, vmax = mean-sigma, uperc
         
+        self.log.error(f"m/s {mean}/{sigma} {lperc}/{uperc} ")        
         self.imgshape = data.shape
         if self.ax_img[num]:
+            # we have to set clim to vmax first, otherwise the real values later will be ignored.
+            if self.mean[num] > mean + sigma or self.mean[num] < mean - sigma:
+                self.ax_img[num].set_clim(vmin=min, vmax=max)
             self.ax_img[num].set_data(data)
+            if self.mean[num] > mean + sigma or self.mean[num] < mean - sigma:
+#                self.ax_img[num].set_norm(LogNorm(vmin=mean-sigma, vmax=mean+sigma))
+#                self.ax_img[num].set_norm(LogNorm(vmin=mean-sigma,vmax=mean+sigma))
+#                self.ax_img[num].set_norm(PowerNorm(gamma, vmin=mean-sigma, vmax=uperc))
+                self.ax_img[num].set_clim(vmin=vmin, vmax=vmax)
+                self.mean[num], self.sigma[num], self.lperc[num], self.uperc[num] = mean, sigma, lperc, uperc
         else:
             ax_divider = make_axes_locatable(self.ax[num])
             cax = ax_divider.append_axes('right', size='3%', pad=0.05)
-            self.ax_img[num] = self.ax[num].imshow(data, vmin=mean-sigma, vmax=mean+sigma, interpolation='nearest', origin='lower')
+            self.ax_img[num] = self.ax[num].imshow(data, vmin=vmin, vmax=vmax, interpolation='nearest', origin='lower')
+#            self.ax_img[num] = self.ax[num].imshow(data, norm=LogNorm(vmin=vmin, vmax=vmax), interpolation='nearest', origin='lower')
+#            self.ax_img[num] = self.ax[num].imshow(data, norm=LogNorm(vmin=vmin, vmax=vmax ), interpolation='nearest', origin='lower')
+#            self.ax_img[num] = self.ax[num].imshow(data, norm=PowerNorm(gamma, vmin=vmin, vmax=vmax), interpolation='nearest', origin='lower')
             self.fig.colorbar(self.ax_img[num], cax=cax, orientation='vertical')
+            self.mean[num], self.sigma[num], self.lperc[num], self.uperc[num] = mean, sigma, lperc, uperc
 
         if radec and kmangle:
             self.drawNE(num, radec, kmangle)
@@ -101,9 +115,9 @@ class PlotIt:
         x,y, = l+20, self.imgshape[0]-l-20
         print(f"{self.imgshape} {x} {y} {l}")
         lx, ly = rotate(sky_angle, (0, l))
-        self.annoN[num] = self.ax[num].annotate('N', xy=(x, y), xytext=(x+lx, y+ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
+        self.annoN[num] = self.ax[num].annotate('N', xy=(x, y), xytext=(x+lx, y+ly), size="large", color="w", ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2, color="w"))
         lx, ly = rotate(sky_angle, (l, 0))
-        self.annoE[num] = self.ax[num].annotate('E', xy=(x, y), xytext=(x-lx, y-ly), ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2))
+        self.annoE[num] = self.ax[num].annotate('E', xy=(x, y), xytext=(x-lx, y-ly), size="large", color="w", ha='center', va="center", weight="bold", arrowprops=dict(arrowstyle='<-', lw=2, color="w"))
         
         self.fig.canvas.draw_idle()
         self.fig.canvas.start_event_loop(0.01)
