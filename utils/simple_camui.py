@@ -57,9 +57,11 @@ class AMQPClientUI(AMQPClient):
         """Handles a reply received from the exchange.
         """
         reply = AMQPReply(message, log=self.log)
-        print(reply.sender)
+        self.log.debug(f"{reply.sender} {reply.body}")
         if self.cam_actor == reply.sender:
             for cam_reply in reply.body:
+                if cam_reply not in self.cam_names:
+                    continue
                 if reply.body[cam_reply].get("state", None) == "written":
                     filename = reply.body[cam_reply].get("filename", None)
                     data = fits.open(filename)[0].data.byteswap().newbyteorder()
@@ -68,12 +70,12 @@ class AMQPClientUI(AMQPClient):
         elif self.km_actor == reply.sender:
             if "Position" in reply.body:
                 self.kmangle=reply.body["Position"]
-                print(reply.body["Position"])
+                self.log.debug(f'{reply.body["Position"]}')
 
         elif self.tel_actor == reply.sender:
             if "ra_j2000_hours" in reply.body:
                 self.radec=SkyCoord(ra=reply.body["ra_j2000_hours"]*u.hour, dec=reply.body["dec_j2000_degs"]*u.deg)
-                print(self.radec)
+                self.log.debug(f"{self.radec}")
 
         else: return
     
@@ -81,7 +83,9 @@ class AMQPClientUI(AMQPClient):
 async def main(loop, args):
    plotit = PlotIt(title=[f"{args.camera_actor} {args.west}", f"{args.camera_actor} {args.east}"])
    client = await AMQPClientUI(args, plotit, host='localhost').start()
-   
+   log = client.log
+
+   log.debug("waiting ...")
    while(True):
         await asyncio.sleep(0.01)
         plotit.start_event_loop(0.01)
@@ -104,8 +108,6 @@ if __name__ == '__main__':
     # Start the server
     loop = asyncio.get_event_loop()
     loop.create_task(main(loop, args))
-    print("waiting ...")
     loop.run_forever()
-    print("exit ...")
 
 

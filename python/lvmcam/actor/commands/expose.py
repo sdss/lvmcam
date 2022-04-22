@@ -29,7 +29,7 @@ def report_exposure_state(command, event, payload):
     if not name:
         return
 
-    print(f"report_exposure_state {event} {type(event)} {payload}")
+    command.actor.log.debug(f"report_exposure_state {event} {type(event)} {payload}")
 
 
     if name not in command.actor.exposure_state:
