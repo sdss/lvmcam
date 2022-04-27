@@ -125,10 +125,14 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 #        image_namer =  ImageNamerPlus(dirname="$HOME/{self.camera.name.replace('.', self.ospathsep)}/{date.strftime('%Y%m%d')}")
 
         for camera in self.camera_system._config:
-            cam = await self.camera_system.add_camera(name=self.camera_system._config[camera]["uid"])
-            cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
-            cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
-            self.schema["properties"][camera] = self.schemaCamera
+            try:
+                cam = await self.camera_system.add_camera(name=camera, uid=self.camera_system._config[camera]["uid"])
+                cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
+                cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
+                self.schema["properties"][camera] = self.schemaCamera
+
+            except Exception as ex:
+                self.log.error(f"Camera {camera}: {ex}")
 
         self.load_schema(self.schema, is_file=False)
  
