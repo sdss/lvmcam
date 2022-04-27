@@ -66,7 +66,7 @@ class PlotIt:
         gamma=0.6
         vmin, vmax = mean-sigma, uperc
         
-        self.log.error(f"m/s {mean}/{sigma} {lperc}/{uperc} ")        
+        self.log.debug(f"m/s {mean}/{sigma} {lperc}/{uperc} ")        
         self.imgshape = data.shape
         if self.ax_img[num]:
             # we have to set clim to vmax first, otherwise the real values later will be ignored.
