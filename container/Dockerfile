@@ -74,7 +74,7 @@ RUN source ~/.bashrc
 ENV PATH=/root/.pyenv/bin:$PATH
 
 RUN cd /root && \
-    git clone https://github.com/sdss/lvmcam.git && \
+    git clone https://github.com/wasndas/lvmcam.git && \
     cd lvmcam
 
 RUN cd /root/lvmcam && \
@@ -100,6 +100,6 @@ WORKDIR /root/lvmcam
 
 # COPY ./container/run-cam.sh /root/lvmcam/container
 
-RUN chmod +x ./container/run-cam.sh
+# RUN chmod +x ./container/run-cam.sh
 
 CMD ["/root/lvmcam/container/run-cam.sh"]
