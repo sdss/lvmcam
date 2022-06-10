@@ -1,5 +1,9 @@
 FROM ubuntu:20.04
 
+
+# podman run --rm -ti --name=lvm.sci.cam  -e LVMT_RMQ=192.168.49.2 -v /home/briegel/workspace/lvmt/wasndas/lvmcam:/root/lvmcam -e LVMT_CAM=lvm.sci.agcam localhost/sdss/lvmcam
+
+
 LABEL email="mgjeon@khu.ac.kr"
 LABEL name="Mingyu Jeon"
 

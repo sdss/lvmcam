@@ -25,12 +25,12 @@ from sdsstools.logger import SDSSLogger
 
 from lvmcam.actor.actor import LvmcamActor
 
-@click.group(cls=DefaultGroup, default="actor", default_if_no_args=True)
+@click.group(cls=DefaultGroup, default="actor")
 @click.option(
     "-c",
     "--config",
     "config_file",
-    type=click.Path(exists=True, dir_okay=False),
+    type=str,
     help="Path to the user configuration file.",
 )
 @click.option(
@@ -52,8 +52,8 @@ def lvmcam(ctx, config_file, verbose):
 async def actor(ctx):
     """Runs the actor."""
 
-    default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvm.sci.agcam.yml")
-    config_file = ctx.obj["config_file"] or default_config_file
+#    default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvm.sci.agcam.yml")
+    config_file = ctx.obj["config_file"]
     lvmcam_obj = LvmcamActor.from_config(config_file, verbose=ctx.obj["verbose"])
 
     lvmcam_obj.log.debug("Hello world")

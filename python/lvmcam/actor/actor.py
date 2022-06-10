@@ -88,11 +88,11 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         **kwargs,
     ):   
         self.dirname = config_get(config, "dirname", None)
-        self.basename =config_get(config, "basename", None)
+        self.basename = config_get(config, "basename", None)
+        print(f'{config_get(config,"camtype", "skymakercam")}')
         super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         self.exposure_state = {}
-
 
         #TODO: fix schema
         self.schemaCamera = {

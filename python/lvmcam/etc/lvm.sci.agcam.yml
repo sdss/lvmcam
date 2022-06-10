@@ -24,6 +24,8 @@ cameras:
         descr: "Guider Camera Science East"
 
         # skymakercam
+        rmq:
+            host: localhost
         instpar: lvm_sci_age_cam
         focus_stage: "lvm.sci.foc"
         kmirror: "lvm.sci.km"
@@ -79,6 +81,8 @@ cameras:
         descr: "Guider Camera Science West"
 
         ## skymakercam
+        rmq:
+            host: localhost
         instpar: lvm_sci_agw_cam
         focus_stage: "lvm.sci.foc"
         kmirror: "lvm.sci.km"
