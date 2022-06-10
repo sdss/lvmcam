@@ -2,7 +2,7 @@
 
 LVMT_PATH=/root/lvmcam
 LVMT_CAM=${LVMT_CAM:=sci}
-LVMT_CAM_TYPE="skymakercam"
+LVMT_CAM_TYPE=${LVMT_CAM_TYPE:="skymakercam"}
 LVMT_DATA_ROOT="${LVM_DATA_ROOT:=${LVMT_PATH}/data}"
 LVMT_RMQ=${LVMT_RMQ:=localhost}
 
