@@ -9,7 +9,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     env:
-      USER: sdss
+      USER: wasndas
       APP: lvmcam
     steps:
       - name: Set docker tags
