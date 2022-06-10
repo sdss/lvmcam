@@ -8,11 +8,12 @@ actor:
     #default_cameras:
        #- west
 
-#camtype: araviscam
-camtype: skymakercam
+
+camtype: araviscam  # types: skymakercam, araviscam
 
 basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
-dirname: "$HOME/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+dirname: "${LVM_DATA_ROOT:=$HOME}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+
 site: "LCO"
 
 cameras:
@@ -27,7 +28,7 @@ cameras:
         focus_stage: "lvm.sci.foc"
         kmirror: "lvm.sci.km"
         tcs: "lvm.sci.pwi"
-        catalog_path: "$HOME/data/catalog/gaia"
+        catalog_path: "/tmp/data/catalog/gaia"
         default:
             gain: 5.0
             binning: [4, 4]
@@ -82,7 +83,7 @@ cameras:
         focus_stage: "lvm.sci.foc"
         kmirror: "lvm.sci.km"
         tcs: "lvm.sci.pwi"
-        catalog_path: "$HOME/data/catalog/gaia"
+        catalog_path: "/tmp/data/catalog/gaia"
 
         ## araviscam
         pixsize: 9.0
