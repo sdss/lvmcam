@@ -13,6 +13,6 @@ if [ $LVMT_DEBUG ]; then
 fi
 
 sed "s/camtype: .*/camtype: $LVMT_CAM_TYPE/; s/host: .*$/host: $LVMT_RMQ/" < $LVMT_PATH/python/lvmcam/etc/$LVMT_CAM.yml \
-            > $LVMT_PATH/python/lvmcam/etc/$LVMT_CAM_$LVMT_RMQ.yml
+            > $LVMT_PATH/python/lvmcam/etc/${LVMT_CAM}_${LVMT_RMQ}.yml
 
-python3 $LVMT_PATH/python/lvmcam/__main__.py -c $LVMT_PATH/python/lvmcam/etc/$LVMT_CAM_$LVMT_RMQ.yml --verbose start --debug
+python3 $LVMT_PATH/python/lvmcam/__main__.py -c $LVMT_PATH/python/lvmcam/etc/${LVMT_CAM}_${LVMT_RMQ}.yml --verbose start --debug
