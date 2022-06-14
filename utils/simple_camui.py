@@ -84,7 +84,7 @@ class AMQPClientUI(AMQPClient):
 
 async def main(loop, args):
    plotit = PlotIt(title=[f"{args.camera_actor} {args.west}", f"{args.camera_actor} {args.east}"])
-   client = await AMQPClientUI(args, plotit, host='localhost').start()
+   client = await AMQPClientUI(args, plotit, host=args.rmq_host).start()
    log = client.log
 
    log.debug("waiting ...")
@@ -105,6 +105,8 @@ if __name__ == '__main__':
     parser.add_argument("-w", '--west', type=str, default="west", help="Choose your west camera name")
     args = parser.parse_args()
     parser.add_argument("-e", '--east', type=str, default="east", help="Choose your east camera name")
+    args = parser.parse_args()
+    parser.add_argument("-H", '--rmq_host', type=str, default="localhost", help="Choose your rabbitmq host")
     args = parser.parse_args()
 
     # Start the server
