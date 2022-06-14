@@ -26,7 +26,7 @@ cameras:
         # skymakercam
         rmq:
             host: localhost
-        instpar: lvm_spec_age_cam
+        instpar: lvm_sci_age_cam
         focus_stage: "lvm.spec.foc"
         kmirror: "lvm.spec.km"
         tcs: "lvm.spec.pwi"

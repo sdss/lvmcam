@@ -26,7 +26,7 @@ cameras:
         # skymakercam
         rmq:
             host: localhost
-        instpar: lvm_skye_age_cam
+        instpar: lvm_sci_age_cam
         focus_stage: "lvm.skye.foc"
         kmirror: "lvm.skye.km"
         tcs: "lvm.skye.pwi"
@@ -83,7 +83,7 @@ cameras:
         ## skymakercam
         rmq:
             host: localhost
-        instpar: lvm_skye_agw_cam
+        instpar: lvm_sci_agw_cam
         focus_stage: "lvm.skye.foc"
         kmirror: "lvm.skye.km"
         tcs: "lvm.skye.pwi"

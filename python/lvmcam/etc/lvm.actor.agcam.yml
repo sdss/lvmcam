@@ -1,0 +1,7 @@
+#Actor configuration for the AMQPActor class
+
+actor:
+    name: lvm.sci.agcam
+    host: 192.168.42.2
+    port: 5672
+    log_dir: '~/tmp/log'
