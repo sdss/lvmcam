@@ -25,9 +25,9 @@ RUN pip3 install sdss-clu sdss-basecam sdss-araviscam sdss-skymakercam expandvar
 
 WORKDIR /root
 
-COPY run-cam.sh /root
+#COPY run-cam.sh /root
 
-CMD ["/root/run-cam.sh"]
+CMD ["/root/lvmcam/container/run-cam.sh"]
 
 
 
