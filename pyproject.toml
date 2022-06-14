@@ -38,6 +38,7 @@ container_autotuner ="container:autotuner"
 
 [tool.poetry.dependencies]
 python = ">3.7,<3.10"
+expandvars = ">=0.9.0"
 sdss-tree = ">=2.15.2"
 sdss-access = ">=0.2.3"
 sdsstools = ">=0.4.0"

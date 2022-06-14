@@ -12,7 +12,7 @@ actor:
 camtype: araviscam  # types: skymakercam, araviscam
 
 basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
-dirname: "${LVM_DATA_ROOT:=$HOME}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
 site: "LCO"
 

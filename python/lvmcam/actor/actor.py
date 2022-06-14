@@ -8,7 +8,8 @@
 
 from logging import DEBUG
 
-from os.path import expandvars
+#from os.path import expandvars
+from expandvars import expand as expandvars
 
 
 from sdsstools.logger import StreamFormatter  
@@ -128,7 +129,9 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             try:
                 cam = await self.camera_system.add_camera(name=camera, uid=self.camera_system._config[camera]["uid"])
                 cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
+                self.log.debug(f"dirname {cam.image_namer.dirname}")
                 cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
+                self.log.debug(f"basename {cam.image_namer.basename}")
                 self.schema["properties"][camera] = self.schemaCamera
 
             except Exception as ex:

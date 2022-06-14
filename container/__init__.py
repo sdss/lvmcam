@@ -13,6 +13,7 @@ lvmt_root = os.environ["PWD"]
 lvmt_image_source_local = "localhost/sdss"
 lvmt_image_source_remote = "ghcr.io/sdss"
 lvmt_image_name = 'lvmcam'
+lvmt_rmq = socket.gethostname()
 
 default_cam = 'lvm.cam'
 
@@ -43,57 +44,41 @@ def build(lvmt_root:str, use_cache: bool):
     command = subprocess.run(shlex.split(build))
 
 
-# @click.command()   
-# @click.option("--name", "-n", default=default_cam, type=str)
-# @click.option("--debug", "-d", default=False, type=bool)
-# def autotuner(name: str, debug:bool):
-#     run_autotuner = f"-v {lvmt_root}:/root/lvmt:Z -e cam_NAME={name}"
-#     run = f"{container_bin} exec -ti {name} /opt/autotuner-1.0.3beta1/run-autotuner_nogl"
-#     command = subprocess.run(shlex.split(f"{run}"))
-
-# podman build -t sdss/lvmcam ./container --format docker
-# podman kill lvm.cam.sci.agw
-# podman run --rm -d --network=host --name=lvm.cam.sci.agw localhost/sdss/lvmcam
-
 @click.command()   
 @click.option("--lvmt_root", default=lvmt_root, type=str)
 @click.option("--name", "-n", default=default_cam, type=str)
-@click.option("--virtual/--no-virtual", "-v", default=False)
 @click.option("--debug/--no-debug", "-d", default=False)
 @click.option("--kill/--no-kill", default=False)
-def start(lvmt_root:str, name: str, virtual:bool, debug:bool, kill:bool):
+@click.option("--rmq", default=lvmt_rmq, type=str)
+@click.option("--simulator/--araviscam", default=False)
+def start(lvmt_root:str, name: str, debug:bool, kill:bool, rmq:str, simulator:bool):
     if not subprocess.run(shlex.split(f"podman image exists {lvmt_image_source_local}/{lvmt_image_name}")).returncode:
        lvmt_image = f"{lvmt_image_source_local}/{lvmt_image_name}"
     else:
        if subprocess.run(shlex.split(f"podman image exists {lvmt_image_source_remote}/{lvmt_image_name}")).returncode:
            subprocess.run(shlex.split(f"podman pull {lvmt_image_source_remote}/{lvmt_image_name}:latest"))
        lvmt_image = f"{lvmt_image_source_remote}/{lvmt_image_name}"
-    # vnc_port=None
+
 
     if kill:
         subprocess.run(shlex.split(f"podman kill {name}"))
         subprocess.run(shlex.split(f"podman rm {name} -f"))
 
         
-    run_base = f"--rm -td --network=host --name={name} -e HOME_PATH={os.getcwd()}"
+    run_base = f"--rm -d --name={name}"
     
-    run_base += f" -e LVMT_RMQ={socket.gethostname()}"
-
-    # run_base += f" -e LVMT_PATH={os.path.dirname(lvmt_root)}"
-    
-    # vnc_port = next_free_port()
-    # run_base +=  f" -p {vnc_port}:5900 -e cam_GEOM={geom}"
-        
-    if virtual:
-        run_base +=  f" -e CAM_VIRTUAL=true"
+    if rmq:
+        run_base += f" -e LVMT_RMQ={lvmt_rmq}"
+    else:
+        run_base += f" -e LVMT_RMQ={socket.gethostname()}"
 
     if debug:
-        run_base +=  f" -e CAM_DEBUG=true"
+        run_base +=  f" -e LVMT_DEBUG=true"
 
-    # run_base += " -v /dev:/dev:rslave"
-    
-    # system_xauthority=PosixPath('~/.Xauthority').expanduser()
-    run_cam = f"-v {lvmt_root}/python/lvmcam:/root/lvmcam/python/lvmcam:rw -e CAM_NAME={name}"
+    if simulator:
+        run_base +=  f" -e LVMT_CAM_TYPE=skymakercam"
+
+    run_cam = f"-v {lvmt_root}/python/lvmcam:/root/lvmcam/python/lvmcam:rw -e LVMT_CAM={name}"
     run = f"{container_bin} run {run_base} {run_cam} {lvmt_image}"
     print(run)
     #child = pexpect.spawn(run)
@@ -101,8 +86,6 @@ def start(lvmt_root:str, name: str, virtual:bool, debug:bool, kill:bool):
     #assert isRunning(name) == True
     command = subprocess.run(shlex.split(f"{run}"))
     logs = subprocess.run(shlex.split(f"podman logs -f {name}"))
-    # if vnc_port and os.environ.get("DISPLAY") and system_xauthority:
-    #     vncclient = subprocess.run(shlex.split(f"vncviewer :{vnc_port - 5900}"))
     
     print("done")
 
