@@ -97,15 +97,10 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", '--camera_actor', type=str, default="lvm.sci.agcam", help="Choose your camera")
-    args = parser.parse_args()
     parser.add_argument("-k", '--km_actor', type=str, default="lvm.sci.km", help="Choose your kmirror")
-    args = parser.parse_args()
     parser.add_argument("-t", '--tel_actor', type=str, default="lvm.sci.pwi", help="Choose your telescope")
-    args = parser.parse_args()
     parser.add_argument("-w", '--west', type=str, default="west", help="Choose your west camera name")
-    args = parser.parse_args()
     parser.add_argument("-e", '--east', type=str, default="east", help="Choose your east camera name")
-    args = parser.parse_args()
     parser.add_argument("-H", '--rmq_host', type=str, default="localhost", help="Choose your rabbitmq host")
     args = parser.parse_args()
 
