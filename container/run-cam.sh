@@ -3,11 +3,12 @@
 LVMT_PATH=/root/lvmcam
 LVMT_CAM=${LVMT_CAM:="lvm.sci.agcam"}
 LVMT_CAM_TYPE=${LVMT_CAM_TYPE:="araviscam"}
-LVMT_DATA_ROOT="${LVM_DATA_ROOT:=${HOME}/data}"
 LVMT_RMQ=${LVMT_RMQ:=localhost}
 
+export LVMT_DATA_ROOT="${LVM_DATA_ROOT:=${HOME}/data}"
+#echo $LVMT_DATA_ROOT
 
-echo $LVMT_DEBUG
+#echo $LVMT_DEBUG
 if [ $LVMT_DEBUG ]; then 
     export PYTHONPATH=$LVMT_PATH/python/
 fi
