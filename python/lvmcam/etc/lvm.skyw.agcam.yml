@@ -18,7 +18,7 @@ site: "LCO"
 
 cameras:
     east:
-        uid: 19283182
+        uid: east
         autoconnect: true
 #        type: "skymakercam"
         descr: "Guider Camera Science East"
