@@ -18,8 +18,9 @@ from sdsstools.logger import SDSSLogger
 
 from clu import AMQPActor
 
-from basecam.actor import BaseCameraActor
 from basecam import BaseCamera
+from basecam.actor import BaseCameraActor
+from basecam.exposure import ImageNamer
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
@@ -34,41 +35,6 @@ camera_types = {"araviscam": lambda *args, **kwargs: BlackflyCameraSystem(Blackf
 
 __all__ = ["LvmcamActor"]
 
-#from basecam.exposure import ImageNamer
-
-#import pathlib
-
-#class ImageNamerPlus(ImageNamer):
-    #"""Creates a new sequential filename for an image."""
-    #def __init__(
-        #self,
-        #basename: str = "{camera.name}-{num:04d}.fits",
-        #dirname: str = ".",
-        #overwrite: bool = False,
-        #camera: Optional[BaseCamera] = None,
-        #reset_sequence: bool = True,
-    #):
-        #from os.path import expandvars, sep
-        #from datetime import datetime
-        #self.ospathsep = os.path.sep
-        #super().__init__(basename, expandvars(dirname), overwrite, camera, reset_sequence)
-    
-    #def get_dirname(self) -> pathlib.Path:
-        #"""Returns the evaluated dirname."""
-        #date = datetime.now()
-        #dirname = pathlib.Path(
-            #eval(f"f'''{self.dirname}'''", vars())
-        #)
-        #if self._previous_dirname and self._previous_dirname != str(dirname):
-            #if self._reset_sequence:
-                #self._last_num = 0
-        #self._previous_dirname = str(dirname)
-##        os.makedirs(dirname_expanded)
-        #return dirname
-        
-
-#imn=ImageNamerPlus('{camera.name}-{date.strftime("%Y%m%d")}_{num:08d}.fits', dirname="$HOME/{self.camera.name.replace('.', self.ospathsep)}/{date.strftime('%Y%m%d')}",camera=camera)
-#imn.get_dirname()
 
 def config_get(config, key, default=None):
     """ DOESNT work for keys with dots !!! """
@@ -128,10 +94,13 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         for camera in self.camera_system._config:
             try:
                 cam = await self.camera_system.add_camera(name=camera, uid=self.camera_system._config[camera]["uid"])
-                cam.image_namer.dirname = expandvars(self.dirname) if self.dirname else cam.image_namer.dirname
-                self.log.debug(f"dirname {cam.image_namer.dirname}")
-                cam.image_namer.basename = expandvars(self.basename) if self.basename else cam.image_namer.basename
-                self.log.debug(f"basename {cam.image_namer.basename}")
+                basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
+                self.log.debug(f"basename {basename}")
+                dirname = expandvars(self.dirname) if self.dirname else "."
+                self.log.debug(f"dirname {dirname}")
+                
+                cam.image_namer = ImageNamer(basename=basename, dirname=dirname, camera=cam)
+
                 self.schema["properties"][camera] = self.schemaCamera
 
             except Exception as ex:
