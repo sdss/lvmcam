@@ -1,5 +1,6 @@
 # Changelog
 
+## 0.2.5 - June 9, 2022
 ## 0.2.4 - January 24, 2022
 
 ### ✨ Improved
