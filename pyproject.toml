@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sdss-lvmcam"
-version = "0.0.16"
+version = "0.0.17"
 description = "The package for lvmagp"
 authors = ["Mingyu Jeon <mgjeon@khu.ac.kr>", "Sumin Lee <lxmark888@khu.ac.kr>"]
 license = "BSD-3-Clause"
@@ -48,11 +48,11 @@ expandvars = ">=0.9.0"
 #click = "^8.0.1"
 #astropy = "^4.3.post1"
 PyGObject = "^3.40.1"
-sdss-basecam = "^0.5.0"
+#sdss-basecam = "^0.5.0"
 opencv-python = "^4.5.3"
 #pytest-asyncio = "^0.16.0"
 sdss-skymakercam = ">=0.0.6"
-sdss-cluplus = ">=0.0.17"
+sdss-cluplus = ">=0.2.1"
 sdss-araviscam = ">=0.1.91"
 
 [tool.poetry.dev-dependencies]
