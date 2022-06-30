@@ -25,7 +25,6 @@ packages = [
 include = ["python/lvmcam/etc/*"]
 
 [tool.poetry.build]
-script = "build.py"
 generate-setup-file = false
 
 [tool.poetry.scripts]
