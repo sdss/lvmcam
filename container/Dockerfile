@@ -23,7 +23,7 @@ RUN apt install -y python3-pip
 RUN pip3 install sdss-clu sdss-basecam sdss-araviscam sdss-skymakercam expandvars
 
 # temporary fix for sdss-basecam
-RUN pip3 install astropy==5.1
+#RUN pip3 install astropy==5.1
 
 WORKDIR /root
 
