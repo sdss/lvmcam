@@ -52,12 +52,15 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self,
         config, 
         *args,
+        simulate:bool=False,
         **kwargs,
     ):   
         self.dirname = config_get(config, "dirname", None)
         self.basename = config_get(config, "basename", None)
         print(f'{config_get(config,"camtype", "skymakercam")}')
-        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
+        camera_type = camera_types[config_get(config,"camtype", "skymakercam") if not simulate else "skymakercam"](config) 
+        
+        super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         self.exposure_state = {}
 
