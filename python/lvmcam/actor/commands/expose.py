@@ -17,6 +17,9 @@ from basecam.exceptions import ExposureError
 from basecam.actor.tools import get_cameras
 from . import camera_parser
 
+
+from cluplus.proxy import Proxy
+
 __all__ = ["expose"]
 
 
@@ -29,7 +32,8 @@ def report_exposure_state(command, event, payload):
     if not name:
         return
 
-    command.actor.log.debug(f"report_exposure_state {event} {type(event)} {payload}")
+#    command.actor.log.debug(f" payload_state {event} {payload}")
+#    command.actor.log.debug(f"exposure_state {command.actor.exposure_state}")
 
 
     if name not in command.actor.exposure_state:
@@ -53,8 +57,10 @@ def report_exposure_state(command, event, payload):
                 "remaining_time": 0.0,
                 "current_stack": 0,
                 "n_stack": 0,
+#                "error": command.actor.exposure_state[name].get("error"),
             }
         )
+#        return
     elif event == CameraEvent.EXPOSURE_IDLE:
         command.actor.exposure_state[name].update(
             {
@@ -139,8 +145,11 @@ async def expose_one_camera(
         if post_process_cb:
             await post_process_cb(command, exposure)
         return True
-    except ExposureError as ee:
-        command.error(error={"camera": camera.name, "error": str(ee)})
+
+
+    except Exception as ex:
+        command.actor.exposure_state[camera.name].update({"error": Proxy._exceptionToMap(ex)})
+        command.error({camera.name: {"error": command.actor.exposure_state[camera.name].get("error")}})
         return False
 
 
@@ -243,32 +252,38 @@ async def expose(
                     )
                 )
             )
+
         results = await asyncio.gather(*jobs)
         command.actor.listener.remove_callback(report_exposure_state_partial)
 
-        if not all(results):
-            return command.failed("one or more cameras failed to expose.")
-        else:
+
+        def status(cameras):
+
             status = {}
             for camera in cameras:
                 # Reset cameras to idle
                 report_exposure_state(
                     command,
                     CameraEvent.EXPOSURE_IDLE,
-                    {"name": camera.name},
+                    {},
                 )
-                status.update(
-                    { 
-                        camera.name:
-                        {
-                            "state": command.actor.exposure_state[camera.name].get("state", "NA"),
-                            "filename": command.actor.exposure_state[camera.name].get("filename", "UNKNOWN"),
-                        }
-                    }
-                )
+                
+                status.update({camera.name: {"state": command.actor.exposure_state[camera.name].get("state", "NA")}})
+                if error := command.actor.exposure_state[camera.name].get("error"):
+                    command.actor.log.debug(f"status done {error}")
+                    status[camera.name].update({"error": error})
+                else:
+                    status[camera.name].update({"filename": command.actor.exposure_state[camera.name].get("filename", "UNKNOWN")})
 
-            return command.finish(status)
+            return status
+
+
+        if not any(results):
+            return command.fail(error=Exception("one or more cameras failed to expose.", status(cameras)))
+        else:
+            return command.finish(status(cameras))
         
     except Exception as ex:
+        command.info(error=ex)
         return command.error(error=ex)
 
