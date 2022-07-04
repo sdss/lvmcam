@@ -28,12 +28,12 @@ def report_exposure_state(command, event, payload):
     if event not in CameraEvent:
         return
 
-    name = payload.get("name", "")
+    name = payload.get("name", None)
     if not name:
         return
 
-#    command.actor.log.debug(f" payload_state {event} {payload}")
-#    command.actor.log.debug(f"exposure_state {command.actor.exposure_state}")
+    command.actor.log.debug(f"payload_state {event} {payload}")
+    command.actor.log.debug(f"exposure_state {command.actor.exposure_state}")
 
 
     if name not in command.actor.exposure_state:
@@ -57,7 +57,6 @@ def report_exposure_state(command, event, payload):
                 "remaining_time": 0.0,
                 "current_stack": 0,
                 "n_stack": 0,
-#                "error": command.actor.exposure_state[name].get("error"),
             }
         )
 #        return
@@ -71,6 +70,8 @@ def report_exposure_state(command, event, payload):
                 "image_type": "NA",
             }
         )
+        if command.actor.exposure_state[name].get("error", None):
+            command.actor.exposure_state[name].pop("error")
         return
     elif event == CameraEvent.EXPOSURE_WRITTEN:
         filename = payload.get("filename", "UNKNOWN")
@@ -99,7 +100,7 @@ def report_exposure_state(command, event, payload):
              {  
                "state": command.actor.exposure_state[name].get("state", "NA"),
                "image_type": command.actor.exposure_state[name].get("image_type", "NA"),
-               "error": payload.get("error", "Error unknown"),
+#               "error": payload.get("error", "Error unknown"),
              }
           }
         )
@@ -146,10 +147,18 @@ async def expose_one_camera(
             await post_process_cb(command, exposure)
         return True
 
+        report_exposure_state(
+            command,
+            CameraEvent.EXPOSURE_IDLE,
+            {},
+        )
+                
 
     except Exception as ex:
-        command.actor.exposure_state[camera.name].update({"error": Proxy._exceptionToMap(ex)})
-        command.error({camera.name: {"error": command.actor.exposure_state[camera.name].get("error")}})
+        # we do use error2, otherwise it will be oberwritten by basecam
+        command.actor.exposure_state[camera.name].update({"error2": Proxy._exceptionToMap(ex)})
+        command.error({camera.name: {"error": command.actor.exposure_state[camera.name].get("error2")}})
+#        command.error({camera.name: {"error": Proxy._exceptionToMap(ex)}})
         return False
 
 
@@ -256,32 +265,18 @@ async def expose(
         results = await asyncio.gather(*jobs)
         command.actor.listener.remove_callback(report_exposure_state_partial)
 
-
-        def status(cameras):
-
-            status = {}
-            for camera in cameras:
-                # Reset cameras to idle
-                report_exposure_state(
-                    command,
-                    CameraEvent.EXPOSURE_IDLE,
-                    {},
-                )
-                
-                status.update({camera.name: {"state": command.actor.exposure_state[camera.name].get("state", "NA")}})
-                if error := command.actor.exposure_state[camera.name].get("error"):
-                    command.actor.log.debug(f"status done {error}")
-                    status[camera.name].update({"error": error})
-                else:
-                    status[camera.name].update({"filename": command.actor.exposure_state[camera.name].get("filename", "UNKNOWN")})
-
-            return status
-
+        status = {}
+        for camera in cameras:
+            status.update({camera.name: {"state": command.actor.exposure_state[camera.name].get("state", "NA")}})
+            if filename := command.actor.exposure_state[camera.name].get("filename"):
+                status[camera.name].update({"filename": filename})
+            else:
+                status[camera.name].update({"error": command.actor.exposure_state[camera.name].get("error2")})
 
         if not any(results):
-            return command.fail(error=Exception("one or more cameras failed to expose.", status(cameras)))
+            return command.fail(error=Exception("one or more cameras failed to expose.", status))
         else:
-            return command.finish(status(cameras))
+            return command.finish(status)
         
     except Exception as ex:
         command.info(error=ex)
