@@ -32,8 +32,8 @@ def report_exposure_state(command, event, payload):
     if not name:
         return
 
-    command.actor.log.debug(f"payload_state {event} {payload}")
-    command.actor.log.debug(f"exposure_state {command.actor.exposure_state}")
+#    command.actor.log.debug(f"payload_state {event} {payload}")
+#    command.actor.log.debug(f"exposure_state {command.actor.exposure_state}")
 
 
     if name not in command.actor.exposure_state:
