@@ -267,9 +267,10 @@ async def expose(
 
         status = {}
         for camera in cameras:
-            status.update({camera.name: {"state": command.actor.exposure_state[camera.name].get("state", "NA")}})
-            if filename := command.actor.exposure_state[camera.name].get("filename"):
-                status[camera.name].update({"filename": filename})
+            state = command.actor.exposure_state[camera.name].get("state", "NA")
+            status.update({camera.name: {"state": state}})
+            if state == "written" :
+                status[camera.name].update({"filename": command.actor.exposure_state[camera.name].get("filename")})
             else:
                 status[camera.name].update({"error": command.actor.exposure_state[camera.name].get("error2")})
 
