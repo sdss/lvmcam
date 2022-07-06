@@ -34,6 +34,14 @@ from lvmcam.actor.actor import LvmcamActor
     help="Path to the user configuration file.",
 )
 @click.option(
+    "-r",
+    "--rmq_url",
+    "rmq_url",
+    default=None,
+    type=str,
+    help="rabbitmq url, eg: amqp://guest:guest@localhost:5672/",
+)
+@click.option(
     "-v",
     "--verbose",
     count=True,
@@ -49,7 +57,7 @@ from lvmcam.actor.actor import LvmcamActor
 def lvmcam(ctx, config_file, verbose, simulate):
     """lvm controller"""
 
-    ctx.obj = {"verbose": verbose, "config_file": config_file, "simulate": simulate}
+    ctx.obj = {"verbose": verbose, "config_file": config_file, "rmq_url": rmq_url, "simulate": simulate}
 
 
 @lvmcam.group(cls=DaemonGroup, prog="lvmcam_actor", workdir=os.getcwd())
@@ -60,7 +68,7 @@ async def actor(ctx):
 
 #    default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvm.sci.agcam.yml")
     config_file = ctx.obj["config_file"]
-    lvmcam_obj = LvmcamActor.from_config(config_file, verbose=ctx.obj["verbose"], simulate=ctx.obj["simulate"])
+    lvmcam_obj = LvmcamActor.from_config(config_file, url=ctx.obj["rmq_url"], verbose=ctx.obj["verbose"], simulate=ctx.obj["simulate"])
 
     lvmcam_obj.log.debug("Hello world")
 
