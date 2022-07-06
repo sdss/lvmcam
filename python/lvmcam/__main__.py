@@ -54,7 +54,7 @@ from lvmcam.actor.actor import LvmcamActor
     help="Simulation mode. Overwrite configured camera type with skymakercam.",
 )
 @click.pass_context
-def lvmcam(ctx, config_file, verbose, simulate):
+def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
     """lvm controller"""
 
     ctx.obj = {"verbose": verbose, "config_file": config_file, "rmq_url": rmq_url, "simulate": simulate}
