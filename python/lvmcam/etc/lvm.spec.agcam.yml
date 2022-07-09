@@ -18,33 +18,30 @@ site: "LCO"
 
 cameras:
     east:
-        uid: east
+        pixsize: 9.0
+        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
+        pixscale: 8.920
+
+        gain: 5.0
+        binning: [4, 4]
+
+        # araviscam
+#        ip: "192.168.80.64"
+        ip: "192.168.1.15"
+        uid: 19283182
         autoconnect: true
-#        type: "skymakercam"
         descr: "Guider Camera Science East"
 
         # skymakercam
-        rmq:
-            host: localhost
         instpar: lvm_sci_age_cam
         focus_stage: "lvm.spec.foc"
         kmirror: "lvm.spec.km"
         tcs: "lvm.spec.pwi"
         catalog_path: "/tmp/data/catalog/gaia"
-        default:
-            gain: 5.0
-            binning: [4, 4]
 
-        # araviscam
-        ip: "192.168.80.64"
-        pixsize: 9.0
-        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-        pixscale: 8.920
-        connection:
-            uid: "19283182"
-            gain: 5.0
-            binning: [4, 4]
-
+        genicam_params:
+            # araviscam genicam parameters
+            
             # The following 4 dict must follow exactly the
             # name structure and types as in the araviscam/etc/*.xml file
             bool:
@@ -72,6 +69,6 @@ cameras:
             float:
 
             string:
-
+            
         shutter: false
 

@@ -96,7 +96,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
-                cam = await self.camera_system.add_camera(name=camera, uid=self.camera_system._config[camera]["uid"])
+                cam = await self.camera_system.add_camera(name=camera)
+                self.log.debug(f"camname {camera}")
                 basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
                 self.log.debug(f"basename {basename}")
                 dirname = expandvars(self.dirname) if self.dirname else "."
@@ -104,6 +105,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 
                 cam.image_namer = ImageNamer(basename=basename, dirname=dirname, camera=cam)
 
+  
                 self.schema["properties"][camera] = self.schemaCamera
 
             except Exception as ex:

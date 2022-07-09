@@ -37,7 +37,7 @@ container_isRunning ="container:isRunning"
 container_autotuner ="container:autotuner"
 
 [tool.poetry.dependencies]
-python = ">3.7,<4"
+python = ">3.7,<3.11"
 expandvars = ">=0.9.0"
 #sdss-tree = ">=2.15.2"
 #sdss-access = ">=0.2.3"
