@@ -7,7 +7,7 @@ actor:
     log_dir: '~/tmp/log'
     #default_cameras:
        #- west
-
+        
 
 camtype: araviscam  # types: skymakercam, araviscam
 
@@ -16,6 +16,15 @@ dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strfti
 
 site: "LCO"
 
+scraper:
+   lvm.sci.pwi:
+       ra_j2000_hours: ra_h
+       dec_j2000_degs: deg_d
+   lvm.sci.foc:
+       Position: foc_um
+   lvm.sci.km:
+       Position: km_d
+   
 cameras:
     east:
         uid: east

@@ -16,7 +16,10 @@ from sdsstools.logger import StreamFormatter
 from sdsstools import get_logger, read_yaml_file
 from sdsstools.logger import SDSSLogger
 
+import aio_pika as apika
+
 from clu import AMQPActor
+from clu.client import AMQPReply
 
 from basecam import BaseCamera
 from basecam.actor import BaseCameraActor
@@ -55,14 +58,9 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         simulate:bool=False,
         **kwargs,
     ):   
-        self.dirname = config_get(config, "dirname", None)
-        self.basename = config_get(config, "basename", None)
-        print(f'{config_get(config,"camtype", "skymakercam")}')
         camera_type = camera_types[config_get(config,"camtype", "skymakercam") if not simulate else "skymakercam"](config) 
-        
-        super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
 
-        self.exposure_state = {}
+        super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         #TODO: fix schema
         self.schemaCamera = {
@@ -85,7 +83,16 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
-        #self.log.debug(str(self.model.schema))
+        self.dirname = config_get(config, "dirname", None)
+        self.basename = config_get(config, "basename", None)
+
+        self.exposure_state = {}
+        
+        self.scraper_map = config_get(config, "scraper", None)
+        self.log.debug(str(self.scraper_map))
+        self.scraper_actors = list(self.scraper_map.keys() if self.scraper_map else None)
+        self.scraper_data = {}
+        self.log.debug(str(self.scraper_map))
 
 
     async def start(self):
@@ -105,7 +112,6 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 
                 cam.image_namer = ImageNamer(basename=basename, dirname=dirname, camera=cam)
 
-  
                 self.schema["properties"][camera] = self.schemaCamera
 
             except Exception as ex:
@@ -123,3 +129,18 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             cam = await self.camera_system.remove_camera(name=self.camera_system._config[camera]["uid"])
             
         self.log.debug("Stop done")
+
+
+    async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
+        """Handles a reply received from the exchange.
+        """
+        reply = AMQPReply(message, log=self.log)
+
+        if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) == ':':
+            self.log.debug(f"{reply.sender}: {reply.body}")
+            sender_map = self.scraper_map.get(reply.sender, None)
+            self.scraper_data = {**self.scraper_data, **{sender_map[k]:v for k, v in reply.body.items() if k in sender_map.keys()}}
+            self.log.info(f"{self.scraper_data}")
+
+        return reply
+
