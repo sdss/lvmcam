@@ -10,13 +10,18 @@ from logging import DEBUG
 
 #from os.path import expandvars
 from expandvars import expand as expandvars
+from types import SimpleNamespace as sn
 
+from datetime import datetime
 
 from sdsstools.logger import StreamFormatter  
 from sdsstools import get_logger, read_yaml_file
 from sdsstools.logger import SDSSLogger
 
+import aio_pika as apika
+
 from clu import AMQPActor
+from clu.client import AMQPReply
 
 from basecam import BaseCamera
 from basecam.actor import BaseCameraActor
@@ -52,14 +57,18 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self,
         config, 
         *args,
+        simulate:bool=False,
         **kwargs,
     ):   
-        self.dirname = config_get(config, "dirname", None)
-        self.basename = config_get(config, "basename", None)
-        print(f'{config_get(config,"camtype", "skymakercam")}')
-        super().__init__(camera_types[config_get(config,"camtype", "skymakercam")](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
+        camera_type = camera_types[config_get(config,"camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
 
-        self.exposure_state = {}
+        from sdsstools import get_logger
+        logger = get_logger("test")
+        
+        for cam, conf in config.get("cameras", {}).items():
+            config["cameras"][cam] = {**config.get("camera_params", {}), **conf}
+
+        super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         #TODO: fix schema
         self.schemaCamera = {
@@ -82,7 +91,16 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
-        #self.log.debug(str(self.model.schema))
+        self.dirname = config_get(config, "dirname", None)
+        self.basename = config_get(config, "basename", None)
+
+        self.exposure_state = {}
+        
+        self.scraper_map = config_get(config, "scraper", None)
+        self.log.debug(str(self.scraper_map))
+        self.scraper_actors = list(self.scraper_map.keys() if self.scraper_map else None)
+        self.scraper_data = {}
+        self.log.debug(str(self.scraper_map))
 
 
     async def start(self):
@@ -93,7 +111,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
-                cam = await self.camera_system.add_camera(name=camera, uid=self.camera_system._config[camera]["uid"])
+                cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_data=self.scraper_data)
+                self.log.debug(f"camname {camera}")
                 basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
                 self.log.debug(f"basename {basename}")
                 dirname = expandvars(self.dirname) if self.dirname else "."
@@ -118,3 +137,27 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             cam = await self.camera_system.remove_camera(name=self.camera_system._config[camera]["uid"])
             
         self.log.debug("Stop done")
+
+
+    async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
+        """Handles a reply received from the exchange.
+        """
+
+        reply = AMQPReply(message, log=self.log)
+
+        try:
+            if message.timestamp:
+                self.log.info(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
+        except Exception as ex:
+            self.log.error(f"{ex}")
+
+        if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) == ':':
+            # self.log.debug(f"{reply.sender}: {reply.body}")
+            sender_map = self.scraper_map.get(reply.sender, None)
+            timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else None
+            self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
+            self.log.info(f"{self.scraper_data}")
+
+
+        return reply
+
