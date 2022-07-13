@@ -16,6 +16,15 @@ dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/spec/agcam/{camera.name}/{date.strft
 
 site: "LCO"
 
+scraper:
+   lvm.sci.pwi:
+       ra_j2000_hours: ra_h
+       dec_j2000_degs: deg_d
+   lvm.sci.foc:
+       Position: foc_um
+   lvm.sci.km:
+       Position: km_d
+   
 cameras:
     east:
         pixsize: 9.0
@@ -29,6 +38,7 @@ cameras:
 #        ip: "192.168.80.64"
         ip: "192.168.1.15"
         uid: 19283182
+
         autoconnect: true
         descr: "Guider Camera Science East"
 

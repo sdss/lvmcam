@@ -10,7 +10,9 @@ from logging import DEBUG
 
 #from os.path import expandvars
 from expandvars import expand as expandvars
+from types import SimpleNamespace as sn
 
+from datetime import datetime
 
 from sdsstools.logger import StreamFormatter  
 from sdsstools import get_logger, read_yaml_file
@@ -58,7 +60,13 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         simulate:bool=False,
         **kwargs,
     ):   
-        camera_type = camera_types[config_get(config,"camtype", "skymakercam") if not simulate else "skymakercam"](config) 
+        camera_type = camera_types[config_get(config,"camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
+
+        from sdsstools import get_logger
+        logger = get_logger("test")
+        
+        for cam, conf in config.get("cameras", {}).items():
+            config["cameras"][cam] = {**config.get("camera_params", {}), **conf}
 
         super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
 
@@ -103,7 +111,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
-                cam = await self.camera_system.add_camera(name=camera)
+                cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_data=self.scraper_data)
                 self.log.debug(f"camname {camera}")
                 basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
                 self.log.debug(f"basename {basename}")
@@ -134,13 +142,22 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
     async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
         """Handles a reply received from the exchange.
         """
+
         reply = AMQPReply(message, log=self.log)
 
+        try:
+            if message.timestamp:
+                self.log.info(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
+        except Exception as ex:
+            self.log.error(f"{ex}")
+
         if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) == ':':
-            self.log.debug(f"{reply.sender}: {reply.body}")
+            # self.log.debug(f"{reply.sender}: {reply.body}")
             sender_map = self.scraper_map.get(reply.sender, None)
-            self.scraper_data = {**self.scraper_data, **{sender_map[k]:v for k, v in reply.body.items() if k in sender_map.keys()}}
+            timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else None
+            self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
             self.log.info(f"{self.scraper_data}")
+
 
         return reply
 

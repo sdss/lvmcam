@@ -9,13 +9,6 @@ actor:
        #- west
         
 
-camtype: araviscam  # types: skymakercam, araviscam
-
-basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
-dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
-
-site: "LCO"
-
 scraper:
    lvm.sci.pwi:
        ra_j2000_hours: ra_h
@@ -24,86 +17,80 @@ scraper:
        Position: foc_um
    lvm.sci.km:
        Position: km_d
-   
+
+       
+camera_type: araviscam  # types: skymakercam, araviscam
+
+basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
+dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+
+
+camera_params:
+    autoconnect: true
+
+    site: "LCO"
+    pixsize: 9.0
+    # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
+    pixscale: 8.920
+    
+    gain: 5.0
+    binning: [4, 4]
+
+    # skymakercam
+    focus_stage: "lvm.sci.foc"
+    kmirror: "lvm.sci.km"
+    tcs: "lvm.sci.pwi"
+    catalog_path: "/tmp/data/catalog/gaia"
+
+    # araviscam
+    genicam_params:
+        # The following 4 dict must follow exactly the
+        # name structure and types as in the araviscam/etc/*.xml file
+        bool:
+            # flip vertically (reverse Y) so image in numpy is ordered according to
+            # FITS standards, where the bottom line is first in sequence of bytes
+            ReverseY: True
+            ReverseX: False
+
+            # No blacklevel clamping, added 2021-02-18
+            # Disabled for support of astrometry in dark sky exposures
+            BlackLevelClampingEnable: False
+
+            # No gamma correction, added 2021-02-18
+            GammaEnable: False
+
+            # sharpeningEnable is not writable on the FLIR (!)
+            SharpeningEnable: False
+
+        int:
+            # the binning modes are enumerations: 0 = mean, 1=sum
+            # The sum is what most astronomers would expect...
+            BinningHorizontalMode: 1
+            BinningVerticalMode: 1
+
+        float:
+
+        string:
+
+    shutter: false
+       
 cameras:
     east:
-        uid: east
-        autoconnect: true
-#        type: "skymakercam"
         descr: "Guider Camera Science East"
 
-        # skymakercam
-        rmq:
-            host: localhost
-        instpar: lvm_sci_age_cam
-        focus_stage: "lvm.sci.foc"
-        kmirror: "lvm.sci.km"
-        tcs: "lvm.sci.pwi"
-        catalog_path: "/tmp/data/catalog/gaia"
-        default:
-            gain: 5.0
-            binning: [4, 4]
-
         # araviscam
+        uid: 19283182
         ip: "192.168.80.64"
-        pixsize: 9.0
-        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-        pixscale: 8.920
-        connection:
-            uid: "19283182"
-            gain: 5.0
-            binning: [4, 4]
 
-            # The following 4 dict must follow exactly the
-            # name structure and types as in the araviscam/etc/*.xml file
-            bool:
-                # flip vertically (reverse Y) so image in numpy is ordered according to
-                # FITS standards, where the bottom line is first in sequence of bytes
-                ReverseY: True
-                ReverseX: False
-
-                # No blacklevel clamping, added 2021-02-18
-                # Disabled for support of astrometry in dark sky exposures
-                BlackLevelClampingEnable: False
-
-                # No gamma correction, added 2021-02-18
-                GammaEnable: False
-
-                # sharpeningEnable is not writable on the FLIR (!)
-                SharpeningEnable: False
-
-            int:
-                # the binning modes are enumerations: 0 = mean, 1=sum
-                # The sum is what most astronomers would expect...
-                BinningHorizontalMode: 1
-                BinningVerticalMode: 1
-
-            float:
-
-            string:
-
-        shutter: false
+        # skymakercam
+        instpar: lvm_sci_age_cam
 
     west:
-        uid: west
-        autoconnect: true
         descr: "Guider Camera Science West"
 
+        # araviscam
+        uid: 19283183
+        ip: "192.168.80.65"
+
         ## skymakercam
-        rmq:
-            host: localhost
         instpar: lvm_sci_agw_cam
-        focus_stage: "lvm.sci.foc"
-        kmirror: "lvm.sci.km"
-        tcs: "lvm.sci.pwi"
-        catalog_path: "/tmp/data/catalog/gaia"
-
-        ## araviscam
-        pixsize: 9.0
-        # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-        pixscale: 8.920
-
-        default:
-            gain: 5.0
-            binning: [4, 4]
-
