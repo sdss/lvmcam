@@ -98,7 +98,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         
         self.scraper_map = config_get(config, "scraper", None)
         self.log.debug(str(self.scraper_map))
-        self.scraper_actors = list(self.scraper_map.keys() if self.scraper_map else None)
+        self.scraper_actors = list(self.scraper_map.keys()) if self.scraper_map else None
         self.scraper_data = {}
         self.log.debug(str(self.scraper_map))
 
@@ -111,6 +111,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
+                self.log.debug(f"scraper data {self.scraper_data}")
                 cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_data=self.scraper_data)
                 self.log.debug(f"camname {camera}")
                 basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
@@ -151,12 +152,14 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         except Exception as ex:
             self.log.error(f"{ex}")
 
-        if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) == ':':
+        if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) in ":i":
             # self.log.debug(f"{reply.sender}: {reply.body}")
             sender_map = self.scraper_map.get(reply.sender, None)
-            timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else None
-            self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
-            self.log.info(f"{self.scraper_data}")
+            timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
+            # self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
+            for k,v in {sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}.items():
+                self.scraper_data[k]=v
+            self.log.debug(f"{self.scraper_data}")
 
 
         return reply
