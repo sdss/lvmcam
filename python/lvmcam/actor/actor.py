@@ -148,7 +148,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         try:
             if message.timestamp:
-                self.log.info(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
+                self.log.debug(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
         except Exception as ex:
             self.log.error(f"{ex}")
 
