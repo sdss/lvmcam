@@ -9,7 +9,7 @@ actor:
        #- west
 
 
-camera_type: skymakercam  # types: skymakercam, araviscam
+camera_type: araviscam  # types: skymakercam, araviscam
 
 basename: "lvm.spec.agcam.{camera.name}_{num:08d}.fits"
 dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/spec/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
