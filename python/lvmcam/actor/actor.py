@@ -159,7 +159,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             # self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
             for k,v in {sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}.items():
                 self.scraper_data[k]=v
-            self.log.debug(f"{self.scraper_data}")
+#            self.log.debug(f"{self.scraper_data}")
 
 
         return reply
