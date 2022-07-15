@@ -215,6 +215,24 @@ async def expose_one_camera(
     is_flag=True,
     help="Skip the post-process step, if defined.",
 )
+@click.option(
+    "--ra_h",
+    type=float,
+    default=None,
+    help="RA in hms.",
+)
+@click.option(
+    "--dec_d",
+    type=float,
+    default=None,
+    help="DEC ind deg.",
+)
+@click.option(
+    "--km_d",
+    type=float,
+    default=None,
+    help="Kmirror angle in deg.",
+)
 async def expose(
     command,
     cameras,
