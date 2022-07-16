@@ -76,6 +76,20 @@ lvmcam_header_model = HeaderModel(
         ),
         Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
         Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[C] Camera Temperature"),
+        Card(
+            "PIXELSC",
+            "{__camera__.arcsec_per_pix}",
+            "Scale of unbinned pixel on sky [arcsec/pix]",
+            default=-999.0,
+            type=float,
+        ),
+        WCSCards(),
+        Card(
+            "OBSERVAT",
+            "{__camera__.site}",
+            "Observatory",
+            default="",
+        ),
         WeatherCards(),
     ]
 )

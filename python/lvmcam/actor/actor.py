@@ -148,11 +148,11 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         reply = AMQPReply(message, log=self.log)
 
-        try:
-            if message.timestamp:
-                self.log.debug(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
-        except Exception as ex:
-            self.log.error(f"{ex}")
+        #try:
+            #if message.timestamp:
+                #self.log.debug(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
+        #except Exception as ex:
+            #self.log.error(f"{ex}")
 
         if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) in ":i":
             # self.log.debug(f"{reply.sender}: {reply.body}")
