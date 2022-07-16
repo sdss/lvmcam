@@ -121,6 +121,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 
                 cam.image_namer = ImageNamer(basename=basename, dirname=dirname, camera=cam)
                 cam.fits_model = lvmcam_fits_model
+                cam.fits_model.context.update({"__actor__": self})
+
                 self.schema["properties"][camera] = self.schemaCamera
 
             except Exception as ex:

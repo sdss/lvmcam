@@ -64,6 +64,15 @@ lvmcam_header_model = HeaderModel(
     ]
 )
 
+class WeatherCards(MacroCard):
+    def macro(self, exposure, context={}):
+        truss_temp = weather.get_truss_temp()
+        rh = weather.get_humid()
+        dew_point = truss_temp - ((100 - rh) / 5.)
+        return [('TEMP', truss_temp, 'Truss temperature (C)'),
+                ('RELHUM', rh, 'Relative humidity (%)'),
+                ('DEWPOINT', dew_point, 'Dew point temperature (C)')]
+
 
 #: A lvmcam FITS model for uncompressed images. Includes a single extension
 #: with the raw data and a `.lvmcam_header_model`.
