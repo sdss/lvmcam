@@ -24,6 +24,7 @@ from basecam.models import (
 )
 from clu.legacy.types.pvt import PVT
 from sdsstools.time import get_sjd
+from sdsstools import get_logger
 
 
         #APOTCCCards() if flicamera.OBSERVATORY == "APO" else None,
@@ -32,6 +33,20 @@ from sdsstools.time import get_sjd
         #FPSCards(),
     #]
 #)
+
+class WeatherCards(MacroCard):
+    def macro(self, exposure, context={}):
+        self.logger = get_logger("lvm_weathr")
+        self.logger.sh.setLevel(0)
+        self.logger.debug(f"{context}")
+        truss_temp = 42 # weather.get_truss_temp()
+        rh = 66 #weather.get_humid()
+        dew_point = truss_temp - ((100 - rh) / 5.)
+        return [('TEMP', truss_temp, 'Truss temperature (C)'),
+                ('RELHUM', rh, 'Relative humidity (%)'),
+                ('DEWPOINT', dew_point, 'Dew point temperature (C)')]
+
+
 
 lvmcam_header_model = HeaderModel(
     [
@@ -61,17 +76,10 @@ lvmcam_header_model = HeaderModel(
         ),
         Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
         Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[C] Camera Temperature"),
+        WeatherCards(),
     ]
 )
 
-class WeatherCards(MacroCard):
-    def macro(self, exposure, context={}):
-        truss_temp = weather.get_truss_temp()
-        rh = weather.get_humid()
-        dew_point = truss_temp - ((100 - rh) / 5.)
-        return [('TEMP', truss_temp, 'Truss temperature (C)'),
-                ('RELHUM', rh, 'Relative humidity (%)'),
-                ('DEWPOINT', dew_point, 'Dew point temperature (C)')]
 
 
 #: A lvmcam FITS model for uncompressed images. Includes a single extension
