@@ -23,6 +23,8 @@ import aio_pika as apika
 from clu import AMQPActor
 from clu.client import AMQPReply
 
+from cluplus.configloader import Loader
+
 from basecam import BaseCamera
 from basecam.actor import BaseCameraActor
 from basecam.exposure import ImageNamer
@@ -166,3 +168,14 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         return reply
 
+    @classmethod
+    def from_config(cls, config, *args, **kwargs):
+        """Creates an actor from hierachical configuration file(s)."""
+
+        instance = super(LvmcamActor, cls).from_config(config, loader=Loader, *args, **kwargs)
+
+        if kwargs["verbose"]:
+            instance.log.fh.setLevel(DEBUG)
+            instance.log.sh.setLevel(DEBUG)
+
+        return instance

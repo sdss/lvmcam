@@ -1,0 +1,11 @@
+
+
+lvm.sci.pwi:
+    ra_j2000_hours: ra_h
+    dec_j2000_degs: dec_d
+    field_angle_here_degs: field_angle_d
+lvm.sci.foc:
+    Position: foc_um
+lvm.sci.km:
+    Position: km_d
+

@@ -66,11 +66,8 @@ def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
 async def actor(ctx):
     """Runs the actor."""
 
-#    default_config_file = os.path.join(os.path.dirname(__file__), "etc/lvm.sci.agcam.yml")
     config_file = ctx.obj["config_file"]
     lvmcam_obj = LvmcamActor.from_config(config_file, url=ctx.obj["rmq_url"], verbose=ctx.obj["verbose"], simulate=ctx.obj["simulate"])
-
-    lvmcam_obj.log.debug("Hello world")
 
     await lvmcam_obj.start()
     await lvmcam_obj.run_forever()

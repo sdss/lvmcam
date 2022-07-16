@@ -1,80 +1,14 @@
-#Actor configuration for the AMQPActor class
 
-actor:
-    name: lvm.sci.agcam
-    host: localhost
-    port: 5672
-    log_dir: '~/tmp/log'
-    #default_cameras:
-       #- west
-        
-
-scraper:
-   lvm.sci.pwi:
-       ra_j2000_hours: ra_h
-       dec_j2000_degs: dec_d
-       field_angle_here_degs: field_angle_d
-   lvm.sci.foc:
-       Position: foc_um
-   lvm.sci.km:
-       Position: km_d
-
-       
 camera_type: araviscam  # types: skymakercam, araviscam
 
 basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
 dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
+camera_params: !include lvm.camera_param.agcam.yml
 
-camera_params:
-    autoconnect: true
+scraper: !include lvm.scraper.agcam.yml
 
-    site: "LCO"
-    pixsize: 9.0
-    # pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-    pixscale: 8.920
-    
-    gain: 5.0
-    binning: [4, 4]
 
-    # skymakercam
-    focus_stage: "lvm.sci.foc"
-    kmirror: "lvm.sci.km"
-    tcs: "lvm.sci.pwi"
-    catalog_path: "/tmp/data/catalog/gaia"
-
-    # araviscam
-    genicam_params:
-        # The following 4 dict must follow exactly the
-        # name structure and types as in the araviscam/etc/*.xml file
-        bool:
-            # flip vertically (reverse Y) so image in numpy is ordered according to
-            # FITS standards, where the bottom line is first in sequence of bytes
-            ReverseY: True
-            ReverseX: False
-
-            # No blacklevel clamping, added 2021-02-18
-            # Disabled for support of astrometry in dark sky exposures
-            BlackLevelClampingEnable: False
-
-            # No gamma correction, added 2021-02-18
-            GammaEnable: False
-
-            # sharpeningEnable is not writable on the FLIR (!)
-            SharpeningEnable: False
-
-        int:
-            # the binning modes are enumerations: 0 = mean, 1=sum
-            # The sum is what most astronomers would expect...
-            BinningHorizontalMode: 1
-            BinningVerticalMode: 1
-
-        float:
-
-        string:
-
-    shutter: false
-       
 cameras:
     east:
         descr: "Guider Camera Science East"
@@ -95,3 +29,11 @@ cameras:
 
         ## skymakercam
         instpar: lvm_sci_agw_cam
+
+actor:
+    name: lvm.sci.agcam
+    host: localhost
+    port: 5672
+    log_dir: '~/tmp/log'
+    #default_cameras:
+       #- west
