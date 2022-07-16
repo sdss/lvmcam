@@ -79,7 +79,7 @@ lvmcam_header_model = HeaderModel(
         Card(
             "PIXELSC",
             "{__camera__.arcsec_per_pix}",
-            "Scale of unbinned pixel on sky [arcsec/pix]",
+            "[arcsec/pix] Scale of unbinned pixel on sky",
             default=-999.0,
             type=float,
         ),
@@ -89,6 +89,18 @@ lvmcam_header_model = HeaderModel(
             "{__camera__.site}",
             "Observatory",
             default="",
+        ),
+        Card(
+            "RA",
+            "{__exposure__.camera_params['ra_h']}",
+            "[h] Right Ascension of the observation",
+            default=-999.0,
+        ),
+        Card(
+            "DEC",
+            "{__exposure__.camera_params['dec_d']}",
+            "[deg] Declination of the observation",
+            default=-999.0,
         ),
         WeatherCards(),
     ]

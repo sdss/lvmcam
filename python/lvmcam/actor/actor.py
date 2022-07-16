@@ -8,8 +8,6 @@
 
 from logging import DEBUG
 
-#from os.path import expandvars
-from expandvars import expand as expandvars
 from types import SimpleNamespace as sn
 
 from datetime import datetime
@@ -116,12 +114,10 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 self.log.debug(f"scraper data {self.scraper_data}")
                 cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_data=self.scraper_data)
                 self.log.debug(f"camname {camera}")
-                basename = expandvars(self.basename) if self.basename else "{camera.name}-{num:04d}.fits"
-                self.log.debug(f"basename {basename}")
-                dirname = expandvars(self.dirname) if self.dirname else "."
-                self.log.debug(f"dirname {dirname}")
+                self.log.debug(f"basename {self.basename}")
+                self.log.debug(f"dirname {self.dirname}")
                 
-                cam.image_namer = ImageNamer(basename=basename, dirname=dirname, camera=cam)
+                cam.image_namer = ImageNamer(basename=self.basename, dirname=self.dirname, camera=cam)
                 cam.fits_model = lvmcam_fits_model
                 cam.fits_model.context.update({"__actor__": self})
 

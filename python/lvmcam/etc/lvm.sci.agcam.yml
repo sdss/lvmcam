@@ -1,8 +1,8 @@
 
 camera_type: araviscam  # types: skymakercam, araviscam
 
-basename: "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
-dirname: "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+basename: !env "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
+dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
 camera_params: !include lvm.camera_param.agcam.yml
 
