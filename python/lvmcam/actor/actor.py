@@ -18,6 +18,7 @@ from sdsstools.logger import SDSSLogger
 
 import aio_pika as apika
 
+
 from clu import AMQPActor
 from clu.client import AMQPReply
 

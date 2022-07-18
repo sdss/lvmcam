@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import abc
+from math import nan
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -47,6 +48,12 @@ class WeatherCards(MacroCard):
                 ('DEWPOINT', dew_point, 'Dew point temperature (C)')]
 
 
+class ScraperParamCards(MacroCard):
+    def macro(self, exposure, context={}):
+        
+        return [('RA', exposure.camera.params.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
+                ('DEC', exposure.camera.params.get('dec_d', 90.0), '[deg] Declination of the observation'),
+                ('FIELDROT', exposure.camera.params.get('field_angle_here_degs', -999.9), '[deg] Field angle from PW')]
 
 lvmcam_header_model = HeaderModel(
     [
@@ -70,38 +77,17 @@ lvmcam_header_model = HeaderModel(
             comment="Date (in TIMESYS) the exposure started",
         ),
         Card(
-            "GAIN",
-            value="{__exposure__.camera.gain}",
-            comment="[ct] Camera gain"
-        ),
-        Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
-        Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[C] Camera Temperature"),
-        Card(
-            "PIXELSC",
-            "{__camera__.arcsec_per_pix}",
-            "[arcsec/pix] Scale of unbinned pixel on sky",
-            default=-999.0,
-            type=float,
-        ),
-        WCSCards(),
-        Card(
             "OBSERVAT",
             "{__camera__.site}",
             "Observatory",
             default="",
         ),
-        Card(
-            "RA",
-            "{__exposure__.camera_params['ra_h']}",
-            "[h] Right Ascension of the observation",
-            default=-999.0,
-        ),
-        Card(
-            "DEC",
-            "{__exposure__.camera_params['dec_d']}",
-            "[deg] Declination of the observation",
-            default=-999.0,
-        ),
+        Card("GAIN", value="{__exposure__.camera.gain}", comment="[ct] Camera gain"),
+        Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
+        Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[C] Camera Temperature"),
+        Card("PIXELSC", "{__exposure__.camera.arcsec_per_pix}", comment="[arcsec/pix] Scale of unbinned pixel on sky", default=-999.0, type=float),
+        WCSCards(),
+        ScraperParamCards(),
         WeatherCards(),
     ]
 )
