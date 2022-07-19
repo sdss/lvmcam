@@ -27,14 +27,6 @@ from clu.legacy.types.pvt import PVT
 from sdsstools.time import get_sjd
 from sdsstools import get_logger
 
-
-        #APOTCCCards() if flicamera.OBSERVATORY == "APO" else None,
-        #LampCards() if flicamera.OBSERVATORY == "APO" else None,
-        #APOCards() if flicamera.OBSERVATORY == "APO" else None,
-        #FPSCards(),
-    #]
-#)
-
 class WeatherCards(MacroCard):
     def macro(self, exposure, context={}):
         self.logger = get_logger("lvm_weathr")
@@ -48,14 +40,7 @@ class WeatherCards(MacroCard):
                 ('DEWPOINT', dew_point, 'Dew point temperature (C)')]
 
 
-class ScraperParamCards(MacroCard):
-    def macro(self, exposure, context={}):
-        
-        return [('RA', exposure.camera.params.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
-                ('DEC', exposure.camera.params.get('dec_d', 90.0), '[deg] Declination of the observation'),
-                ('FIELDROT', exposure.camera.params.get('field_angle_here_degs', -999.9), '[deg] Field angle from PW')]
-
-lvmcam_header_model = HeaderModel(
+header_model = HeaderModel(
     [
         "VCAM",
         "BASECAMV",
@@ -87,7 +72,6 @@ lvmcam_header_model = HeaderModel(
         Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[C] Camera Temperature"),
         Card("PIXELSC", "{__exposure__.camera.arcsec_per_pix}", comment="[arcsec/pix] Scale of unbinned pixel on sky", default=-999.0, type=float),
         WCSCards(),
-        ScraperParamCards(),
         WeatherCards(),
     ]
 )
@@ -95,25 +79,25 @@ lvmcam_header_model = HeaderModel(
 
 
 #: A lvmcam FITS model for uncompressed images. Includes a single extension
-#: with the raw data and a `.lvmcam_header_model`.
-lvmcam_fits_model = FITSModel(
+#: with the raw data and a `.header_model`.
+fits_model = FITSModel(
     [
         Extension(
             data="raw",
-            header_model=lvmcam_header_model,
+            header_model=header_model,
             name="PRIMARY"
         )
     ]
 )
 
 
-#: A compressed, lvmcam FITS model. Similar to `.lvmcam_fits_model` but uses
+#: A compressed, lvmcam FITS model. Similar to `.fits_model` but uses
 #: ``RICE_1`` compression.
-lvmcam_fz_fits_model = FITSModel(
+fz_fits_model = FITSModel(
     [
         Extension(
             data="raw",
-            header_model=lvmcam_header_model,
+            header_model=header_model,
             compressed="RICE_1",
             name="PRIMARY",
         )

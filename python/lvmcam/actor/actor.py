@@ -27,13 +27,16 @@ from cluplus.configloader import Loader
 from basecam import BaseCamera
 from basecam.actor import BaseCameraActor
 from basecam.exposure import ImageNamer
+from basecam.models import FITSModel, Extension, basic_header_model
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
-from lvmcam.model import lvmcam_fits_model, lvmcam_fz_fits_model
+#from lvmcam.model import fits_model, lvmcam_fz_fits_model
+from lvmcam.models import CameraCards, ScraperParamCards
 
 from araviscam import BlackflyCameraSystem, BlackflyCamera
 from skymakercam import SkymakerCameraSystem, SkymakerCamera
+
 
 camera_types = {"araviscam": lambda *args, **kwargs: BlackflyCameraSystem(BlackflyCamera, *args, **kwargs ),
                 "skymakercam": lambda *args, **kwargs: SkymakerCameraSystem(SkymakerCamera, *args, **kwargs)}
@@ -110,6 +113,10 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
 #        image_namer =  ImageNamerPlus(dirname="$HOME/{self.camera.name.replace('.', self.ospathsep)}/{date.strftime('%Y%m%d')}")
 
+        header_model = basic_header_model
+        header_model.append(CameraCards)
+        header_model.append(ScraperParamCards())
+
         for camera in self.camera_system._config:
             try:
                 self.log.debug(f"scraper data {self.scraper_data}")
@@ -119,7 +126,14 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 self.log.debug(f"dirname {self.dirname}")
                 
                 cam.image_namer = ImageNamer(basename=self.basename, dirname=self.dirname, camera=cam)
-                cam.fits_model = lvmcam_fits_model
+                cam.fits_model = FITSModel(
+                    [
+                        Extension(data="raw", 
+                        header_model=header_model,
+                        compressed=None,
+                        name="PRIMARY")
+                    ]
+)
                 cam.fits_model.context.update({"__actor__": self})
 
                 self.schema["properties"][camera] = self.schemaCamera
