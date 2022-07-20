@@ -3,9 +3,11 @@
 autoconnect: true
 
 site: "LCO"
+
+# pixel size in um
 pixsize: 9.0
-# pixel scale (in focal plane) in microns per arcsec of SDSS-V_0010
-pixscale: 8.920
+# focal length in millimeter per arcsec of SDSS-V_0010
+flen: 1839.8
 
 gain: 5.0
 binning: [4, 4]

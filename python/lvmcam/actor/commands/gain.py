@@ -3,7 +3,7 @@
 #
 # @Author: José Sánchez-Gallego (gallegoj@uw.edu)
 # @Date: 2021-02-14
-# @Filename: binning.py
+# @Filename: gain.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
@@ -16,13 +16,13 @@ from basecam.actor.tools import get_cameras
 
 from . import camera_parser
 
-__all__ = ["binning"]
+__all__ = ["gain"]
 
 @camera_parser.command()
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
-@click.argument("BINNING", nargs=2, type=int, required=False)
-async def binning(command, cameras, binning):
-    """Controls the camera binning.
+@click.argument("GAIN", nargs=1, type=int, required=False)
+async def gain(command, cameras, gain):
+    """Controls the camera gain.
 
     If called without a gain value, returns the current value.
     """
@@ -36,20 +36,20 @@ async def binning(command, cameras, binning):
 
         status = {}
         for camera in cameras:
-            if not binning:
-                binning = list(await camera.get_binning())
-                status[camera.name] = { "binning": binning }
+            if not gain:
+                gain = await camera.get_gain()
+                status[camera.name] = { "gain": gain }
             else:
                 try:
-                    await camera.set_binning(*binning)
-                    status[camera.name] = { "binning": binning }
+                    await camera.set_gain(gain)
+                    status[camera.name] = { "gain": gain }
 
                 except (CameraError, AssertionError) as ee:
-                    command.error(error=dict(camera=camera.name, error=str(ee)))
+                    command.error(error=ee)
                     failed = True
 
         if failed:
-            return command.fail("failed to set binning for one or more cameras.")
+            return command.fail("failed to set gain for one or more cameras.")
         else:
             return command.finish(status)
 

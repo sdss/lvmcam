@@ -32,7 +32,7 @@ from basecam.models import FITSModel, Extension, basic_header_model
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
 #from lvmcam.model import fits_model, lvmcam_fz_fits_model
-from lvmcam.models import CameraCards, ScraperParamCards, ScraperDataStore
+from lvmcam.models import CameraCards, WcsCards, ScraperParamCards, ScraperDataStore
 
 from araviscam import BlackflyCameraSystem, BlackflyCamera
 from skymakercam import SkymakerCameraSystem, SkymakerCamera
@@ -88,7 +88,6 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                      "additionalProperties": False,
         }
 
-
         if kwargs['verbose']:
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
@@ -107,6 +106,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         header_model = basic_header_model
         header_model.append(CameraCards)
         header_model.append(ScraperParamCards())
+        header_model.append(WcsCards())
 
         for camera in self.camera_system._config:
             try:

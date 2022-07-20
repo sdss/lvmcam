@@ -1,9 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @Author: José Sánchez-Gallego (gallegoj@uw.edu)
-# @Date: 2021-02-12
-# @Filename: model.py
+# @Author: Florian Briegel (briegel@mpia.de)
+# @Date: 2021-08-18
+# @Filename: models/scraper.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 from __future__ import annotations
@@ -82,7 +81,7 @@ class ScraperParamCards(MacroCard):
     def macro(self, exposure, context={}):
         from sdsstools.logger import get_logger
         logger = get_logger("ScraperParamCards")
-        logger.warning(f"########### {exposure.scraper_store}")
+#        logger.warning(f"########### {exposure.scraper_store}")
 
         return [
             ('RA', exposure.scraper_store.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
