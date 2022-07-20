@@ -29,15 +29,25 @@ from sdsstools.time import get_sjd
 from sdsstools import get_logger
 
 
+# https://learn.astropy.org/tutorials/synthetic-images.html
 
 #exposure.wcs = wcs.WCS()
-#exposure.wcs.cdelt = np.array([-0.066667, 0.066667])
-#exposure.wcs.crval = [0, -90]
-#exposure.wcs.cunit = ["deg", "deg"]
-#exposure.wcs.ctype = ["RA---TAN", "DEC--TAN"]
-#crpix1 = reg.width / 2
+#exposure.wcs.wcs.cdelt = np.array([1.,1.])
+#exposure.wcs.wcs.crval = [exposure.scraper_store.get("ra_h", 0.0)*15, exposure.scraper_store.get("dec_d", 90.0)]
+#exposure.wcs.wcs.cunit = ["deg", "deg"]
+#exposure.wcs.wcs.ctype = ["RA---TAN", "DEC--TAN"]
+
+## The distance from the long edge of the FLIR camera to the center
+## of the focus (fiber) is 7.144+4.0 mm according to SDSS-V_0110 figure 6
+## and 11.14471 according to figure 3-1 of LVMi-0081
+## For the *w or *e cameras the pixel row 1 (in FITS) is that far
+## away in the y-coordinate and in the middle of the x-coordinate.
+## For the *c cameras at the fiber bundle we assume them to be in the beam center.
+#crpix1 = self.width/self.binning[0] / 2
 #crpix2 = 11.14471 * 1000.0 / self.pixsize
 #exposure.wcs.wcs.crpix = [crpix1, crpix2]
+
+
 
 
 class WcsCards(MacroCard):
