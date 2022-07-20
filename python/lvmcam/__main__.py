@@ -66,6 +66,7 @@ def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
 async def actor(ctx):
     """Runs the actor."""
 
+
     config_file = ctx.obj["config_file"]
     lvmcam_obj = LvmcamActor.from_config(config_file, url=ctx.obj["rmq_url"], verbose=ctx.obj["verbose"], simulate=ctx.obj["simulate"])
 

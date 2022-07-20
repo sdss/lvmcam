@@ -32,7 +32,7 @@ from basecam.models import FITSModel, Extension, basic_header_model
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
 #from lvmcam.model import fits_model, lvmcam_fz_fits_model
-from lvmcam.models import CameraCards, ScraperParamCards
+from lvmcam.models import CameraCards, ScraperParamCards, ScraperDataStore
 
 from araviscam import BlackflyCameraSystem, BlackflyCamera
 from skymakercam import SkymakerCameraSystem, SkymakerCamera
@@ -54,6 +54,7 @@ def config_get(config, key, default=None):
     return g(config, key, default)
 
 
+
 class LvmcamActor(BaseCameraActor, AMQPActor):
     """Lvmcam base actor."""
 
@@ -66,9 +67,6 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
     ):   
         camera_type = camera_types[config_get(config,"camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
 
-        from sdsstools import get_logger
-        logger = get_logger("test")
-        
         for cam, conf in config.get("cameras", {}).items():
             config["cameras"][cam] = {**config.get("camera_params", {}), **conf}
 
@@ -99,19 +97,12 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.basename = config_get(config, "basename", None)
 
         self.exposure_state = {}
-        
-        self.scraper_map = config_get(config, "scraper", None)
-        self.log.debug(str(self.scraper_map))
-        self.scraper_actors = list(self.scraper_map.keys()) if self.scraper_map else None
-        self.scraper_data = {}
-        self.log.debug(str(self.scraper_map))
 
+        self.scraper_store = ScraperDataStore(config_get(config, "scraper", {}))
 
     async def start(self):
         """Start actor and add cameras."""
         await super().start()
-
-#        image_namer =  ImageNamerPlus(dirname="$HOME/{self.camera.name.replace('.', self.ospathsep)}/{date.strftime('%Y%m%d')}")
 
         header_model = basic_header_model
         header_model.append(CameraCards)
@@ -119,8 +110,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
-                self.log.debug(f"scraper data {self.scraper_data}")
-                cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_data=self.scraper_data)
+                cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_store=self.scraper_store)
                 self.log.debug(f"camname {camera}")
                 self.log.debug(f"basename {self.basename}")
                 self.log.debug(f"dirname {self.dirname}")
@@ -160,24 +150,13 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         """
 
         reply = AMQPReply(message, log=self.log)
-
-        #try:
-            #if message.timestamp:
-                #self.log.debug(f"delay: {datetime.now() - apika.message.decode_timestamp(message.timestamp)} {apika.message.decode_timestamp(message.timestamp)} {message.timestamp}")
-        #except Exception as ex:
-            #self.log.error(f"{ex}")
-
-        if reply.sender in self.scraper_actors and reply.headers.get("message_code", None) in ":i":
-            # self.log.debug(f"{reply.sender}: {reply.body}")
-            sender_map = self.scraper_map.get(reply.sender, None)
+        if reply.sender in self.scraper_store.actors() and reply.headers.get("message_code", None) in ":i":
             timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
-            # self.scraper_data = {**self.scraper_data, **{sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}}
-            for k,v in {sender_map[k]:sn(val=v, ts=timestamp) for k, v in reply.body.items() if k in sender_map.keys()}.items():
-                self.scraper_data[k]=v
-            self.log.debug(f"{self.scraper_data}")
-
+            self.scraper_store.update_with_actor_key_maps(reply.sender, reply.body, timestamp)
+#        self.log.debug(str(self.scraper_store.data))
 
         return reply
+
 
     @classmethod
     def from_config(cls, config, *args, **kwargs):
