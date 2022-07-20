@@ -153,7 +153,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         if reply.sender in self.scraper_store.actors() and reply.headers.get("message_code", None) in ":i":
             timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
             self.scraper_store.update_with_actor_key_maps(reply.sender, reply.body, timestamp)
-#        self.log.debug(str(self.scraper_store.data))
+#        self.log.debug(self.scraper_store.data)
 
         return reply
 
