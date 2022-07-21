@@ -45,15 +45,6 @@ camera_types = {"araviscam": lambda *args, **kwargs: BlackflyCameraSystem(Blackf
 __all__ = ["LvmcamActor"]
 
 
-def config_get(config, key, default=None):
-    """ DOESNT work for keys with dots !!! """
-    def g(config, key, d=None):
-        k = key.split('.', maxsplit=1)
-        c = config.get(k[0] if not k[0].isnumeric() else int(k[0]))  # keys can be numeric
-        return d if c is None else c if len(k) < 2 else g(c, k[1], d) if type(c) is dict else d
-    return g(config, key, default)
-
-
 
 class LvmcamActor(BaseCameraActor, AMQPActor):
     """Lvmcam base actor."""
@@ -65,7 +56,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         simulate:bool=False,
         **kwargs,
     ):   
-        camera_type = camera_types[config_get(config,"camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
+        camera_type = camera_types[config.get("camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
 
         for cam, conf in config.get("cameras", {}).items():
             config["cameras"][cam] = {**config.get("camera_params", {}), **conf}
@@ -93,11 +84,11 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
         self.dirname = config_get(config, "dirname", None)
-        self.basename = config_get(config, "basename", None)
+        self.basename = config.get("basename", None)
 
         self.exposure_state = {}
 
-        self.scraper_store = ScraperDataStore(config_get(config, "scraper", {}))
+        self.scraper_store = ScraperDataStore(config.get("scraper", {}))
 
     async def start(self):
         """Start actor and add cameras."""
