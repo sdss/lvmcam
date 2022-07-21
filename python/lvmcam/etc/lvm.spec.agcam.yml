@@ -25,7 +25,7 @@ cameras:
         uid: 19283182
 
         # skymakercam
-        instpar: lvm_sci_age_cam
+        instpar: lvm_age_cam
         catalog_path: "/tmp/data/catalog/gaia"
 
 

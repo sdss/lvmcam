@@ -27,7 +27,7 @@ cameras:
         ip: "192.168.80.64"
 
         # skymakercam
-        instpar: lvm_sci_age_cam
+        instpar: lvm_age_cam
 
     west:
         descr: "Guider Camera Science West"
@@ -37,7 +37,7 @@ cameras:
         ip: "192.168.80.65"
 
         ## skymakercam
-        instpar: lvm_sci_agw_cam
+        instpar: lvm_agw_cam
 
 actor:
     name: lvm.sci.agcam
