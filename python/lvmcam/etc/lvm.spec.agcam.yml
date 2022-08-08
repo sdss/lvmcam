@@ -20,8 +20,7 @@ cameras:
     east:
         descr: "Guider Camera Spec"
         # araviscam
-#        ip: "192.168.80.64"
-        ip: "192.168.1.15"
+        ip: "192.168.80.64"
         uid: 19283182
 
         # skymakercam
