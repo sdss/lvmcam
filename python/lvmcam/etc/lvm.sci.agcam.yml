@@ -38,6 +38,7 @@ cameras:
 
         ## skymakercam
         instpar: lvm_agw_cam
+        focus_offset: 42
 
 actor:
     name: lvm.sci.agcam
