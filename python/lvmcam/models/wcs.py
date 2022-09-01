@@ -64,8 +64,8 @@ class WcsCards(MacroCard):
         # For the *w or *e cameras the pixel row 1 (in FITS) is that far
         # away in the y-coordinate and in the middle of the x-coordinate.
         # For the *c cameras at the fiber bundle we assume them to be in the beam center.
-        crpix1 = exposure.camera.image_area.wd / 2 * exposure.camera.binning[0]
-        crpix2 = 11.14471 * 1000.0 / exposure.camera.pixsize * exposure.camera.binning[1]
+        crpix1 = exposure.camera.image_area.wd / 2 / exposure.camera.binning[0]
+        crpix2 = 11.14471 * 1000.0 / exposure.camera.pixsize / exposure.camera.binning[1]
 #        logger.warning(f"{crpix1} {crpix2}")
 
         # field angle: degrees, then radians
