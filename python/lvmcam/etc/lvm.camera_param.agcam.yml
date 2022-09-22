@@ -2,7 +2,7 @@
 
 autoconnect: true
 
-site: "LCO"
+site: "MPIA"
 
 # pixel size in um
 pixsize: 9.0
