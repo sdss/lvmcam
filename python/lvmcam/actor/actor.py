@@ -83,6 +83,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
+        self.log.info(f"Camera type: {camera_type}")
+
         self.dirname = config.get("dirname", None)
         self.basename = config.get("basename", None)
 

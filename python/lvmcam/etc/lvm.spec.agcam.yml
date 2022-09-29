@@ -1,5 +1,5 @@
 
-camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
+camera_type: !env ${LVM_CAM_TYPE:-skymakercam}  # types: skymakercam, araviscam
 
 basename: !env "lvm.spec.agcam.{camera.name}_{num:08d}.fits"
 dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/spec/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
