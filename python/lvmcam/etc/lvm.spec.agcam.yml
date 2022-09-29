@@ -20,8 +20,8 @@ cameras:
     east:
         descr: "Guider Camera Spec"
         # araviscam
-        ip: "192.168.80.64"
-        uid: 19283182
+        ip: "192.168.80.66"
+        uid: 19283190
 
         # skymakercam
         instpar: lvm_age_cam
