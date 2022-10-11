@@ -25,8 +25,8 @@ genicam_params:
     bool:
         # flip vertically (reverse Y) so image in numpy is ordered according to
         # FITS standards, where the bottom line is first in sequence of bytes
-        ReverseY: True
         ReverseX: False
+        ReverseY: True
 
         # No blacklevel clamping, added 2021-02-18
         # Disabled for support of astrometry in dark sky exposures

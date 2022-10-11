@@ -7,6 +7,7 @@
 
 
 from logging import DEBUG
+from copy import deepcopy
 
 from types import SimpleNamespace as sn
 
@@ -17,7 +18,6 @@ from sdsstools import get_logger, read_yaml_file
 from sdsstools.logger import SDSSLogger
 
 import aio_pika as apika
-
 
 from clu import AMQPActor
 from clu.client import AMQPReply
@@ -32,7 +32,7 @@ from basecam.models import FITSModel, Extension, basic_header_model
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
 #from lvmcam.model import fits_model, lvmcam_fz_fits_model
-from lvmcam.models import CameraCards, WcsCards, ScraperParamCards, ScraperDataStore
+from lvmcam.models import CameraCards, WcsCards, ScraperParamCards, ScraperDataStore, GenicamCards
 
 from araviscam import BlackflyCameraSystem, BlackflyCamera
 from skymakercam import SkymakerCameraSystem, SkymakerCamera
@@ -56,12 +56,20 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         simulate:bool=False,
         **kwargs,
     ):   
-        camera_type = camera_types[config.get("camera_type", "skymakercam") if not simulate else "skymakercam"](config) 
+        self.camera_type = config.get("camera_type", "skymakercam") if not simulate else "skymakercam"
+
+        def mergedicts(a, b):
+            for key in b:
+                if isinstance(a.get(key), dict) or isinstance(b.get(key), dict):
+                    mergedicts(a[key], b[key])
+                else:
+                    a[key] = b[key]
+            return a
 
         for cam, conf in config.get("cameras", {}).items():
-            config["cameras"][cam] = {**config.get("camera_params", {}), **conf}
+            config["cameras"][cam] = mergedicts(deepcopy(config.get("camera_params", {})), {**conf})
 
-        super().__init__(camera_type, *args, command_parser=camera_parser, version=__version__, **kwargs)
+        super().__init__(camera_types[self.camera_type](config), *args, command_parser=camera_parser, version=__version__, **kwargs)
 
         #TODO: fix schema
         self.schemaCamera = {
@@ -83,7 +91,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
-        self.log.info(f"Camera type: {camera_type}")
+        self.log.info(f"Camera type: {self.camera_type}")
 
         self.dirname = config.get("dirname", None)
         self.basename = config.get("basename", None)
@@ -98,6 +106,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         header_model = basic_header_model
         header_model.append(CameraCards)
+        if self.camera_type == "araviscam":
+            header_model.append(GenicamCards())
         header_model.append(ScraperParamCards())
         header_model.append(WcsCards())
 
