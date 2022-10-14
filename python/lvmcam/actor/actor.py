@@ -75,6 +75,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.schemaCamera = {
                        "type": "object",
                        "properties": {
+                            "state": {"type": "string"},
                             "binning": {"type": "array"},
                             "area": {"type": "array"},
                         }

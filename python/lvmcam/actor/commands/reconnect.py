@@ -11,9 +11,13 @@ import asyncio
 
 import click
 
+from cluplus.proxy import Proxy
+
 from basecam.exceptions import CameraConnectionError
 
 from basecam.actor.tools import get_cameras
+
+from lvmcam.exceptions import LvmcamNotConnected
 
 from . import camera_parser
 
@@ -33,52 +37,43 @@ __all__ = ["reconnect"]
 async def reconnect(command, cameras, timeout):
     """Reconnects a camera."""
 
-    cameras = get_cameras(command, cameras=cameras, fail_command=True)
-    if not cameras:  # pragma: no cover
-        return
+    try:
+        cameras = get_cameras(command, cameras=cameras, fail_command=True)
 
-    failed = False
-    for camera in cameras:
+        failed = False
+        status = {}
+        for camera in cameras:
+            try:
+                await asyncio.wait_for(camera.disconnect(), timeout=timeout)
+                status[camera.name] = {"state": "offline"}
 
-        command.warning(text=f"reconnecting camera {camera.name!r}")
+            except CameraConnectionError as ee:
+                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                continue
 
-        try:
-            await asyncio.wait_for(camera.disconnect(), timeout=timeout)
-            command.info(
-                camera=camera.name, text=f"camera {camera.name!r} was disconnected."
-            )
-        except CameraConnectionError as ee:
-            command.warning(
-                camera=camera.name,
-                text=f"camera {camera.name!r} fail to disconnect: "
-                f"{ee}. Will try to reconnect.",
-            )
-        except asyncio.TimeoutError:
-            command.warning(
-                camera=camera.name,
-                text=f"camera {camera.name!r} timed out "
-                "disconnecting. Will try to reconnect.",
-            )
+            except asyncio.TimeoutError as ee:
+                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                continue
 
-        try:
-            await asyncio.wait_for(camera.connect(force=True), timeout=timeout)
-            command.info(
-                camera=camera.name, error=f"camera {camera.name!r} was reconnected."
-            )
-        except CameraConnectionError as ee:
-            command.error(
-                camera=camera.name,
-                error=f"camera {camera.name!r} fail to reconnect: {ee}",
-            )
-            failed = True
-        except asyncio.TimeoutError:
-            command.error(
-                camera=camera.name,
-                error=f"camera {camera.name!r} timed out reconnecting.",
-            )
-            failed = True
+            try:
+                await asyncio.wait_for(camera.connect(force=True), timeout=timeout)
+                status[camera.name] = {"state": "online"}
 
-    if failed:
-        return command.fail("some cameras failed to reconnect.")
-    else:
-        return command.finish()
+            except CameraConnectionError as ee:
+                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                failed = True
+                continue
+
+            except asyncio.TimeoutError as ee:
+                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                failed = True
+                continue
+
+        if failed:
+            raise LvmcamNotConnected(status)
+
+        command.finish(status)
+
+    except Exception as ex:
+        return command.fail(error=ex)
+
