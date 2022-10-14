@@ -31,14 +31,22 @@ async def status(command, cameras):
                 status[camera.name] = camera.get_status(update=True)
             except Exception as ex:
                 pass
+
             try:
                 status[camera.name]["binning"] = list(await camera.get_binning())
             except Exception as ex:
                 pass
+
             try:
                 status[camera.name]["area"] = tuple(await camera.get_image_area())
             except Exception as ex:
                 pass
+
+            try:
+                status[camera.name]["state"] = "online" if camera.connected else "offline"
+            except Exception as ex:
+                pass
+
         return command.finish(status)
 
     except Exception as ex:
