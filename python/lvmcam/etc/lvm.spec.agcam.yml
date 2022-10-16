@@ -17,7 +17,7 @@ scraper:
        Position: fibsel_d
    
 cameras:
-    east:
+    center:
         descr: "Guider Camera Spec"
         # araviscam
         ip: "192.168.80.66"

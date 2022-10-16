@@ -1,0 +1,39 @@
+
+camera_type: !env ${LVM_CAM_TYPE:-skymakercam}  # types: skymakercam, araviscam
+
+basename: !env "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
+dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+
+camera_params: !include lvm.camera_param.agcam.yml
+
+scraper:
+    lvm.sci.pwi:
+        ra_j2000_hours: ra_h
+        dec_j2000_degs: dec_d
+        field_angle_here_degs: field_angle_d
+
+    lvm.sci.foc:
+        Position: foc_um
+
+    lvm.sci.km:
+        Position: km_d
+
+cameras:
+    center:
+        descr: "Guider Camera Sci Center"
+        # araviscam
+        ip: "192.168.80.64"
+        uid: 19283182
+
+        # skymakercam
+        instpar: lvm_age_cam
+        catalog_path: "/tmp/data/catalog/gaia"
+
+
+actor:
+    name: lvm.sci.agcam
+    host: localhost
+    port: 5672
+    log_dir: '~/tmp/log'
+    #default_cameras:
+       #- west

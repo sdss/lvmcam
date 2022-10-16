@@ -89,9 +89,9 @@ class ScraperParamCards(MacroCard):
     def macro(self, exposure, context={}):
         from sdsstools.logger import get_logger
         logger = get_logger("ScraperParamCards")
-        logger.warning(f"########### {exposure.scraper_store}")
+#        logger.warning(f"########### {exposure.scraper_store}")
 
-        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
+#        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
 
 
         return [
