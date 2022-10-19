@@ -24,8 +24,10 @@ cameras:
         descr: "Guider Camera Skye East"
 
         # araviscam
-        uid: 19283182
-        ip: "192.168.80.64"
+#        uid: 19283182
+#        ip: "192.168.80.64"
+        uid: 19283179
+        ip: "192.168.80.62"
 
         # skymakercam
         instpar: lvm_age_cam
@@ -34,8 +36,10 @@ cameras:
         descr: "Guider Camera Skye West"
 
         # araviscam
-        uid: 19283183
-        ip: "192.168.80.65"
+#        uid: 19283183
+#        ip: "192.168.80.65"
+        uid: 19283198
+        ip: "192.168.80.68"
 
         ## skymakercam
         instpar: lvm_agw_cam
