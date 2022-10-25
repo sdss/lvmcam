@@ -22,7 +22,7 @@ cameras:
         # araviscam
 #        ip: "192.168.80.66"
 #        uid: 19283190
-        ip:  192.168.80.211
+        ip:  192.168.80.63
         uid: 19283180
 
         # skymakercam
