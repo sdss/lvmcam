@@ -5,6 +5,7 @@
 # @Filename: actor.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
+import asyncio
 
 from logging import DEBUG
 from copy import deepcopy
@@ -26,6 +27,9 @@ from cluplus.configloader import Loader
 
 from lvmtel import __version__
 from lvmtel.actor.commands import parser as command_parser
+
+import serial
+
 
 class LvmtelActor(AMQPActor):
     """Lvmtel base actor."""
@@ -57,6 +61,9 @@ class LvmtelActor(AMQPActor):
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(fmt='%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m') 
 
+        self.statusLock = asyncio.Lock()
+        self.statusTask = None
+        self.sensor = None
 
     async def start(self):
         """Start actor"""
@@ -64,6 +71,11 @@ class LvmtelActor(AMQPActor):
 
         self.load_schema(self.schema, is_file=False)
  
+
+        self.sensor = serial.Serial('/dev/ttyUSB0', timeout=2)
+        self.sensor.readline()
+
+
         self.log.debug("Start done")
         
     async def stop(self):
