@@ -89,10 +89,9 @@ class ScraperParamCards(MacroCard):
     def macro(self, exposure, context={}):
         from sdsstools.logger import get_logger
         logger = get_logger("ScraperParamCards")
-#        logger.warning(f"########### {exposure.scraper_store}")
+        logger.warning(f"########### {exposure.scraper_store}")
 
 #        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
-
 
         return [
             ('RA', exposure.scraper_store.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
@@ -100,5 +99,8 @@ class ScraperParamCards(MacroCard):
             ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Field angle from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
             ('FOCUSUM', exposure.scraper_store.get('foc_um', -999.9), '[um] Focus stage position'),
+            ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[C] Temperature bench'),
+            ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[Percent] Humidity bench'),
+            ('BENTEMP', exposure.scraper_store.get('benpress', -999.9), '[hPa] Pressure bench'),
         ]
 

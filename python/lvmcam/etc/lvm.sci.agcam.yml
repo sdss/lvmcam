@@ -18,6 +18,11 @@ scraper:
     lvm.sci.km:
         Position: km_d
 
+    lvm.sci.tel:
+        temperature: bentemp
+        humidity: benhum
+        pressure: benpress
+
 cameras:
     east:
         descr: "Guider Camera Science East"
