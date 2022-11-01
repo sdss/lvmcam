@@ -47,5 +47,6 @@ genicam_params:
     float:
 
     string:
+        PixelFormat: 'Mono16'
 
 shutter: false
