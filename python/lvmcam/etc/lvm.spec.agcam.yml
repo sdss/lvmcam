@@ -7,15 +7,25 @@ dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/spec/agcam/{camera.name}/{date.
 camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
-   lvm.sci.pwi: 
+    lvm.sci.pwi:
        ra_j2000_hours: ra_h
        dec_j2000_degs: dec_d
        field_angle_here_degs: field_angle_d
-   lvm.spec.foc:
+
+    lvm.sci.foc:
        Position: foc_um
-   lvm.spec.fibsel:
-       Position: fibsel_d
-   
+
+#    lvm.spec.fibsel:
+#       Position: fibsel_d
+
+    lvm.sci.km:
+        Position: km_d
+
+    lvm.sci.tel:
+        temperature: bentemp
+        humidity: benhum
+        pressure: benpress
+
 cameras:
     center:
         descr: "Guider Camera Spec"
