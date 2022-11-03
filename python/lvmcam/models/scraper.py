@@ -96,6 +96,8 @@ class ScraperParamCards(MacroCard):
         return [
             ('RA', exposure.scraper_store.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
             ('DEC', exposure.scraper_store.get('dec_d', 90.0), '[deg] Declination of the observation'),
+            ('TEL-ALT', exposure.scraper_store.get('alt_d', 0.0)*15, '[deg] Altitude of the telescope'),
+            ('TEL-AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] Azimuth of the telescope'),
             ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Field angle from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
             ('FOCUSUM', exposure.scraper_store.get('foc_um', -999.9), '[um] Focus stage position'),
