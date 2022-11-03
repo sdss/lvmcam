@@ -41,11 +41,10 @@ class GenicamCards(MacroCard):
 #        logger.warning(f"########### {exposure.scraper_store}")
 
         return [
-            ("GenRevX", 
-             config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseX'), 
+            ("GenRevX",
+             config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseX'),
              '[bool] Flip in X'),
             ("GenRevY", 
              config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseY'), 
-             '[bool] Flip in Y'),
         ]
 
