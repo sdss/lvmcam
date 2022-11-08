@@ -31,17 +31,18 @@ import astropy.units as u
 
 from clu.client import AMQPClient, AMQPReply
 
-from cluplus.configloader import Loader
+from cluplus.proxy import flatten
 
 default = """
 scraper:
     lvm.sci.pwi:
-        ra_j2000_hours: ra_h
-        dec_j2000_degs: dec_d
-        field_angle_here_degs: field_angle_d
+        ra_j2000_hours: raj2000__h
+        dec_j2000_degs: decj2000__d
+        altitude_degs: altitude_d
+        azimuth_degs: azimuth_d
 
     lvm.sci.foc:
-        Position: foc_um
+        Position: foc_dt
 
     lvm.sci.km:
         Position: km_d
@@ -50,9 +51,18 @@ scraper:
         temperature: bentemp
         humidity: benhum
         pressure: benpress
+
+    lvm.sci.agcam:
+        east.temperature: east.temp
+        east.filename: east.file
+        west.temperature: west.temp
+        west.filename: west.file
+        
+    lvm.spec.agcam:
+        center.temperature: center.temp
+        center.filename: center.file
+
 """
-
-
 
 class ScraperDataStore(object):
     def __init__(self, config={}):
@@ -95,7 +105,6 @@ class ScraperDataStore(object):
 
     def items(self):
         return self.data.items()
-
    
 
 class AMQPMonitor(AMQPClient):
@@ -118,7 +127,7 @@ class AMQPMonitor(AMQPClient):
         reply = AMQPReply(message, log=self.log)
         if reply.sender in self.scraper_store.actors() and reply.headers.get("message_code", None) in ":i":
             timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
-            self.scraper_store.update_with_actor_key_maps(reply.sender, reply.body, timestamp)
+            self.scraper_store.update_with_actor_key_maps(reply.sender, flatten(reply.body), timestamp)
 
         return reply
 
@@ -131,7 +140,12 @@ async def main(loop, args):
         await asyncio.sleep(0.5)
         print('\033[2J')
         for k, v in client.scraper_store.items():
-            print(f"{k:14}: {v[0]:10.2f}")
+            if isinstance(v[0], (int, float)):
+                print(f"{k:14}: {v[0]:10.2f} ({v[1]})")
+            else:
+                print(f"{k:14}: {v[0]} ({v[1]})")
+            
+        print()
 
 
 if __name__ == '__main__':
