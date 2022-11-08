@@ -141,9 +141,9 @@ async def main(loop, args):
         print('\033[2J')
         for k, v in client.scraper_store.items():
             if isinstance(v[0], (int, float)):
-                print(f"{k:14}: {v[0]:10.2f} ({v[1]})")
+                print(f"\033[1m{k:14}: {v[0]:10.2f}\033[21m ({v[1]})")
             else:
-                print(f"{k:14}: {v[0]} ({v[1]})")
+                print(f"\033[1m{k:14}: {v[0]}\033[21m ({v[1]})")
             
         print()
 
