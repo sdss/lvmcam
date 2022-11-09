@@ -38,8 +38,8 @@ from cluplus.proxy import flatten
 default = """
 scraper:
     lvm.sci.pwi:
-        ra_j2000_hours: raj2000__h
-        dec_j2000_degs: decj2000__d
+        ra_j2000_hours: ra_j2000_h
+        dec_j2000_degs: dec_j2000_d
         altitude_degs: altitude_d
         azimuth_degs: azimuth_d
 
@@ -48,6 +48,7 @@ scraper:
 
     lvm.sci.km:
         Position: km_d
+        SkyPA: sky_d
 
     lvm.sci.tel:
         temperature: bentemp
@@ -144,7 +145,7 @@ async def main(loop, args):
         for k, v in client.scraper_store.items():
             if isinstance(v[0], (int, float)):
 #                print(f"\033[1m{k:14}: {v[0]:10.2f}\033[21m ({v[1]})")
-                print(f"\033[34m{k:14}\033[0m: \033[32m{v[0]:10.2f}\033[0m ({v[1]})")
+                print(f"\033[34m{k:14}\033[0m: \033[32m{v[0]:10.5f}\033[0m ({v[1]})")
             else:
 #                print(f"\033[1m{k:14}: {v[0]}\033[21m ({v[1]})")
                 print(f"\033[34m{k:14}\033[0m: \033[32m{v[0]}\033[0m ({v[1]})")
