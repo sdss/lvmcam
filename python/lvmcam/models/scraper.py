@@ -72,10 +72,6 @@ class ScraperDataStore(object):
     def items(self):
         return self.data.items()
 
-    def items(self):
-        return self.data.items()
-
-
 def config_get(config, key, default=None):
     """ DOESNT work for keys with dots !!! """
     def g(config, key, d=None):
@@ -96,13 +92,13 @@ class ScraperParamCards(MacroCard):
         return [
             ('RA', exposure.scraper_store.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
             ('DEC', exposure.scraper_store.get('dec_d', 90.0), '[deg] Declination of the observation'),
-            ('TEL-ALT', exposure.scraper_store.get('alt_d', 0.0)*15, '[deg] Altitude of the telescope'),
-            ('TEL-AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] Azimuth of the telescope'),
-            ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Field angle from PW'),
+            ('ALT', exposure.scraper_store.get('alt_d', 0.0)*15, '[deg] pointing Altitude telescope'),
+            ('AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] pointing Azimuth telescope'),
+            ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Cassegrain Field angle from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
             ('FOCUSUM', exposure.scraper_store.get('foc_um', -999.9), '[um] Focus stage position'),
-            ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[C] Temperature bench'),
-            ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[Percent] Humidity bench'),
+            ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[degC] Temperature bench'),
+            ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[] Humidity bench'),
             ('BENTEMP', exposure.scraper_store.get('benpress', -999.9), '[hPa] Pressure bench'),
         ]
 
