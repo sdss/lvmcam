@@ -99,7 +99,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         self.exposure_state = {}
 
-        self.scraper_store = ScraperDataStore(config.get("scraper", {}))
+        self.scraper_store = ScraperDataStore(self, config.get("scraper", {}))
 
     async def start(self):
         """Start actor and add cameras."""

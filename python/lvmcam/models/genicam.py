@@ -46,5 +46,6 @@ class GenicamCards(MacroCard):
              '[bool] Flip in X'),
             ("GenRevY", 
              config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseY'), 
+             '[bool] Flip in Y'),
         ]
 
