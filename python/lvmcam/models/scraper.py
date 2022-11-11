@@ -31,7 +31,7 @@ from sdsstools import get_logger
 
 
 class ScraperDataStore(object):
-    def __init__(self, config={}):
+    def __init__(self, actor, config={}):
         self.actor_key_maps = config
         self.data = {}
 

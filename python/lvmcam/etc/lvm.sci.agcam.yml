@@ -55,9 +55,19 @@ cameras:
             bool:
                 ReverseY: True
 
-        ## skymakercam
-        instpar: lvm_agw_cam
-        focus_offset: 42
+    center:
+        descr: "Guider Camera Spec"
+        # araviscam
+        ip: 192.168.80.70
+        uid: 22126027
+
+        pixsize: 4.5
+
+        genicam_params:
+            string:
+                #PixelFormat: 'RGB8Packed'
+                PixelFormat: 'BayerGB16'
+
 
 actor:
     name: lvm.sci.agcam
