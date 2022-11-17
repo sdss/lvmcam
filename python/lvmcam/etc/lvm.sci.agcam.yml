@@ -19,6 +19,7 @@ scraper:
 
     lvm.sci.km:
         Position: km_d
+        DeviceEncoder.Position: km_s
 
     lvm.sci.tel:
         temperature: bentemp
@@ -42,19 +43,6 @@ cameras:
         # skymakercam
         instpar: lvm_age_cam
 
-    west:
-        descr: "Guider Camera Science West"
-
-        # araviscam
-#        uid: 19283198
-#        ip: "192.168.80.68"
-        uid: 19283195
-        ip: "192.168.80.67"
-
-        genicam_params:
-            bool:
-                ReverseY: True
-
     center:
         descr: "Guider Camera Spec"
         # araviscam
@@ -68,6 +56,24 @@ cameras:
                 #PixelFormat: 'RGB8Packed'
                 PixelFormat: 'BayerGB16'
 
+        # skymakercam
+        instpar: lvm_agc_cam
+
+    west:
+        descr: "Guider Camera Science West"
+
+        # araviscam
+#        uid: 19283198
+#        ip: "192.168.80.68"
+        uid: 19283195
+        ip: "192.168.80.67"
+
+        genicam_params:
+            bool:
+                ReverseY: True
+
+        # skymakercam
+        instpar: lvm_agw_cam
 
 actor:
     name: lvm.sci.agcam

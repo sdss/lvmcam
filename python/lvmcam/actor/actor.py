@@ -23,6 +23,7 @@ from clu import AMQPActor
 from clu.client import AMQPReply
 
 from cluplus.configloader import Loader
+from cluplus.proxy import flatten
 
 from basecam import BaseCamera
 from basecam.actor import BaseCameraActor
@@ -149,15 +150,17 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.log.debug("Stop done")
 
 
-    async def nohandle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
+    async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
         """Handles a reply received from the exchange.
         """
 
         reply = AMQPReply(message, log=self.log)
         if reply.sender in self.scraper_store.actors() and reply.headers.get("message_code", None) in ":i":
             timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
+#            self.log.debug(f"{flatten(reply.body)}")
             self.scraper_store.update_with_actor_key_maps(reply.sender, reply.body, timestamp)
-#        self.log.debug(self.scraper_store.data)
+
+#        self.log.debug(f"{self.scraper_store.data}")
 
         return reply
 
