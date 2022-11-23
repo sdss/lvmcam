@@ -1,4 +1,6 @@
 
+site: "MPIA"
+
 camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
 
 basename: !env "lvm.sci.agcam.{camera.name}_{num:08d}.fits"

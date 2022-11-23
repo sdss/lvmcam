@@ -35,6 +35,18 @@ from lvmcam.actor.commands import camera_parser
 #from lvmcam.model import fits_model, lvmcam_fz_fits_model
 from lvmcam.models import CameraCards, WcsCards, ScraperParamCards, ScraperDataStore, GenicamCards
 
+from lvmtipo.site import Site
+from lvmtipo.siderostat import Siderostat
+from lvmtipo.fiber import Fiber
+from lvmtipo.target import Target
+from lvmtipo.ambient import Ambient
+from lvmtipo.kmirror import Kmirror
+
+from astropy.utils import iers
+iers.conf.auto_download = False
+
+
+
 from araviscam import BlackflyCameraSystem, BlackflyCamera
 from skymakercam import SkymakerCameraSystem, SkymakerCamera
 
@@ -44,7 +56,6 @@ camera_types = {"araviscam": lambda *args, **kwargs: BlackflyCameraSystem(Blackf
 
 
 __all__ = ["LvmcamActor"]
-
 
 
 class LvmcamActor(BaseCameraActor, AMQPActor):
@@ -102,6 +113,21 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 #        self.log.debug(f"{config.get('scraper', [])}")
         self.scraper_store = ScraperDataStore(self, config.get("scraper", {}))
 
+        self.site = Site(name = config.get("site", "LCO"))
+        self.log.info(f"Site: {config.get('site', 'LCO')}")
+
+        azang = 180.0
+        medSign = -1
+
+        self.sid = Siderostat(azang=azang, medSign=medSign)
+        self.ambi = Ambient()
+
+        homeOffset = 135
+        homeIsWest = False
+
+        self.kmirror = Kmirror(home_is_west=homeIsWest, home_offset=homeOffset)
+
+
     async def start(self):
         """Start actor and add cameras."""
         await super().start()
@@ -115,7 +141,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         for camera in self.camera_system._config:
             try:
-                cam = await self.camera_system.add_camera(name=camera, actor=self, scraper_store=self.scraper_store)
+                cam = await self.camera_system.add_camera(name=camera, actor=self)
                 self.log.debug(f"camname {camera}")
                 self.log.debug(f"basename {self.basename}")
                 self.log.debug(f"dirname {self.dirname}")
