@@ -43,6 +43,15 @@ from astropy.utils import iers
 iers.conf.auto_download = False
 
 
+def config_get(config, key, default=None):
+    """ DOESNT work for keys with dots !!! """
+    def g(config, key, d=None):
+        k = key.split('.', maxsplit=1)
+        c = config.get(k[0] if not k[0].isnumeric() else int(k[0]))  # keys can be numeric
+        return d if c is None else c if len(k) < 2 else g(c, k[1], d) if type(c) is dict else d
+    return g(config, key, default)
+
+
 # https://learn.astropy.org/tutorials/synthetic-images.html
 
 class WcsCards(MacroCard):
@@ -61,8 +70,8 @@ class WcsCards(MacroCard):
                          exposure.camera.actor.ambi,
                          exposure.scraper_store.get('km_s', 0.0),
                          exposure.camera.name,
-                         False,
-                         False,
+                         config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseX', False),
+                         config_get(exposure.camera.camera_params, 'genicam_params.bool.ReverseY', False),
                          exposure.camera.actor.kmirror,
                          pixsize=exposure.camera.pixsize,
                          bin=exposure.camera.binning[0],
