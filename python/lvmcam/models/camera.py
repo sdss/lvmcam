@@ -27,7 +27,7 @@ from sdsstools import get_logger
 
 CameraCards = CardGroup(
     [
-        Card("OBSERVAT", "{__camera__.site}", "Observatory", default=""),
+        Card("OBSERVAT", "{__camera__.actor.site}", "Observatory", default=""),
         Card("INSTRUME", "LVM", "SDSS-V Local Volume Mapper"),
         Card("GAIN", value="{__exposure__.camera.gain}", comment="[ct] Camera gain"),
         Card("BINX", value="{__exposure__.camera.binning[0]}", comment="[pix] Binning along axis 1"),
