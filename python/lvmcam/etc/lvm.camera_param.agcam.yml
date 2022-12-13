@@ -6,7 +6,7 @@ site: "MPIA"
 
 # pixel size in um
 pixsize: 9.0
-# focal length in millimeter per arcsec of SDSS-V_0010
+# focal length in millimeter as of SDSS-V_0010
 flen: 1839.8
 
 gain: 5.0
