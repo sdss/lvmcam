@@ -1,4 +1,6 @@
 
+site: "MPIA"
+
 camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
 
 basename: !env "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
@@ -19,6 +21,7 @@ scraper:
 
     lvm.sci.km:
         Position: km_d
+        DeviceEncoder.Position: km_s
 
     lvm.sci.tel:
         temperature: bentemp
@@ -42,6 +45,22 @@ cameras:
         # skymakercam
         instpar: lvm_age_cam
 
+    center:
+        descr: "Guider Camera Spec"
+        # araviscam
+        ip: 192.168.80.70
+        uid: 22126027
+
+        pixsize: 4.5
+
+        genicam_params:
+            string:
+                #PixelFormat: 'RGB8Packed'
+                PixelFormat: 'BayerGB16'
+
+        # skymakercam
+        instpar: lvm_agc_cam
+
     west:
         descr: "Guider Camera Science West"
 
@@ -55,9 +74,8 @@ cameras:
             bool:
                 ReverseY: True
 
-        ## skymakercam
+        # skymakercam
         instpar: lvm_agw_cam
-        focus_offset: 42
 
 actor:
     name: lvm.sci.agcam

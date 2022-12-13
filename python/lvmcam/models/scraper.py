@@ -28,10 +28,10 @@ from clu.legacy.types.pvt import PVT
 from sdsstools.time import get_sjd
 from sdsstools import get_logger
 
-
+from cluplus.proxy import flatten
 
 class ScraperDataStore(object):
-    def __init__(self, config={}):
+    def __init__(self, actor, config={}):
         self.actor_key_maps = config
         self.data = {}
 
@@ -67,7 +67,7 @@ class ScraperDataStore(object):
 
     def update_with_actor_key_maps(self, actor, data:dict, timestamp=datetime.utcnow()):
         akm = self.actor_key_maps.get(actor, None)
-        self.data.update({akm[k]:(v, timestamp) for k, v in data.items() if k in akm.keys()})
+        self.data.update({akm[k]:(v, timestamp) for k, v in flatten(data).items() if k in akm.keys()})
 
     def items(self):
         return self.data.items()
@@ -96,6 +96,7 @@ class ScraperParamCards(MacroCard):
             ('AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] pointing Azimuth telescope'),
             ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Cassegrain Field angle from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
+            ('KMIRSTEP', exposure.scraper_store.get('km_s', -999.9), '[steps] position kmirror'),
             ('FOCUSUM', exposure.scraper_store.get('foc_um', -999.9), '[um] Focus stage position'),
             ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[degC] Temperature bench'),
             ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[] Humidity bench'),

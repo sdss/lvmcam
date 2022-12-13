@@ -27,14 +27,15 @@ from sdsstools import get_logger
 
 CameraCards = CardGroup(
     [
-        Card("OBSERVAT", "{__camera__.site}", "Observatory", default=""),
+        Card("OBSERVAT", "{__camera__.actor.site}", "Observatory", default=""),
         Card("INSTRUME", "LVM", "SDSS-V Local Volume Mapper"),
         Card("GAIN", value="{__exposure__.camera.gain}", comment="[ct] Camera gain"),
         Card("BINX", value="{__exposure__.camera.binning[0]}", comment="[pix] Binning along axis 1"),
         Card("BINY", value="{__exposure__.camera.binning[1]}", comment="[pix] Binning along axis 2"),
         Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
         Card("CamTemp", value="{__exposure__.camera.temperature}", comment="[degC] Camera Temperature"),
-        Card("PIXELSC", "{__exposure__.camera.arcsec_per_pix}", comment="[arcsec/pix] Scale of unbinned pixel on sky", default=-999.0, type=float),
+        Card("PIXSIZE", "{__exposure__.camera.pixsize}", comment="[um] Pixel size", default=-999.0, type=float),
+        Card("PIXSCALE", "{__exposure__.camera.arcsec_per_pix}", comment="[arcsec/pix] Scale of unbinned pixel on sky", default=-999.0, type=float),
     ]
 )
 
