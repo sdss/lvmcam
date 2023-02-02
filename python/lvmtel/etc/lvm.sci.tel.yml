@@ -3,7 +3,7 @@ device:
     /dev/ttyUSB0
 
 actor:
-    name: lvm.sci.tel
+    name: lvm.tel
     host: localhost
     port: 5672
     log_dir: '~/tmp/log'

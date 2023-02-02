@@ -10,6 +10,8 @@ scraper:
     lvm.skyw.pwi:
         ra_j2000_hours: ra_h
         dec_j2000_degs: dec_d
+        altitude_degs: alt_d
+        azimuth_degs: az_d
         field_angle_here_degs: field_angle_d
 
     lvm.skyw.foc:
@@ -17,27 +19,39 @@ scraper:
 
     lvm.skyw.km:
         Position: km_d
+        DeviceEncoder.Position: km_s
 
+    lvm.tel:
+        temperature: bentemp
+        humidity: benhum
+        pressure: benpress
 
 cameras:
     east:
-        descr: "Guider Camera Skyw East"
+        descr: "Guider Camera SkyW East"
 
         # araviscam
-        uid: 19283182
-        ip: "192.168.80.64"
+        uid: 19283186
+        ip: 10.8.38.115
+        
+        genicam_params:
+            bool:
+                ReverseX: True
 
         # skymakercam
         instpar: lvm_age_cam
-
     west:
-        descr: "Guider Camera Skyw West"
+        descr: "Guider Camera SkyW West"
 
         # araviscam
-        uid: 19283183
-        ip: "192.168.80.65"
+        uid: 19283169
+        ip: 10.8.38.116
 
-        ## skymakercam
+        genicam_params:
+            bool:
+                ReverseY: True
+
+        # skymakercam
         instpar: lvm_agw_cam
 
 actor:
