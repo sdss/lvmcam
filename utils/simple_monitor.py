@@ -35,36 +35,35 @@ from clu.client import AMQPClient, AMQPReply
 
 from cluplus.proxy import flatten
 
-default = """
+
+def default(tel):
+  return f"""
 scraper:
-    lvm.sci.pwi:
+    lvm.{tel}.pwi:
         ra_j2000_hours: ra_j2000_h
         dec_j2000_degs: dec_j2000_d
         altitude_degs: altitude_d
         azimuth_degs: azimuth_d
 
-    lvm.sci.foc:
+    lvm.{tel}.foc:
         Position: foc_dt
 
-    lvm.sci.km:
+    lvm.{tel}.km:
         Position: km_d
         SkyPA: sky_d
 
-    lvm.sci.tel:
+    lvm.{tel}.tel:
         temperature: bentemp
         humidity: benhum
         pressure: benpress
 
-    lvm.sci.agcam:
+    lvm.{tel}.agcam:
         east.temperature: east.temp
         east.filename: east.file
         west.temperature: west.temp
         west.filename: west.file
-        
-    lvm.spec.agcam:
         center.temperature: center.temp
         center.filename: center.file
-
 """
 
 class ScraperDataStore(object):
@@ -114,12 +113,12 @@ class AMQPMonitor(AMQPClient):
     
     def __init__(
         self,
-        argv,
         *args,
+        telescope:str,
         **kwargs
     ):
-
-        super().__init__(f"monitor-{uuid.uuid4().hex[:8]}", *args, config=yaml.safe_load(default), **kwargs)
+        print(kwargs)
+        super().__init__(f"monitor-{uuid.uuid4().hex[:8]}", *args, config=yaml.safe_load(default(telescope)), **kwargs)
 
         self.scraper_store = ScraperDataStore(self.config.get("scraper", {}))
 
@@ -134,8 +133,8 @@ class AMQPMonitor(AMQPClient):
 
         return reply
 
-async def main(loop, args):
-   client = await AMQPMonitor(args, host=args.rmq_host).start()
+async def main(loop, **kwargs):
+   client = await AMQPMonitor(**kwargs).start()
    log = client.log
 
    log.debug("waiting ...")
@@ -159,12 +158,13 @@ async def main(loop, args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-H", '--rmq_host', type=str, default="localhost", help="Choose your rabbitmq host")
+    parser.add_argument("-t", '--telescope', type=str, default="sci", help="Choose your telescope: sci, skye, skyw o. spec")
+    parser.add_argument("-H", '--host', type=str, default="localhost", help="Choose your rabbitmq host")
     args = parser.parse_args()
 
     # Start the server
     loop = asyncio.get_event_loop()
-    loop.create_task(main(loop, args))
+    loop.create_task(main(loop, **vars(args)))
     loop.run_forever()
 
 
