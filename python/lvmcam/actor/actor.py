@@ -116,7 +116,12 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.site = Site(name = config.get("site", "LCO"))
         self.log.info(f"Site: {config.get('site', 'LCO')}")
 
-        azang = 180.0
+        # but south-> north at LCO
+        if self.site.lat > 40.0:
+            azang = 180 # MPIA
+        else:
+            azang = 0  # LCO, APO, KHU
+        
         medSign = -1
 
         self.sid = Siderostat(azang=azang, medSign=medSign)
@@ -124,6 +129,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
 
         homeOffset = 135
         homeIsWest = False
+
+        self.log.info(f"Site: {config.get('site', 'LCO')}, homeOffset: {self.homeOffset}, homeIsWest: {self.homeIsWest}, azang: {azang}, medSign {medSign}")
 
         self.kmirror = Kmirror(home_is_west=homeIsWest, home_offset=homeOffset)
 
