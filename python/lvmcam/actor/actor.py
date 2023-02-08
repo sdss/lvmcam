@@ -130,7 +130,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         homeOffset = 135
         homeIsWest = False
 
-        self.log.info(f"Site: {config.get('site', 'LCO')}, homeOffset: {self.homeOffset}, homeIsWest: {self.homeIsWest}, azang: {azang}, medSign {medSign}")
+        self.log.info(f"Site: {config.get('site', 'LCO')}, homeOffset: {homeOffset}, homeIsWest: {homeIsWest}, azang: {azang}, medSign {medSign}")
 
         self.kmirror = Kmirror(home_is_west=homeIsWest, home_offset=homeOffset)
 
