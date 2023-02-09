@@ -97,7 +97,7 @@ class ScraperParamCards(MacroCard):
             ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Cassegrain Field angle from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
             ('KMIRSTEP', exposure.scraper_store.get('km_s', -999.9), '[steps] position kmirror'),
-            ('FOCUSUM', exposure.scraper_store.get('foc_um', -999.9), '[um] Focus stage position'),
+            ('FOCUSDT', exposure.scraper_store.get('foc_dt', -999.9), '[dt] Focus stage position'),
             ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[degC] Temperature bench'),
             ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[] Humidity bench'),
             ('BENTEMP', exposure.scraper_store.get('benpress', -999.9), '[hPa] Pressure bench'),

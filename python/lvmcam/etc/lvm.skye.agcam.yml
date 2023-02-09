@@ -15,7 +15,7 @@ scraper:
         field_angle_here_degs: field_angle_d
 
     lvm.skye.foc:
-        Position: foc_um
+        Position: foc_dt
 
     lvm.skye.km:
         Position: km_d
