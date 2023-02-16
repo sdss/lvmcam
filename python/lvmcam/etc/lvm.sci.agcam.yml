@@ -31,7 +31,7 @@ cameras:
         descr: "Guider Camera Science East"
 
         # araviscam
-        uid: 19283195
+        uid: 19283186
         ip: 10.8.38.111
         
         genicam_params:
@@ -42,10 +42,10 @@ cameras:
         instpar: lvm_age_cam
 
     center:
-        descr: "Guider Camera Science East"
+        descr: "Guider Camera Science Center"
         # araviscam
-        ip: 10.8.38.119
         uid: 22126027
+        ip: 10.8.38.119
 
         pixsize: 4.5
 
@@ -60,7 +60,7 @@ cameras:
         descr: "Guider Camera Science West"
 
         # araviscam
-        uid: 19283190
+        uid: 19283169
         ip: 10.8.38.112
 
         genicam_params:

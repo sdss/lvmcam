@@ -41,19 +41,6 @@ cameras:
         # skymakercam
         instpar: lvm_age_cam
 
-    west:
-        descr: "Guider Camera Spec West"
-
-        # araviscam
-        uid: 19283182
-        ip: 10.8.38.118
-
-        genicam_params:
-            bool:
-                ReverseY: True
-
-        # skymakercam
-        instpar: lvm_agw_cam
 
 actor:
     name: lvm.spec.agcam

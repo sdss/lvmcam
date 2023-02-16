@@ -31,7 +31,7 @@ cameras:
         descr: "Guider Camera SkyW East"
 
         # araviscam
-        uid: 19283186
+        uid: 19283195
         ip: 10.8.38.115
         
         genicam_params:
@@ -44,7 +44,7 @@ cameras:
         descr: "Guider Camera SkyW West"
 
         # araviscam
-        uid: 19283169
+        uid: 19283190
         ip: 10.8.38.116
 
         genicam_params:
