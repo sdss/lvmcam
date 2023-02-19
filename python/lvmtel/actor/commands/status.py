@@ -48,7 +48,7 @@ async def statusTick(command, delta_time):
 
 
 @parser.command()
-@click.option("--statusTick", type=float, default=-1)
+@click.option("--statusTick", type=float, default=5)
 async def status(command, statustick:float):
     """Returns the status of a camera."""
 
