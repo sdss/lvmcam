@@ -51,9 +51,11 @@ class LvmtelActor(AMQPActor):
                        "type": "object",
                        "properties": {
                             "temperature": {"type": "number"},
-                            "dewpoint": {"type": "number"},
+                            "dewpoint_enclosure": {"type": "number"},
                             "humidity": {"type": "number"},
-                            "pressure": {"type": "number"},
+                            "temperature_enclosure": {"type": "number"},
+                            "dewpoint_enclosure": {"type": "number"},
+                            "humidity_enclosure": {"type": "number"},
                       },
                       "additionalProperties": False,
         }

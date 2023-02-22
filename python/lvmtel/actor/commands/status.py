@@ -23,9 +23,11 @@ def statusSensorRead(sensor):
 #    print(data)
 
     status = {}
-    status["temperature"] = data['sensor_values'][1]['values'][0][0]['v']
+    status["temperature"] = data['sensor_values'][0]['values'][0][0]['v']
     status["humidity"] = data['sensor_values'][1]['values'][0][1]['v']
-    status["dewpoint"] = data['sensor_values'][1]['values'][0][2]['v']
+    status["temperature_enclosure"] = data['sensor_values'][1]['values'][0][0]['v']
+    status["humidity_enclosure"] = data['sensor_values'][1]['values'][0][1]['v']
+    status["dewpoint_enclosure"] = data['sensor_values'][1]['values'][0][2]['v']
 
     return status
 
