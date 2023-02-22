@@ -15,6 +15,16 @@ def getSensorsJson(host,
                    skipcomplex=True,
                    skipsimple=False,
                    verbose=False):
+
+    '''
+    import gude_sensor
+    ret = gude_sensor.getSensorsJson("10.8.38.122")
+    print(f"t oc: {ret['sensor_values'][0]['values'][0][0]['v']} °C")
+    print(f"t ic: {ret['sensor_values'][1]['values'][0][0]['v']} °C")
+    print(f"h ic: {ret['sensor_values'][1]['values'][0][1]['v']} %")
+    print(f"t ic: {ret['sensor_values'][1]['values'][0][2]['v']} °C dewpoint")
+    '''
+
     if ssl:
         url = 'https://'
     else:

@@ -26,10 +26,10 @@ from clu.client import AMQPReply
 from cluplus.configloader import Loader
 
 from lvmtel import __version__
-from lvmtel.actor.commands import parser as command_parser
+from .commands import parser as command_parser
+from .commands.status import statusTick
 
-import serial
-
+#import serial
 
 class LvmtelActor(AMQPActor):
     """Lvmtel base actor."""
@@ -51,6 +51,7 @@ class LvmtelActor(AMQPActor):
                        "type": "object",
                        "properties": {
                             "temperature": {"type": "number"},
+                            "dewpoint": {"type": "number"},
                             "humidity": {"type": "number"},
                             "pressure": {"type": "number"},
                       },
@@ -71,10 +72,10 @@ class LvmtelActor(AMQPActor):
 
         self.load_schema(self.schema, is_file=False)
  
+ #       self.sensor = serial.Serial('/dev/ttyUSB0', timeout=2)
+ #       self.sensor.readline()
 
-        self.sensor = serial.Serial('/dev/ttyUSB0', timeout=2)
-        self.sensor.readline()
-
+        self.statusTask = self.loop.create_task(statusTick(self, 5.0))
 
         self.log.debug("Start done")
         

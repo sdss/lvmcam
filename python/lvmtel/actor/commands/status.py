@@ -11,40 +11,42 @@ import asyncio
 import click
 from . import parser
 
+import gude_sensor
 
 __all__ = ["status"]
 
 def statusSensorRead(sensor):
 
-    data = sensor.readline().split()
+#    data = sensor.readline().split()
+    data = gude_sensor.getSensorsJson("10.8.38.122")
 
 #    print(data)
 
     status = {}
-    status["temperature"] = float(data[0])
-    status["humidity"] = float(data[2])
-    status["pressure"] = float(data[4])
+    status["temperature"] = data['sensor_values'][1]['values'][0][0]['v']
+    status["humidity"] = data['sensor_values'][1]['values'][0][1]['v']
+    status["dewpoint"] = data['sensor_values'][1]['values'][0][2]['v']
 
     return status
 
 
-async def statusTick(command, delta_time):
+async def statusTick(actor, delta_time):
 
-    lock = command.actor.statusLock
+    lock = actor.statusLock
 
-    while command.actor.statusTask:
+    while actor.statusTask:
         try:
             if not lock.locked():
-                command.actor.write(
+                actor.write(
                         "i",
-                        statusSensorRead(command.actor.sensor)
+                        statusSensorRead(actor.sensor)
                 )
 
         except Exception as e:
-            command.actor.write("i", {"error": e})
+            actor.write("i", {"error": e})
 #            print(e)
 
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(delta_time)
 
 
 @parser.command()
@@ -56,13 +58,13 @@ async def status(command, statustick:float):
 
     try:
         async with lock:
-            command.actor.sensor.flushInput()
+#            command.actor.sensor.flushInput()
             status = statusSensorRead(command.actor.sensor)
             command.finish(status)
 
         if statustick > 0.0:
             if not command.actor.statusTask:
-                command.actor.statusTask = command.actor.loop.create_task(statusTick(command, statustick))
+                command.actor.statusTask = command.actor.loop.create_task(statusTick(command.actor, statustick))
         else:
             command.actor.statusTask = None
 
