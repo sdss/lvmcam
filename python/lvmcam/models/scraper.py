@@ -95,11 +95,14 @@ class ScraperParamCards(MacroCard):
             ('ALT', exposure.scraper_store.get('alt_d', 0.0), '[deg] pointing Altitude telescope'),
             ('AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] pointing Azimuth telescope'),
             ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Cassegrain Field angle from PW'),
+            ('PWA0POS', exposure.scraper_store.get('axis0_position_d', -999.9), '[deg] Axis0 pos angle from PW'),
+            ('PWA0T', exposure.scraper_store.get('axis0_position_timestamp_s', -999.9), '[] Axis0 pos angle time from PW'),
+            ('PWA1POS', exposure.scraper_store.get('axis1_position_d', -999.9), '[deg] Axis1 pos angle from PW'),
+            ('PWA1T', exposure.scraper_store.get('axis1_position_timestamp_s', -999.9), '[] Axis1 pos angle time from PW'),
             ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
             ('KMIRSTEP', exposure.scraper_store.get('km_s', -999.9), '[steps] position kmirror'),
             ('FOCUSDT', exposure.scraper_store.get('foc_dt', -999.9), '[dt] Focus stage position'),
-            ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[degC] Temperature bench'),
-            ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[] Humidity bench'),
-            ('BENTEMP', exposure.scraper_store.get('benpress', -999.9), '[hPa] Pressure bench'),
+            ('BENTEMPI', exposure.scraper_store.get('bentempi', -999.9), '[degC] Temperature bench inside'),
+            ('BENHUMO', exposure.scraper_store.get('benhumo', -999.9), '[] Humidity bench oustside'),
+            ('BENTEMPO', exposure.scraper_store.get('benpresso', -999.9), '[hPa] Pressure bench oustside'),
         ]
-
