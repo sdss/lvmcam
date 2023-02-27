@@ -1,8 +1,6 @@
-
-
 autoconnect: true
 
-site: "LCO"
+site: 'LCO'
 
 # pixel size in um
 pixsize: 9.0
@@ -13,40 +11,40 @@ gain: 5.0
 binning: [1, 1]
 
 # skymakercam
-focus_stage: "lvm.sci.foc"
-kmirror: "lvm.sci.km"
-tcs: "lvm.sci.pwi"
-catalog_path: "/tmp/data/catalog/gaia"
+focus_stage: 'lvm.sci.foc'
+kmirror: 'lvm.sci.km'
+tcs: 'lvm.sci.pwi'
+catalog_path: '/tmp/data/catalog/gaia'
 
 # araviscam
 genicam_params:
-    # The following 4 dict must follow exactly the
-    # name structure and types as in the araviscam/etc/*.xml file
-    bool:
-        # flip vertically (reverse Y) so image in numpy is ordered according to
-        # FITS standards, where the bottom line is first in sequence of bytes
-        ReverseX: False
-        ReverseY: True
+  # The following 4 dict must follow exactly the
+  # name structure and types as in the araviscam/etc/*.xml file
+  bool:
+    # flip vertically (reverse Y) so image in numpy is ordered according to
+    # FITS standards, where the bottom line is first in sequence of bytes
+    ReverseX: False
+    ReverseY: True
 
-        # No blacklevel clamping, added 2021-02-18
-        # Disabled for support of astrometry in dark sky exposures
-        BlackLevelClampingEnable: False
+    # No blacklevel clamping, added 2021-02-18
+    # Disabled for support of astrometry in dark sky exposures
+    BlackLevelClampingEnable: False
 
-        # No gamma correction, added 2021-02-18
-        GammaEnable: False
+    # No gamma correction, added 2021-02-18
+    GammaEnable: False
 
-        # sharpeningEnable is not writable on the FLIR (!)
-        SharpeningEnable: False
+    # sharpeningEnable is not writable on the FLIR (!)
+    SharpeningEnable: False
 
-    int:
-        # the binning modes are enumerations: 0 = mean, 1=sum
-        # The sum is what most astronomers would expect...
-        BinningHorizontalMode: 1
-        BinningVerticalMode: 1
+  int:
+    # the binning modes are enumerations: 0 = mean, 1=sum
+    # The sum is what most astronomers would expect...
+    BinningHorizontalMode: 1
+    BinningVerticalMode: 1
 
-    float:
+  float:
 
-    string:
-        PixelFormat: 'Mono16'
+  string:
+    PixelFormat: 'Mono16'
 
 shutter: false

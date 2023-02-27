@@ -8,36 +8,31 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 
-import time
-import random
-import string
-import uuid
 import argparse
-
 import asyncio
-
-import yaml
-
-from typing import Dict
-
-from datetime import datetime as dt
-import aio_pika as apika
-
-
+import random
 # hard exit
 import signal
+import string
+import time
+import uuid
+from datetime import datetime as dt
+from typing import Dict
+
+import aio_pika as apika
+import yaml
+
+
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
-from astropy.coordinates import SkyCoord
 import astropy.units as u
-
+from astropy.coordinates import SkyCoord
 from clu.client import AMQPClient, AMQPReply
-
 from cluplus.proxy import flatten
 
 
 def default(tel):
-  return f"""
+    return f"""
 scraper:
     lvm.{tel}.pwi:
         ra_j2000_hours: ra_j2000_h
@@ -66,6 +61,7 @@ scraper:
         center.filename: center.file
 """
 
+
 class ScraperDataStore(object):
     def __init__(self, config={}):
         self.actor_key_maps = config
@@ -81,7 +77,7 @@ class ScraperDataStore(object):
         return self.data.__repr__()
 
     def keys(self):
-         return self.data.keys()
+        return self.data.keys()
 
     def __getitem__(self, key):
         return self.get(key)
@@ -94,77 +90,92 @@ class ScraperDataStore(object):
 
     def set(self, key, val, timestamp=dt.utcnow()):
         self.data[key] = (val, timestamp)
-        
+
     def get(self, key, default=None):
         return self.data.get(key, (default, None))[0]
-        
-    def update(self, data:dict, timestamp=dt.utcnow()):
-        self.data.update({k:(v, timestamp) for k, v in data.items()})
 
-    def update_with_actor_key_maps(self, actor, data:dict, timestamp=dt.utcnow()):
+    def update(self, data: dict, timestamp=dt.utcnow()):
+        self.data.update({k: (v, timestamp) for k, v in data.items()})
+
+    def update_with_actor_key_maps(self, actor, data: dict, timestamp=dt.utcnow()):
         akm = self.actor_key_maps.get(actor, None)
-        self.data.update({akm[k]:(v, timestamp) for k, v in data.items() if k in akm.keys()})
+        self.data.update(
+            {akm[k]: (v, timestamp) for k, v in data.items() if k in akm.keys()}
+        )
 
     def items(self):
         return self.data.items()
-   
+
 
 class AMQPMonitor(AMQPClient):
-    
-    def __init__(
-        self,
-        *args,
-        telescope:str,
-        **kwargs
-    ):
+    def __init__(self, *args, telescope: str, **kwargs):
         print(kwargs)
-        super().__init__(f"monitor-{uuid.uuid4().hex[:8]}", *args, config=yaml.safe_load(default(telescope)), **kwargs)
+        super().__init__(
+            f"monitor-{uuid.uuid4().hex[:8]}",
+            *args,
+            config=yaml.safe_load(default(telescope)),
+            **kwargs,
+        )
 
         self.scraper_store = ScraperDataStore(self.config.get("scraper", {}))
 
-
     async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
-        """Handles a reply received from the exchange.
-        """
+        """Handles a reply received from the exchange."""
         reply = AMQPReply(message, log=self.log)
-        if reply.sender in self.scraper_store.actors() and reply.headers.get("message_code", None) in ":i":
-            timestamp = apika.message.decode_timestamp(message.timestamp) if message.timestamp else datetime.utcnow()
-            self.scraper_store.update_with_actor_key_maps(reply.sender, flatten(reply.body), timestamp)
+        if (
+            reply.sender in self.scraper_store.actors()
+            and reply.headers.get("message_code", None) in ":i"
+        ):
+            timestamp = (
+                apika.message.decode_timestamp(message.timestamp)
+                if message.timestamp
+                else datetime.utcnow()
+            )
+            self.scraper_store.update_with_actor_key_maps(
+                reply.sender, flatten(reply.body), timestamp
+            )
 
         return reply
 
-async def main(loop, **kwargs):
-   client = await AMQPMonitor(**kwargs).start()
-   log = client.log
 
-   log.debug("waiting ...")
-   while(True):
+async def main(loop, **kwargs):
+    client = await AMQPMonitor(**kwargs).start()
+    log = client.log
+
+    log.debug("waiting ...")
+    while True:
         await asyncio.sleep(0.5)
-        print('\033[2J')
+        print("\033[2J")
         for k, v in client.scraper_store.items():
             if isinstance(v[0], (int, float)):
-#                print(f"\033[1m{k:14}: {v[0]:10.2f}\033[21m ({v[1]})")
+                #                print(f"\033[1m{k:14}: {v[0]:10.2f}\033[21m ({v[1]})")
                 print(f"\033[34m{k:14}\033[0m: \033[32m{v[0]:10.5f}\033[0m ({v[1]})")
             else:
-#                print(f"\033[1m{k:14}: {v[0]}\033[21m ({v[1]})")
+                #                print(f"\033[1m{k:14}: {v[0]}\033[21m ({v[1]})")
                 print(f"\033[34m{k:14}\033[0m: \033[32m{v[0]}\033[0m ({v[1]})")
-            
+
         print()
 
-#\033[34m [34mBlue[0m
-#\033[32m [32mGreen[0m
-                        
-                        
-if __name__ == '__main__':
 
+# \033[34m [34mBlue[0m
+# \033[32m [32mGreen[0m
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", '--telescope', type=str, default="sci", help="Choose your telescope: sci, skye, skyw o. spec")
-    parser.add_argument("-H", '--host', type=str, default="localhost", help="Choose your rabbitmq host")
+    parser.add_argument(
+        "-t",
+        "--telescope",
+        type=str,
+        default="sci",
+        help="Choose your telescope: sci, skye, skyw o. spec",
+    )
+    parser.add_argument(
+        "-H", "--host", type=str, default="localhost", help="Choose your rabbitmq host"
+    )
     args = parser.parse_args()
 
     # Start the server
     loop = asyncio.get_event_loop()
     loop.create_task(main(loop, **vars(args)))
     loop.run_forever()
-
-

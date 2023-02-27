@@ -31,7 +31,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Install dependencies (apt-get)
       run: |
         sudo apt-get update
@@ -45,7 +45,7 @@ jobs:
         sudo apt-get install -y python3-pip python3-dev intltool libxml2-dev
         sudo apt-get update --fix-missing
         sudo apt-get install -f
-    
+
     - name: Install Aravis 0.8.
       run: |
         mkdir aravis
@@ -88,7 +88,7 @@ jobs:
     #- name: Lint with isort
     #  run: |
      #   poetry run isort -c .
-    
+
     # - name: Run type checking
     #   continue-on-error: true
     #   run: |
@@ -104,4 +104,3 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
-

@@ -7,8 +7,8 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
-
 from basecam.actor.tools import get_cameras
+
 from . import camera_parser
 
 
@@ -43,7 +43,9 @@ async def status(command, cameras):
                 pass
 
             try:
-                status[camera.name]["state"] = "online" if camera.connected else "offline"
+                status[camera.name]["state"] = (
+                    "online" if camera.connected else "offline"
+                )
             except Exception as ex:
                 pass
 

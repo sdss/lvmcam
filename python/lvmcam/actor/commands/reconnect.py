@@ -10,16 +10,14 @@
 import asyncio
 
 import click
-
-from cluplus.proxy import Proxy
-
-from basecam.exceptions import CameraConnectionError
-
 from basecam.actor.tools import get_cameras
+from basecam.exceptions import CameraConnectionError
+from cluplus.proxy import Proxy
 
 from lvmcam.exceptions import LvmcamNotConnected
 
 from . import camera_parser
+
 
 __all__ = ["reconnect"]
 
@@ -48,11 +46,17 @@ async def reconnect(command, cameras, timeout):
                 status[camera.name] = {"state": "offline"}
 
             except CameraConnectionError as ee:
-                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                status[camera.name] = {
+                    "state": "unknown",
+                    "error": Proxy._exceptionToMap(ee),
+                }
                 continue
 
             except asyncio.TimeoutError as ee:
-                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                status[camera.name] = {
+                    "state": "unknown",
+                    "error": Proxy._exceptionToMap(ee),
+                }
                 continue
 
             try:
@@ -60,12 +64,18 @@ async def reconnect(command, cameras, timeout):
                 status[camera.name] = {"state": "online"}
 
             except CameraConnectionError as ee:
-                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                status[camera.name] = {
+                    "state": "unknown",
+                    "error": Proxy._exceptionToMap(ee),
+                }
                 failed = True
                 continue
 
             except asyncio.TimeoutError as ee:
-                status[camera.name] = {"state": "unknown", "error": Proxy._exceptionToMap(ee)}
+                status[camera.name] = {
+                    "state": "unknown",
+                    "error": Proxy._exceptionToMap(ee),
+                }
                 failed = True
                 continue
 
@@ -76,4 +86,3 @@ async def reconnect(command, cameras, timeout):
 
     except Exception as ex:
         return command.fail(error=ex)
-

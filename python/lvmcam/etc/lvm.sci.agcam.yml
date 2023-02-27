@@ -1,79 +1,78 @@
+camera_type: !env ${LVM_CAM_TYPE:-araviscam} # types: skymakercam, araviscam
 
-camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
-
-basename: !env "lvm.sci.agcam.{camera.name}_{num:08d}.fits"
+basename: !env 'lvm.sci.agcam.{camera.name}_{num:08d}.fits'
 dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/sci/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
 camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
-    lvm.sci.pwi:
-        ra_j2000_hours: ra_h
-        dec_j2000_degs: dec_d
-        altitude_degs: alt_d
-        azimuth_degs: az_d
-        field_angle_here_degs: field_angle_d
+  lvm.sci.pwi:
+    ra_j2000_hours: ra_h
+    dec_j2000_degs: dec_d
+    altitude_degs: alt_d
+    azimuth_degs: az_d
+    field_angle_here_degs: field_angle_d
 
-    lvm.sci.foc:
-        Position: foc_dt
+  lvm.sci.foc:
+    Position: foc_dt
 
-    lvm.sci.km:
-        Position: km_d
-        DeviceEncoder.Position: km_s
+  lvm.sci.km:
+    Position: km_d
+    DeviceEncoder.Position: km_s
 
-    lvm.tel:
-        temperature: bentemp
-        humidity: benhum
-        pressure: benpress
+  lvm.tel:
+    temperature: bentemp
+    humidity: benhum
+    pressure: benpress
 
 cameras:
-    east:
-        descr: "Guider Camera Science East"
+  east:
+    descr: 'Guider Camera Science East'
 
-        # araviscam
-        uid: 19283186
-        ip: 10.8.38.111
-        
-        genicam_params:
-            bool:
-                ReverseX: True
+    # araviscam
+    uid: 19283186
+    ip: 10.8.38.111
 
-        # skymakercam
-        instpar: lvm_age_cam
+    genicam_params:
+      bool:
+        ReverseX: True
 
-    center:
-        descr: "Guider Camera Science Center"
-        # araviscam
-        uid: 22126027
-        ip: 10.8.38.119
+    # skymakercam
+    instpar: lvm_age_cam
 
-        pixsize: 4.5
+  center:
+    descr: 'Guider Camera Science Center'
+    # araviscam
+    uid: 22126027
+    ip: 10.8.38.119
 
-        genicam_params:
-            string:
-                PixelFormat: 'BayerGB16'
+    pixsize: 4.5
 
-        # skymakercam
-        instpar: lvm_agc_cam
+    genicam_params:
+      string:
+        PixelFormat: 'BayerGB16'
 
-    west:
-        descr: "Guider Camera Science West"
+    # skymakercam
+    instpar: lvm_agc_cam
 
-        # araviscam
-        uid: 19283169
-        ip: 10.8.38.112
+  west:
+    descr: 'Guider Camera Science West'
 
-        genicam_params:
-            bool:
-                ReverseY: True
+    # araviscam
+    uid: 19283169
+    ip: 10.8.38.112
 
-        # skymakercam
-        instpar: lvm_agw_cam
+    genicam_params:
+      bool:
+        ReverseY: True
+
+    # skymakercam
+    instpar: lvm_agw_cam
 
 actor:
-    name: lvm.sci.agcam
-    host: localhost
-    port: 5672
-    log_dir: '~/tmp/log'
-    #default_cameras:
-       #- west
+  name: lvm.sci.agcam
+  host: localhost
+  port: 5672
+  log_dir: '~/tmp/log'
+  #default_cameras:
+  #- west

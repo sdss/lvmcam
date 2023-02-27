@@ -7,16 +7,15 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
-
-from clu.parsers.click import CluCommand
-
-from basecam.exceptions import CameraError
-
 from basecam.actor.tools import get_cameras
+from basecam.exceptions import CameraError
+from clu.parsers.click import CluCommand
 
 from . import camera_parser
 
+
 __all__ = ["gain"]
+
 
 @camera_parser.command()
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
@@ -38,11 +37,11 @@ async def gain(command, cameras, gain):
         for camera in cameras:
             if not gain:
                 gain = await camera.get_gain()
-                status[camera.name] = { "gain": gain }
+                status[camera.name] = {"gain": gain}
             else:
                 try:
                     await camera.set_gain(gain)
-                    status[camera.name] = { "gain": gain }
+                    status[camera.name] = {"gain": gain}
 
                 except (CameraError, AssertionError) as ee:
                     command.error(error=ee)

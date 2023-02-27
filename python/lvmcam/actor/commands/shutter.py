@@ -7,13 +7,14 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
-
+from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraError
 
-from basecam.actor.tools import get_cameras
 from . import camera_parser
 
+
 __all__ = ["shutter"]
+
 
 @camera_parser.command()
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
@@ -36,17 +37,19 @@ async def shutter(command, cameras, shutter_position):
         failed = False
         status = {}
         for camera in cameras:
-            if not hasattr(camera,"get_shutter"):
+            if not hasattr(camera, "get_shutter"):
                 status[camera.name] = {"shutter": "unavailable"}
                 continue
-                
+
             if shutter_position is None:
                 shutter_now = await camera.get_shutter()
                 status[camera.name] = {"shutter": "open" if shutter_now else "closed"}
             else:
                 try:
                     await camera.set_shutter(shutter_position == "open")
-                    status[camera.name] = {"shutter": "open" if shutter_now else "closed"}
+                    status[camera.name] = {
+                        "shutter": "open" if shutter_now else "closed"
+                    }
 
                 except CameraError as ee:
                     status[camera.name] = {"shutter": "unknown"}

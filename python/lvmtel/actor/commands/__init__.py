@@ -11,8 +11,8 @@ import os
 
 import click
 from clu.command import Command
-
-from clu.parsers.click import CluGroup, command_parser, help_, ping, version, get_schema
+from clu.parsers.click import (CluGroup, command_parser,
+                               get_schema, help_, ping, version)
 from cluplus.parsers.click import __commands
 
 
@@ -39,7 +39,7 @@ files = [
     file_ for file_ in glob.glob("**/*.py", recursive=True) if file_ not in exclusions
 ]
 
-print (files)
+print(files)
 
 for file_ in files:
     modname = file_[0:-3].replace("/", ".")

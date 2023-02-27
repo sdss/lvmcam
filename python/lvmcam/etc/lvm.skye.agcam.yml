@@ -1,64 +1,63 @@
+camera_type: !env ${LVM_CAM_TYPE:-araviscam} # types: skymakercam, araviscam
 
-camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
-
-basename: !env "lvm.skye.agcam.{camera.name}_{num:08d}.fits"
+basename: !env 'lvm.skye.agcam.{camera.name}_{num:08d}.fits'
 dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/skye/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
 camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
-    lvm.skye.pwi:
-        ra_j2000_hours: ra_h
-        dec_j2000_degs: dec_d
-        altitude_degs: alt_d
-        azimuth_degs: az_d
-        field_angle_here_degs: field_angle_d
+  lvm.skye.pwi:
+    ra_j2000_hours: ra_h
+    dec_j2000_degs: dec_d
+    altitude_degs: alt_d
+    azimuth_degs: az_d
+    field_angle_here_degs: field_angle_d
 
-    lvm.skye.foc:
-        Position: foc_dt
+  lvm.skye.foc:
+    Position: foc_dt
 
-    lvm.skye.km:
-        Position: km_d
-        DeviceEncoder.Position: km_s
+  lvm.skye.km:
+    Position: km_d
+    DeviceEncoder.Position: km_s
 
-    lvm.tel:
-        temperature: bentemp
-        humidity: benhum
-        pressure: benpress
+  lvm.tel:
+    temperature: bentemp
+    humidity: benhum
+    pressure: benpress
 
 cameras:
-    east:
-        descr: "Guider Camera Skye East"
+  east:
+    descr: 'Guider Camera Skye East'
 
-        # araviscam
-        uid: 19283198
-        ip: 10.8.38.113
-        
-        genicam_params:
-            bool:
-                ReverseX: True
+    # araviscam
+    uid: 19283198
+    ip: 10.8.38.113
 
-        # skymakercam
-        instpar: lvm_age_cam
+    genicam_params:
+      bool:
+        ReverseX: True
 
-    west:
-        descr: "Guider Camera Skye West"
+    # skymakercam
+    instpar: lvm_age_cam
 
-        # araviscam
-        uid: 19283179
-        ip: 10.8.38.114
+  west:
+    descr: 'Guider Camera Skye West'
 
-        genicam_params:
-            bool:
-                ReverseY: True
+    # araviscam
+    uid: 19283179
+    ip: 10.8.38.114
 
-        # skymakercam
-        instpar: lvm_agw_cam
+    genicam_params:
+      bool:
+        ReverseY: True
+
+    # skymakercam
+    instpar: lvm_agw_cam
 
 actor:
-    name: lvm.skye.agcam
-    host: localhost
-    port: 5672
-    log_dir: '~/tmp/log'
-    #default_cameras:
-       #- west
+  name: lvm.skye.agcam
+  host: localhost
+  port: 5672
+  log_dir: '~/tmp/log'
+  #default_cameras:
+  #- west

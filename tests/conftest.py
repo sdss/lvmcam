@@ -12,10 +12,7 @@ more information.
 
 import os
 
-# import pathlib
-
 import clu.testing
-
 # import numpy
 import pytest
 from clu.actor import AMQPBaseActor
@@ -24,6 +21,13 @@ from sdsstools import merge_config, read_yaml_file
 
 from lvmcam import config
 from lvmcam.actor import LvmcamActor
+
+
+# import pathlib
+
+
+
+
 
 
 @pytest.fixture()

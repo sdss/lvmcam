@@ -7,12 +7,11 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
-
+from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraError
 
-from basecam.actor.tools import get_cameras
-
 from . import camera_parser
+
 
 __all__ = ["area"]
 
@@ -39,19 +38,19 @@ async def area(command, cameras, area, reset):
     if not cameras:  # pragma: no cover
         return
 
-    status={}
+    status = {}
     failed = False
     for camera in cameras:
         if not area and reset is False:
-            #report_area(command, camera, tuple(await camera.get_image_area()))
+            # report_area(command, camera, tuple(await camera.get_image_area()))
             area = await camera.get_image_area()
-            status[camera.name]={"area": area}
+            status[camera.name] = {"area": area}
         else:
             if reset:
                 area = None
             try:
                 await camera.set_image_area(area)
-                status[camera.name]={"area": tuple(await camera.get_image_area())}
+                status[camera.name] = {"area": tuple(await camera.get_image_area())}
             except CameraError as ee:
                 command.error(error=dict(camera=camera.name, error=str(ee)))
                 failed = True

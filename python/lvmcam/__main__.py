@@ -16,14 +16,12 @@ import click
 from click_default_group import DefaultGroup
 from clu.tools import cli_coro as cli_coro_lvm
 
-from sdsstools.daemonizer import DaemonGroup
-
-from sdsstools.logger import StreamFormatter  
 from sdsstools import get_logger, read_yaml_file
-from sdsstools.logger import SDSSLogger
-
+from sdsstools.daemonizer import DaemonGroup
+from sdsstools.logger import SDSSLogger, StreamFormatter
 
 from lvmcam.actor.actor import LvmcamActor
+
 
 @click.group(cls=DefaultGroup, default="actor")
 @click.option(
@@ -57,7 +55,12 @@ from lvmcam.actor.actor import LvmcamActor
 def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
     """lvm controller"""
 
-    ctx.obj = {"verbose": verbose, "config_file": config_file, "rmq_url": rmq_url, "simulate": simulate}
+    ctx.obj = {
+        "verbose": verbose,
+        "config_file": config_file,
+        "rmq_url": rmq_url,
+        "simulate": simulate,
+    }
 
 
 @lvmcam.group(cls=DaemonGroup, prog="lvmcam_actor", workdir=os.getcwd())
@@ -66,9 +69,13 @@ def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
 async def actor(ctx):
     """Runs the actor."""
 
-
     config_file = ctx.obj["config_file"]
-    lvmcam_obj = LvmcamActor.from_config(config_file, url=ctx.obj["rmq_url"], verbose=ctx.obj["verbose"], simulate=ctx.obj["simulate"])
+    lvmcam_obj = LvmcamActor.from_config(
+        config_file,
+        url=ctx.obj["rmq_url"],
+        verbose=ctx.obj["verbose"],
+        simulate=ctx.obj["simulate"],
+    )
 
     await lvmcam_obj.start()
     await lvmcam_obj.run_forever()

@@ -8,27 +8,19 @@
 from __future__ import annotations
 
 import abc
-from math import nan
-
 from datetime import datetime
-
+from math import nan
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from basecam.exposure import Exposure
-from basecam.models import (
-    Card,
-    CardGroup,
-    Extension,
-    FITSModel,
-    HeaderModel,
-    MacroCard,
-    WCSCards,
-)
+from basecam.models import (Card, CardGroup, Extension, FITSModel,
+                            HeaderModel, MacroCard, WCSCards)
 from clu.legacy.types.pvt import PVT
-from sdsstools.time import get_sjd
-from sdsstools import get_logger
-
 from cluplus.proxy import flatten
+
+from sdsstools import get_logger
+from sdsstools.time import get_sjd
+
 
 class ScraperDataStore(object):
     def __init__(self, actor, config={}):
@@ -45,7 +37,7 @@ class ScraperDataStore(object):
         return self.data.__repr__()
 
     def keys(self):
-         return self.data.keys()
+        return self.data.keys()
 
     def __getitem__(self, key):
         return self.get(key)
@@ -58,48 +50,113 @@ class ScraperDataStore(object):
 
     def set(self, key, val, timestamp=datetime.utcnow()):
         self.data[key] = (val, timestamp)
-        
+
     def get(self, key, default=None):
         return self.data.get(key, (default, None))[0]
-        
-    def update(self, data:dict, timestamp=datetime.utcnow()):
-        self.data.update({k:(v, timestamp) for k, v in data.items()})
 
-    def update_with_actor_key_maps(self, actor, data:dict, timestamp=datetime.utcnow()):
+    def update(self, data: dict, timestamp=datetime.utcnow()):
+        self.data.update({k: (v, timestamp) for k, v in data.items()})
+
+    def update_with_actor_key_maps(
+        self, actor, data: dict, timestamp=datetime.utcnow()
+    ):
         akm = self.actor_key_maps.get(actor, None)
-        self.data.update({akm[k]:(v, timestamp) for k, v in flatten(data).items() if k in akm.keys()})
+        self.data.update(
+            {
+                akm[k]: (v, timestamp)
+                for k, v in flatten(data).items()
+                if k in akm.keys()
+            }
+        )
 
     def items(self):
         return self.data.items()
 
+
 def config_get(config, key, default=None):
-    """ DOESNT work for keys with dots !!! """
+    """DOESNT work for keys with dots !!!"""
+
     def g(config, key, d=None):
-        k = key.split('.', maxsplit=1)
-        c = config.get(k[0] if not k[0].isnumeric() else int(k[0]))  # keys can be numeric
-        return d if c is None else c if len(k) < 2 else g(c, k[1], d) if type(c) is dict else d
+        k = key.split(".", maxsplit=1)
+        c = config.get(
+            k[0] if not k[0].isnumeric() else int(k[0])
+        )  # keys can be numeric
+        return (
+            d
+            if c is None
+            else c
+            if len(k) < 2
+            else g(c, k[1], d)
+            if type(c) is dict
+            else d
+        )
+
     return g(config, key, default)
 
 
 class ScraperParamCards(MacroCard):
     def macro(self, exposure, context={}):
         from sdsstools.logger import get_logger
+
         logger = get_logger("ScraperParamCards")
         logger.warning(f"########### {exposure.scraper_store}")
 
-#        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
+        #        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
 
         return [
-            ('RA', exposure.scraper_store.get('ra_h', 0.0)*15, '[deg] Right Ascension of the observation'),
-            ('DEC', exposure.scraper_store.get('dec_d', 90.0), '[deg] Declination of the observation'),
-            ('ALT', exposure.scraper_store.get('alt_d', 0.0), '[deg] pointing Altitude telescope'),
-            ('AZ', exposure.scraper_store.get('az_d', 90.0), '[deg] pointing Azimuth telescope'),
-            ('FIELDROT', exposure.scraper_store.get('field_angle_d', -999.9), '[deg] Cassegrain Field angle from PW'),
-            ('KMIRDROT', exposure.scraper_store.get('km_d', -999.9), '[deg] Rotation angle kmirror'),
-            ('KMIRSTEP', exposure.scraper_store.get('km_s', -999.9), '[steps] position kmirror'),
-            ('FOCUSDT', exposure.scraper_store.get('foc_dt', -999.9), '[dt] Focus stage position'),
-            ('BENTEMP', exposure.scraper_store.get('bentemp', -999.9), '[degC] Temperature bench'),
-            ('BENHUM', exposure.scraper_store.get('benhum', -999.9), '[] Humidity bench'),
-            ('BENTEMP', exposure.scraper_store.get('benpress', -999.9), '[hPa] Pressure bench'),
+            (
+                "RA",
+                exposure.scraper_store.get("ra_h", 0.0) * 15,
+                "[deg] Right Ascension of the observation",
+            ),
+            (
+                "DEC",
+                exposure.scraper_store.get("dec_d", 90.0),
+                "[deg] Declination of the observation",
+            ),
+            (
+                "ALT",
+                exposure.scraper_store.get("alt_d", 0.0),
+                "[deg] pointing Altitude telescope",
+            ),
+            (
+                "AZ",
+                exposure.scraper_store.get("az_d", 90.0),
+                "[deg] pointing Azimuth telescope",
+            ),
+            (
+                "FIELDROT",
+                exposure.scraper_store.get("field_angle_d", -999.9),
+                "[deg] Cassegrain Field angle from PW",
+            ),
+            (
+                "KMIRDROT",
+                exposure.scraper_store.get("km_d", -999.9),
+                "[deg] Rotation angle kmirror",
+            ),
+            (
+                "KMIRSTEP",
+                exposure.scraper_store.get("km_s", -999.9),
+                "[steps] position kmirror",
+            ),
+            (
+                "FOCUSDT",
+                exposure.scraper_store.get("foc_dt", -999.9),
+                "[dt] Focus stage position",
+            ),
+            (
+                "BENTEMP",
+                exposure.scraper_store.get("bentemp", -999.9),
+                "[degC] Temperature bench",
+            ),
+            (
+                "BENHUM",
+                exposure.scraper_store.get("benhum", -999.9),
+                "[] Humidity bench",
+            ),
+            (
+                "BENTEMP",
+                exposure.scraper_store.get("benpress", -999.9),
+                "[hPa] Pressure bench",
+            ),
         ]
-

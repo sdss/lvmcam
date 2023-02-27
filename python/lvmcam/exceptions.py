@@ -13,8 +13,11 @@ from __future__ import absolute_import, division, print_function
 
 class LvmcamError(Exception):
     """A custom core Lvmcam exception"""
+
     pass
+
 
 class LvmcamNotConnected(LvmcamError):
     """Camera(s) not connected."""
+
     pass

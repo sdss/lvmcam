@@ -7,16 +7,14 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import asyncio
+from math import nan
 
 import click
-
-from basecam.exceptions import CameraError
-
 from basecam.actor.tools import get_cameras
+from basecam.exceptions import CameraError
 
 from . import camera_parser
 
-from math import nan
 
 __all__ = ["temperature"]
 
@@ -39,7 +37,7 @@ async def temperature(command, cameras, temperature):
 
         status = {}
         for camera in cameras:
-            if not hasattr(camera,"get_temperature"):
+            if not hasattr(camera, "get_temperature"):
                 status[camera.name] = {"temperature": nan}
                 continue
 
@@ -56,7 +54,7 @@ async def temperature(command, cameras, temperature):
         failed = False
         for ii, result in enumerate(results):
             if isinstance(result, CameraError):
-                command.error(error=dict(camera = cameras[ii].name, error=str(result)))
+                command.error(error=dict(camera=cameras[ii].name, error=str(result)))
                 failed = True
             else:
                 status[camera.name] = {"ccd_temp": await camera.get_temperature()}

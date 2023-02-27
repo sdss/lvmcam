@@ -1,63 +1,62 @@
+camera_type: !env ${LVM_CAM_TYPE:-araviscam} # types: skymakercam, araviscam
 
-camera_type: !env ${LVM_CAM_TYPE:-araviscam}  # types: skymakercam, araviscam
-
-basename: !env "lvm.skyw.agcam.{camera.name}_{num:08d}.fits"
+basename: !env 'lvm.skyw.agcam.{camera.name}_{num:08d}.fits'
 dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/skyw/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
 
 camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
-    lvm.skyw.pwi:
-        ra_j2000_hours: ra_h
-        dec_j2000_degs: dec_d
-        altitude_degs: alt_d
-        azimuth_degs: az_d
-        field_angle_here_degs: field_angle_d
+  lvm.skyw.pwi:
+    ra_j2000_hours: ra_h
+    dec_j2000_degs: dec_d
+    altitude_degs: alt_d
+    azimuth_degs: az_d
+    field_angle_here_degs: field_angle_d
 
-    lvm.skyw.foc:
-        Position: foc_dt
+  lvm.skyw.foc:
+    Position: foc_dt
 
-    lvm.skyw.km:
-        Position: km_d
-        DeviceEncoder.Position: km_s
+  lvm.skyw.km:
+    Position: km_d
+    DeviceEncoder.Position: km_s
 
-    lvm.tel:
-        temperature: bentemp
-        humidity: benhum
-        pressure: benpress
+  lvm.tel:
+    temperature: bentemp
+    humidity: benhum
+    pressure: benpress
 
 cameras:
-    east:
-        descr: "Guider Camera SkyW East"
+  east:
+    descr: 'Guider Camera SkyW East'
 
-        # araviscam
-        uid: 19283195
-        ip: 10.8.38.115
-        
-        genicam_params:
-            bool:
-                ReverseX: True
+    # araviscam
+    uid: 19283195
+    ip: 10.8.38.115
 
-        # skymakercam
-        instpar: lvm_age_cam
-    west:
-        descr: "Guider Camera SkyW West"
+    genicam_params:
+      bool:
+        ReverseX: True
 
-        # araviscam
-        uid: 19283190
-        ip: 10.8.38.116
+    # skymakercam
+    instpar: lvm_age_cam
+  west:
+    descr: 'Guider Camera SkyW West'
 
-        genicam_params:
-            bool:
-                ReverseY: True
+    # araviscam
+    uid: 19283190
+    ip: 10.8.38.116
 
-        # skymakercam
-        instpar: lvm_agw_cam
+    genicam_params:
+      bool:
+        ReverseY: True
+
+    # skymakercam
+    instpar: lvm_agw_cam
 
 actor:
-    name: lvm.skyw.agcam
-    host: localhost
-    port: 5672
-    log_dir: '~/tmp/log'
-    #default_cameras:
-       #- west
+  name: lvm.skyw.agcam
+  host: localhost
+  port: 5672
+  log_dir: '~/tmp/log'
+  #default_cameras:
+  #- west

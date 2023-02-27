@@ -7,16 +7,15 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
-
-from clu.parsers.click import CluCommand
-
-from basecam.exceptions import CameraError
-
 from basecam.actor.tools import get_cameras
+from basecam.exceptions import CameraError
+from clu.parsers.click import CluCommand
 
 from . import camera_parser
 
+
 __all__ = ["binning"]
+
 
 @camera_parser.command()
 @click.argument("CAMERAS", nargs=-1, type=str, required=False)
@@ -38,11 +37,11 @@ async def binning(command, cameras, binning):
         for camera in cameras:
             if not binning:
                 binning = list(await camera.get_binning())
-                status[camera.name] = { "binning": binning }
+                status[camera.name] = {"binning": binning}
             else:
                 try:
                     await camera.set_binning(*binning)
-                    status[camera.name] = { "binning": binning }
+                    status[camera.name] = {"binning": binning}
 
                 except (CameraError, AssertionError) as ee:
                     command.error(error=dict(camera=camera.name, error=str(ee)))

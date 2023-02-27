@@ -11,9 +11,10 @@ import importlib
 import os
 
 import click
-#from basecam.actor.commands import camera_parser
-from clu.parsers.click import CluGroup, help_, ping, version, get_schema
+# from basecam.actor.commands import camera_parser
+from clu.parsers.click import CluGroup, get_schema, help_, ping, version
 from cluplus.parsers.click import __commands
+
 
 # we do create our own parser to remove the basecam caommands
 @click.group(cls=CluGroup)
