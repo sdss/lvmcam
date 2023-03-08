@@ -13,6 +13,10 @@ scraper:
         altitude_degs: alt_d
         azimuth_degs: az_d
         field_angle_here_degs: field_angle_d
+        axis0.position_degs: axis0_position_d
+        axis0.position_timestamp: axis0_position_timestamp_s
+        axis1.position_degs: axis1_position_d
+        axis1.position_timestamp: axis1_position_timestamp_s
 
     lvm.spec.foc:
         Position: foc_dt
@@ -22,9 +26,9 @@ scraper:
         DeviceEncoder.Position: km_s
 
     lvm.tel:
-        temperature: bentemp
-        humidity: benhum
-        pressure: benpress
+        temperature: bentempi
+        temperature_enclosure: bentempo
+        humidity_enclosure: benhumo
 
 cameras:
     east:
