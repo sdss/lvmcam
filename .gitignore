@@ -120,5 +120,3 @@ ENV/
 **/assets/
 
 python/lvmcam/araviscam/aravis.py
-
-poetry.lock

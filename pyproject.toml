@@ -39,7 +39,6 @@ container_autotuner ="container:autotuner"
 python = ">3.7,<3.11"
 sdss-cluplus = ">=0.2.10"
 sdss-araviscam = ">=0.1.91"
-sdss-skymakercam = ">=0.0.6"
 
 [tool.poetry.dev-dependencies]
 ipython = ">=7.11.0"
