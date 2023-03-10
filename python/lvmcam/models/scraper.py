@@ -13,15 +13,8 @@ from math import nan
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from basecam.exposure import Exposure
-from basecam.models import (
-    Card,
-    CardGroup,
-    Extension,
-    FITSModel,
-    HeaderModel,
-    MacroCard,
-    WCSCards,
-)
+from basecam.models import (Card, CardGroup, Extension, FITSModel,
+                            HeaderModel, MacroCard, WCSCards)
 from clu.legacy.types.pvt import PVT
 from cluplus.proxy import flatten
 
