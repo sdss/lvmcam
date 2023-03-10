@@ -7,6 +7,7 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
+
 from basecam.actor.tools import get_cameras
 
 from . import camera_parser
@@ -29,24 +30,24 @@ async def status(command, cameras):
         for camera in cameras:
             try:
                 status[camera.name] = camera.get_status(update=True)
-            except Exception as ex:
+            except Exception:
                 pass
 
             try:
                 status[camera.name]["binning"] = list(await camera.get_binning())
-            except Exception as ex:
+            except Exception:
                 pass
 
             try:
                 status[camera.name]["area"] = tuple(await camera.get_image_area())
-            except Exception as ex:
+            except Exception:
                 pass
 
             try:
                 status[camera.name]["state"] = (
                     "online" if camera.connected else "offline"
                 )
-            except Exception as ex:
+            except Exception:
                 pass
 
         return command.finish(status)

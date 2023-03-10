@@ -8,22 +8,14 @@
 
 import math
 
-import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.ndimage
-import sep
-from astropy.coordinates import SkyCoord
-from lvmtipo.fiber import Fiber
+from matplotlib import use as plt_use
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 from lvmtipo.siderostat import Siderostat
 from lvmtipo.site import Site
 from lvmtipo.target import Target
-from matplotlib import use as plt_use
-from matplotlib.colors import LogNorm, PowerNorm
-from matplotlib.patches import Arrow, Ellipse, Rectangle
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-from scipy.ndimage.filters import gaussian_filter, gaussian_gradient_magnitude
-
 from sdsstools.logger import get_logger
 
 
@@ -31,7 +23,6 @@ class PlotIt:
     def __init__(self, title=["west, east"], site="LCO", logger=get_logger("plotit")):
         self.log = logger
 
-        #        plt_use('TkAgg')
         plt_use("Qt5Agg")
         self.fig = plt.figure(figsize=(8, 10))
         self.ax = [None, None]
@@ -58,20 +49,18 @@ class PlotIt:
     def update(self, num, data, radec, kmangle):
         mean, sigma, min, max = np.mean(data), np.std(data), np.min(data), np.max(data)
         lperc, uperc = np.percentile(data, 5), np.percentile(data, 99.95)
-        gamma = 0.6
+
         vmin, vmax = mean - sigma, uperc
 
         self.log.debug(f"m/s {mean}/{sigma} {lperc}/{uperc} ")
         self.imgshape = data.shape
         if self.ax_img[num]:
-            # we have to set clim to vmax first, otherwise the real values later will be ignored.
+            # we have to set clim to vmax first, otherwise the real values
+            # later will be ignored.
             if self.mean[num] > mean + sigma or self.mean[num] < mean - sigma:
                 self.ax_img[num].set_clim(vmin=min, vmax=max)
             self.ax_img[num].set_data(data)
             if self.mean[num] > mean + sigma or self.mean[num] < mean - sigma:
-                #                self.ax_img[num].set_norm(LogNorm(vmin=mean-sigma, vmax=mean+sigma))
-                #                self.ax_img[num].set_norm(LogNorm(vmin=mean-sigma,vmax=mean+sigma))
-                #                self.ax_img[num].set_norm(PowerNorm(gamma, vmin=mean-sigma, vmax=uperc))
                 self.ax_img[num].set_clim(vmin=vmin, vmax=vmax)
                 self.mean[num], self.sigma[num], self.lperc[num], self.uperc[num] = (
                     mean,
@@ -83,11 +72,13 @@ class PlotIt:
             ax_divider = make_axes_locatable(self.ax[num])
             cax = ax_divider.append_axes("right", size="3%", pad=0.05)
             self.ax_img[num] = self.ax[num].imshow(
-                data, vmin=vmin, vmax=vmax, interpolation="nearest", origin="lower"
+                data,
+                vmin=vmin,
+                vmax=vmax,
+                interpolation="nearest",
+                origin="lower",
             )
-            #            self.ax_img[num] = self.ax[num].imshow(data, norm=LogNorm(vmin=vmin, vmax=vmax), interpolation='nearest', origin='lower')
-            #            self.ax_img[num] = self.ax[num].imshow(data, norm=LogNorm(vmin=vmin, vmax=vmax ), interpolation='nearest', origin='lower')
-            #            self.ax_img[num] = self.ax[num].imshow(data, norm=PowerNorm(gamma, vmin=vmin, vmax=vmax), interpolation='nearest', origin='lower')
+
             self.fig.colorbar(self.ax_img[num], cax=cax, orientation="vertical")
             self.mean[num], self.sigma[num], self.lperc[num], self.uperc[num] = (
                 mean,
@@ -121,16 +112,13 @@ class PlotIt:
         if self.annoE[num]:
             self.annoE[num].remove()
 
-        l = self.imgshape[0] / 10
-        (
-            x,
-            y,
-        ) = (
-            l + 20,
-            self.imgshape[0] - l - 20,
+        ll = self.imgshape[0] / 10
+        (x, y) = (
+            ll + 20,
+            self.imgshape[0] - ll - 20,
         )
-        print(f"{self.imgshape} {x} {y} {l}")
-        lx, ly = rotate(sky_angle, (0, l))
+        print(f"{self.imgshape} {x} {y} {ll}")
+        lx, ly = rotate(sky_angle, (0, ll))
         self.annoN[num] = self.ax[num].annotate(
             "N",
             xy=(x, y),
@@ -142,7 +130,7 @@ class PlotIt:
             weight="bold",
             arrowprops=dict(arrowstyle="<-", lw=2, color="w"),
         )
-        lx, ly = rotate(sky_angle, (l, 0))
+        lx, ly = rotate(sky_angle, (ll, 0))
         self.annoE[num] = self.ax[num].annotate(
             "E",
             xy=(x, y),

@@ -8,29 +8,19 @@
 
 import argparse
 import asyncio
-import random
-
-# hard exit
 import signal
-import string
-import time
 import uuid
-from datetime import datetime as dt
 
 import aio_pika as apika
+import astropy.units as u
+from astropy.coordinates import SkyCoord
 from astropy.io import fits
+from simple_plotit import PlotIt
+
 from clu.client import AMQPClient, AMQPReply
 
 
-# from astropy.utils import iers
-# iers.conf.auto_download = False
-
-
 signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-import astropy.units as u
-from astropy.coordinates import SkyCoord
-from simple_plotit import PlotIt
 
 
 class AMQPClientUI(AMQPClient):

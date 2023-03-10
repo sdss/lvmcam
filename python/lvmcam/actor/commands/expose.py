@@ -10,9 +10,9 @@ import asyncio
 from functools import partial
 
 import click
+
 from basecam.actor.tools import get_cameras
 from basecam.events import CameraEvent
-from basecam.exceptions import ExposureError
 from cluplus.proxy import Proxy
 
 from . import camera_parser

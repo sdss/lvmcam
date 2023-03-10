@@ -7,19 +7,10 @@
 
 from __future__ import annotations
 
-import abc
 from datetime import datetime
-from math import nan
-from typing import Any, Dict, List, Optional, Tuple, Union
 
-from basecam.exposure import Exposure
-from basecam.models import (Card, CardGroup, Extension, FITSModel,
-                            HeaderModel, MacroCard, WCSCards)
-from clu.legacy.types.pvt import PVT
+from basecam.models import MacroCard
 from cluplus.proxy import flatten
-
-from sdsstools import get_logger
-from sdsstools.time import get_sjd
 
 
 class ScraperDataStore(object):

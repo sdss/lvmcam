@@ -7,28 +7,13 @@
 
 from __future__ import annotations
 
-import abc
-from datetime import datetime
-from math import cos, nan, radians, sin
-from typing import Any, Dict, List, Optional, Tuple, Union
-
 import astropy.coordinates
 import astropy.time
 import astropy.units as u
 from astropy.utils import iers
-from basecam.exposure import Exposure
-from basecam.models import (Card, CardGroup, Extension, FITSModel,
-                            HeaderModel, MacroCard, WCSCards)
-from clu.legacy.types.pvt import PVT
-from lvmtipo.ambient import Ambient
-from lvmtipo.fiber import Fiber
-from lvmtipo.kmirror import Kmirror
-from lvmtipo.siderostat import Siderostat
-from lvmtipo.site import Site
-from lvmtipo.target import Target
 
-from sdsstools import get_logger
-from sdsstools.time import get_sjd
+from basecam.models import MacroCard
+from lvmtipo.target import Target
 
 
 iers.conf.auto_download = False
@@ -60,8 +45,6 @@ def config_get(config, key, default=None):
 
 class WcsCards(MacroCard):
     def macro(self, exposure, context={}):
-        logger = get_logger("ScraperParamCards")
-
         ra_d = exposure.scraper_store.get("ra_h", 0.0) * 15
         dec_d = exposure.scraper_store.get("dec_d", 90.0)
         target = Target(
@@ -76,10 +59,14 @@ class WcsCards(MacroCard):
             exposure.scraper_store.get("km_s", 0.0),
             exposure.camera.name,
             config_get(
-                exposure.camera.camera_params, "genicam_params.bool.ReverseX", False
+                exposure.camera.camera_params,
+                "genicam_params.bool.ReverseX",
+                False,
             ),
             config_get(
-                exposure.camera.camera_params, "genicam_params.bool.ReverseY", False
+                exposure.camera.camera_params,
+                "genicam_params.bool.ReverseY",
+                False,
             ),
             exposure.camera.actor.kmirror,
             pixsize=exposure.camera.pixsize,

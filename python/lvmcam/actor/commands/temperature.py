@@ -10,6 +10,7 @@ import asyncio
 from math import nan
 
 import click
+
 from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraError
 

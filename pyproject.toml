@@ -39,6 +39,7 @@ container_autotuner ="container:autotuner"
 python = ">3.7,<3.11"
 sdss-cluplus = ">=0.2.10"
 sdss-araviscam = ">=0.1.91"
+sdss-skymakercam = ">=0.0.6"
 
 [tool.poetry.dev-dependencies]
 ipython = ">=7.11.0"
@@ -57,16 +58,19 @@ rstcheck = ">=3.3.1"
 Sphinx = ">=3.0.0"
 black = ">=23.1.0"
 
+[tool.black]
+line-length = 88
+target-version = ['py311']
+fast = true
+
 [tool.isort]
-line_length = 79
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "SDSS", "FIRSTPARTY", "LOCALFOLDER"]
+profile = "black"
+sections = ["FUTURE", "STDLIB", "TYPING", "THIRDPARTY", "SDSS", "FIRSTPARTY", "LOCALFOLDER"]
 default_section = "THIRDPARTY"
 known_first_party = "lvmcam"
-known_sdss = ["sdsstools"]
-balanced_wrapping = true
-include_trailing_comma = false
+known_typing = ["typing"]
+known_sdss = ["sdsstools", "araviscam", "skymakercam", "clu", "lvmtipo", "basecam", "cluplus"]
 lines_after_imports = 2
-use_parentheses = true
 
 [tool.pytest.ini_options]
 addopts = "--cov lvmcam --cov-report xml --cov-report html --cov-report term"
@@ -83,8 +87,5 @@ exclude_lines = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.0.0", "setuptools>=49.6.0"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-#[tool.poetry.scripts]
-#run = "simple_monitor.py:main"

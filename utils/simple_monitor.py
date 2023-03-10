@@ -10,26 +10,18 @@
 
 import argparse
 import asyncio
-import random
-
-# hard exit
 import signal
-import string
-import time
 import uuid
 from datetime import datetime as dt
-from typing import Dict
 
 import aio_pika as apika
 import yaml
 
-
-signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-import astropy.units as u
-from astropy.coordinates import SkyCoord
 from clu.client import AMQPClient, AMQPReply
 from cluplus.proxy import flatten
+
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def default(tel):
@@ -130,7 +122,7 @@ class AMQPMonitor(AMQPClient):
             timestamp = (
                 apika.message.decode_timestamp(message.timestamp)
                 if message.timestamp
-                else datetime.utcnow()
+                else dt.utcnow()
             )
             self.scraper_store.update_with_actor_key_maps(
                 reply.sender, flatten(reply.body), timestamp

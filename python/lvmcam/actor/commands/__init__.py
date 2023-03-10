@@ -1,17 +1,19 @@
 # /usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr), Sumin Lee(lxmark888@khu.ac.kr)
+# @Author: Changgon Kim, Taeeun Kim, Mingyeong YANG (mingyeong@khu.ac.kr), Sumin Lee(lxmark888@khu.ac.kr)  # noqa
 # @Date: 2021-07-14
 # @Filename: __init__.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
+
+# flake8: noqa
 
 import glob
 import importlib
 import os
 
 import click
-# from basecam.actor.commands import camera_parser
+
 from clu.parsers.click import CluGroup, get_schema, help_, ping, version
 from cluplus.parsers.click import __commands
 

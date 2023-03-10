@@ -7,6 +7,7 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import click
+
 from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraError
 
@@ -51,7 +52,7 @@ async def shutter(command, cameras, shutter_position):
                         "shutter": "open" if shutter_now else "closed"
                     }
 
-                except CameraError as ee:
+                except CameraError:
                     status[camera.name] = {"shutter": "unknown"}
                     failed = True
 

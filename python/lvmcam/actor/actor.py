@@ -9,40 +9,36 @@
 from copy import deepcopy
 from datetime import datetime
 from logging import DEBUG
-from types import SimpleNamespace as sn
 
 import aio_pika as apika
 from astropy.utils import iers
-from basecam import BaseCamera
+
+from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam.actor import BaseCameraActor
 from basecam.exposure import ImageNamer
 from basecam.models import Extension, FITSModel, basic_header_model
 from clu import AMQPActor
 from clu.client import AMQPReply
 from cluplus.configloader import Loader
-from cluplus.proxy import flatten
 from lvmtipo.ambient import Ambient
-from lvmtipo.fiber import Fiber
 from lvmtipo.kmirror import Kmirror
 from lvmtipo.siderostat import Siderostat
 from lvmtipo.site import Site
-from lvmtipo.target import Target
-
-from sdsstools import get_logger, read_yaml_file
-from sdsstools.logger import SDSSLogger, StreamFormatter
+from sdsstools.logger import StreamFormatter
+from skymakercam import SkymakerCamera, SkymakerCameraSystem
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
-# from lvmcam.model import fits_model, lvmcam_fz_fits_model
-from lvmcam.models import (CameraCards, GenicamCards, ScraperDataStore,
-                           ScraperParamCards, WcsCards)
+from lvmcam.models import (
+    CameraCards,
+    GenicamCards,
+    ScraperDataStore,
+    ScraperParamCards,
+    WcsCards,
+)
 
 
 iers.conf.auto_download = False
-
-
-from araviscam import BlackflyCamera, BlackflyCameraSystem
-from skymakercam import SkymakerCamera, SkymakerCameraSystem
 
 
 camera_types = {
@@ -112,7 +108,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         if kwargs["verbose"]:
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(
-                fmt="%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m"
+                fmt="%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: "
+                "\033[1m%(message)s\033[21m"
             )
 
         self.log.info(f"Camera type: {self.camera_type}")
@@ -142,7 +139,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         homeIsWest = False
 
         self.log.info(
-            f"Site: {config.get('site', 'LCO')}, homeOffset: {homeOffset}, homeIsWest: {homeIsWest}, azang: {azang}, medSign {medSign}"
+            f"Site: {config.get('site', 'LCO')}, homeOffset: {homeOffset}, "
+            f"homeIsWest: {homeIsWest}, azang: {azang}, medSign {medSign}"
         )
 
         self.kmirror = Kmirror(home_is_west=homeIsWest, home_offset=homeOffset)
@@ -193,11 +191,6 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         """Stop actor and remove cameras."""
         await super().stop()
 
-        for camera in self.camera_system._config:
-            cam = await self.camera_system.remove_camera(
-                name=self.camera_system._config[camera]["uid"]
-            )
-
         self.log.debug("Stop done")
 
     async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
@@ -213,12 +206,12 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 if message.timestamp
                 else datetime.utcnow()
             )
-            #            self.log.debug(f"{flatten(reply.body)}")
-            self.scraper_store.update_with_actor_key_maps(
-                reply.sender, reply.body, timestamp
-            )
 
-        #        self.log.debug(f"{self.scraper_store.data}")
+            self.scraper_store.update_with_actor_key_maps(
+                reply.sender,
+                reply.body,
+                timestamp,
+            )
 
         return reply
 
@@ -227,7 +220,10 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         """Creates an actor from hierachical configuration file(s)."""
 
         instance = super(LvmcamActor, cls).from_config(
-            config, loader=Loader, *args, **kwargs
+            config,
+            loader=Loader,
+            *args,
+            **kwargs,
         )
 
         if kwargs["verbose"]:

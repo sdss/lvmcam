@@ -1,6 +1,3 @@
-import asyncio
-
-import click
 from basecam.actor.commands import camera_parser
 from clu.command import Command
 

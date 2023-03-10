@@ -6,25 +6,16 @@
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
 import asyncio
-from copy import deepcopy
-from datetime import datetime
 from logging import DEBUG
-from types import SimpleNamespace as sn
 
-import aio_pika as apika
-from clu import AMQPActor
-from clu.client import AMQPReply
-from cluplus.configloader import Loader
 from lvmtel import __version__
 
-from sdsstools import get_logger, read_yaml_file
-from sdsstools.logger import SDSSLogger, StreamFormatter
+from clu import AMQPActor
+from cluplus.configloader import Loader
+from sdsstools.logger import StreamFormatter
 
 from .commands import parser as command_parser
 from .commands.status import statusTick
-
-
-# import serial
 
 
 class LvmtelActor(AMQPActor):
@@ -49,7 +40,6 @@ class LvmtelActor(AMQPActor):
                 "dewpoint_enclosure": {"type": "number"},
                 "humidity": {"type": "number"},
                 "temperature_enclosure": {"type": "number"},
-                "dewpoint_enclosure": {"type": "number"},
                 "humidity_enclosure": {"type": "number"},
             },
             "additionalProperties": False,
@@ -58,7 +48,8 @@ class LvmtelActor(AMQPActor):
         if kwargs["verbose"]:
             self.log.sh.setLevel(DEBUG)
             self.log.sh.formatter = StreamFormatter(
-                fmt="%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: \033[1m%(message)s\033[21m"
+                fmt="%(asctime)s %(name)s %(levelname)s %(filename)s:%(lineno)d: "
+                "\033[1m%(message)s\033[21m"
             )
 
         self.statusLock = asyncio.Lock()
@@ -70,10 +61,6 @@ class LvmtelActor(AMQPActor):
         await super().start()
 
         self.load_schema(self.schema, is_file=False)
-
-        #       self.sensor = serial.Serial('/dev/ttyUSB0', timeout=2)
-        #       self.sensor.readline()
-
         self.statusTask = self.loop.create_task(statusTick(self, 5.0))
 
         self.log.debug("Start done")

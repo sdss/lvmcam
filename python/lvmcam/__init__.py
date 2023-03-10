@@ -7,9 +7,9 @@ from sdsstools import get_config, get_logger, get_package_version
 NAME = "sdss-lvmcam"
 
 
-# Inits the logging system as NAME. Only shell logging, and exception and warning catching.
-# File logging can be started by calling log.start_file_logger(path).  Filename can be different
-# than NAME.
+# Inits the logging system as NAME. Only shell logging, and exception and warning
+# catching. File logging can be started by calling log.start_file_logger(path).
+# Filename can be different than NAME.
 log = get_logger(NAME)
 
 
