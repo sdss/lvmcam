@@ -14,7 +14,14 @@ import os
 
 import click
 
-from clu.parsers.click import CluGroup, get_schema, help_, ping, version
+from clu.parsers.click import (
+    CluGroup,
+    get_command_model,
+    get_schema,
+    help_,
+    ping,
+    version,
+)
 from cluplus.parsers.click import __commands
 
 
@@ -29,6 +36,7 @@ camera_parser.add_command(version)
 camera_parser.add_command(help_)
 camera_parser.add_command(__commands)
 camera_parser.add_command(get_schema)
+camera_parser.add_command(get_command_model)
 
 # Autoimport all modules in this directory so that they are added to the camera_parser.
 
