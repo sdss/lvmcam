@@ -11,8 +11,7 @@ import os
 
 import click
 from clu.command import Command
-from clu.parsers.click import (CluGroup, command_parser,
-                               get_schema, help_, ping, version)
+from clu.parsers.click import CluGroup, command_parser, get_schema, help_, ping, version
 from cluplus.parsers.click import __commands
 
 

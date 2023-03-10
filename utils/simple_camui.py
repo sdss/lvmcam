@@ -9,6 +9,7 @@
 import argparse
 import asyncio
 import random
+
 # hard exit
 import signal
 import string
@@ -23,9 +24,6 @@ from clu.client import AMQPClient, AMQPReply
 
 # from astropy.utils import iers
 # iers.conf.auto_download = False
-
-
-
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)

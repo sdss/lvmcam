@@ -33,9 +33,15 @@ from sdsstools.logger import SDSSLogger, StreamFormatter
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
+
 # from lvmcam.model import fits_model, lvmcam_fz_fits_model
-from lvmcam.models import (CameraCards, GenicamCards, ScraperDataStore,
-                           ScraperParamCards, WcsCards)
+from lvmcam.models import (
+    CameraCards,
+    GenicamCards,
+    ScraperDataStore,
+    ScraperParamCards,
+    WcsCards,
+)
 
 
 iers.conf.auto_download = False
