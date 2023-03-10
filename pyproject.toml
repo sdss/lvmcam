@@ -36,7 +36,8 @@ container_isRunning ="container:isRunning"
 container_autotuner ="container:autotuner"
 
 [tool.poetry.dependencies]
-python = ">3.7,<3.11"
+python = ">=3.8,<3.12"
+sdss-basecam = ">=0.7.1b1"
 sdss-cluplus = ">=0.2.10"
 sdss-araviscam = ">=0.1.91"
 sdss-skymakercam = ">=0.0.6"

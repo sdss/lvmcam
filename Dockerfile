@@ -29,9 +29,6 @@ RUN git clone https://github.com/sdss/skymakercam
 RUN cd araviscam && pip3 install .
 RUN cd skymakercam && pip3 install .
 
-# Hacking this for now. We update sdss-clu to 2.0.0b1
-RUN pip3 install --upgrade sdss-clu==2.0.0b1
-
 COPY ./run-actor.sh .
 
 # Need to remove the cloned repos because run-actor imports lvmcam to
