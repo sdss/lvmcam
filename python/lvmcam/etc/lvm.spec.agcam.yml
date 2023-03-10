@@ -6,16 +6,16 @@ dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/spec/agcam/{camera.name}/{date.
 camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
-    lvm.spec.pwi:
-        ra_j2000_hours: ra_h
-        dec_j2000_degs: dec_d
-        altitude_degs: alt_d
-        azimuth_degs: az_d
-        field_angle_here_degs: field_angle_d
-        axis0.position_degs: axis0_position_d
-        axis0.position_timestamp: axis0_position_timestamp_s
-        axis1.position_degs: axis1_position_d
-        axis1.position_timestamp: axis1_position_timestamp_s
+  lvm.spec.pwi:
+    ra_j2000_hours: ra_h
+    dec_j2000_degs: dec_d
+    altitude_degs: alt_d
+    azimuth_degs: az_d
+    field_angle_here_degs: field_angle_d
+    axis0.position_degs: axis0_position_d
+    axis0.position_timestamp: axis0_position_timestamp_s
+    axis1.position_degs: axis1_position_d
+    axis1.position_timestamp: axis1_position_timestamp_s
 
   lvm.spec.foc:
     Position: foc_dt
@@ -24,10 +24,10 @@ scraper:
     Position: km_d
     DeviceEncoder.Position: km_s
 
-    lvm.tel:
-        temperature: bentempi
-        temperature_enclosure: bentempo
-        humidity_enclosure: benhumo
+  lvm.tel:
+    temperature: bentempi
+    temperature_enclosure: bentempo
+    humidity_enclosure: benhumo
 
 cameras:
   east:
@@ -49,5 +49,3 @@ actor:
   host: localhost
   port: 5672
   log_dir: '~/tmp/log'
-  #default_cameras:
-  #- west
