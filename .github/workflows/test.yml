@@ -30,7 +30,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt install libgirepository1.0-dev
+          sudo apt install libgirepository1.0-dev
           python -m pip install --upgrade pip wheel setuptools
           pip install .
 
