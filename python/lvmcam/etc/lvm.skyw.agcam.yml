@@ -1,7 +1,6 @@
-camera_type: !env ${LVM_CAM_TYPE:-araviscam} # types: skymakercam, araviscam
-
-basename: !env 'lvm.skyw.agcam.{camera.name}_{num:08d}.fits'
-dirname: !env "${LVMT_DATA_ROOT:-$HOME/data}/lvm/skyw/agcam/{camera.name}/{date.strftime('%Y%m%d')}"
+camera_type: araviscam
+basename: lvm.skyw.agcam.{camera.name}_{num:08d}.fits
+dirname: /data/agcam/{sjd}
 
 camera_params: !include lvm.camera_param.agcam.yml
 
@@ -61,6 +60,4 @@ actor:
   name: lvm.skyw.agcam
   host: localhost
   port: 5672
-  log_dir: '~/tmp/log'
-  #default_cameras:
-  #- west
+  log_dir: '/data/logs/lvm.skyw.agcam'
