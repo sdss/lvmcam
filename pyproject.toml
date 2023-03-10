@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sdss-lvmcam"
-version = "0.0.37"
+version = "0.0.38"
 description = "The package for lvmcam"
 authors = ["Mingyu Jeon <mgjeon@khu.ac.kr>", "Sumin Lee <lxmark888@khu.ac.kr>"]
 license = "BSD-3-Clause"
@@ -13,7 +13,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-	"Programming Language :: Python :: 3.7",
 	"Programming Language :: Python :: 3.8",
 	"Programming Language :: Python :: 3.9",
 	"Programming Language :: Python :: 3.10",

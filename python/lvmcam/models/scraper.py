@@ -13,8 +13,15 @@ from math import nan
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from basecam.exposure import Exposure
-from basecam.models import (Card, CardGroup, Extension, FITSModel,
-                            HeaderModel, MacroCard, WCSCards)
+from basecam.models import (
+    Card,
+    CardGroup,
+    Extension,
+    FITSModel,
+    HeaderModel,
+    MacroCard,
+    WCSCards,
+)
 from clu.legacy.types.pvt import PVT
 from cluplus.proxy import flatten
 
@@ -130,6 +137,26 @@ class ScraperParamCards(MacroCard):
                 "[deg] Cassegrain Field angle from PW",
             ),
             (
+                "PWA0POS",
+                exposure.scraper_store.get("axis0_position_d", -999.9),
+                "[deg] Axis0 pos angle from PW",
+            ),
+            (
+                "PWA0T",
+                exposure.scraper_store.get("axis0_position_timestamp_s", -999.9),
+                "[] Axis0 pos angle time from PW",
+            ),
+            (
+                "PWA1POS",
+                exposure.scraper_store.get("axis1_position_d", -999.9),
+                "[deg] Axis1 pos angle from PW",
+            ),
+            (
+                "PWA1T",
+                exposure.scraper_store.get("axis1_position_timestamp_s", -999.9),
+                "[] Axis1 pos angle time from PW",
+            ),
+            (
                 "KMIRDROT",
                 exposure.scraper_store.get("km_d", -999.9),
                 "[deg] Rotation angle kmirror",
@@ -145,18 +172,18 @@ class ScraperParamCards(MacroCard):
                 "[dt] Focus stage position",
             ),
             (
-                "BENTEMP",
-                exposure.scraper_store.get("bentemp", -999.9),
-                "[degC] Temperature bench",
+                "BENTEMPI",
+                exposure.scraper_store.get("bentempi", -999.9),
+                "[degC] Temperature bench inside",
             ),
             (
-                "BENHUM",
-                exposure.scraper_store.get("benhum", -999.9),
-                "[] Humidity bench",
+                "BENHUMO",
+                exposure.scraper_store.get("benhumo", -999.9),
+                "[] Humidity bench oustside",
             ),
             (
-                "BENTEMP",
-                exposure.scraper_store.get("benpress", -999.9),
-                "[hPa] Pressure bench",
+                "BENTEMPO",
+                exposure.scraper_store.get("benpresso", -999.9),
+                "[hPa] Pressure bench oustside",
             ),
         ]
