@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### ✨ Improved
+
+- Use `basecam 0.7.1b1` with `CLU 2.0.0b2`. Adds the `get-command-model` command.
+
+
 ## 0.3.1 - March 10, 2023
 
 ### 🏷️ Changed
