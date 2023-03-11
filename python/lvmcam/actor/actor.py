@@ -118,7 +118,7 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.basename = config.get("basename", None)
 
         self.exposure_state = {}
-        #        self.log.debug(f"{config.get('scraper', [])}")
+        self.log.debug(f"{config.get('scraper', [])}")
         self.scraper_store = ScraperDataStore(self, config.get("scraper", {}))
 
         self.site = Site(name=config.get("site", "LCO"))
@@ -196,7 +196,8 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
     async def handle_reply(self, message: apika.IncomingMessage) -> AMQPReply:
         """Handles a reply received from the exchange."""
 
-        reply = AMQPReply(message, log=self.log)
+        reply = await super().handle_reply(message)
+
         if (
             reply.sender in self.scraper_store.actors()
             and reply.headers.get("message_code", None) in ":i"
