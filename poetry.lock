@@ -18,14 +18,14 @@ yarl = "*"
 
 [[package]]
 name = "aiormq"
-version = "6.7.3"
+version = "6.7.4"
 description = "Pure python AMQP asynchronous client library"
 category = "main"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "aiormq-6.7.3-py3-none-any.whl", hash = "sha256:bc6601b98c7297e9b47f89a794d4400bc3e3823dc9679f58985d6bd7617bafb4"},
-    {file = "aiormq-6.7.3.tar.gz", hash = "sha256:aaf0778c132952316bf5a51793eda382c7bbb894795678372541c3b070a710af"},
+    {file = "aiormq-6.7.4-py3-none-any.whl", hash = "sha256:f4d4f3859c044b16c3a221755eca9c0393d283e286f238db343560af9d4b4728"},
+    {file = "aiormq-6.7.4.tar.gz", hash = "sha256:b5249b6bc04b21e79ffeb049667b134128e187aaaafd06d84587aead19aeddb2"},
 ]
 
 [package.dependencies]
@@ -1913,14 +1913,14 @@ files = [
 
 [[package]]
 name = "platformdirs"
-version = "3.1.0"
+version = "3.1.1"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.1.0-py3-none-any.whl", hash = "sha256:13b08a53ed71021350c9e300d4ea8668438fb0046ab3937ac9a29913a1a1350a"},
-    {file = "platformdirs-3.1.0.tar.gz", hash = "sha256:accc3665857288317f32c7bebb5a8e482ba717b474f3fc1d18ca7f9214be0cef"},
+    {file = "platformdirs-3.1.1-py3-none-any.whl", hash = "sha256:e5986afb596e4bb5bde29a79ac9061aa955b94fca2399b7aaac4090860920dd8"},
+    {file = "platformdirs-3.1.1.tar.gz", hash = "sha256:024996549ee88ec1a9aa99ff7f8fc819bb59e2c3477b410d90a16d32d6e707aa"},
 ]
 
 [package.extras]
@@ -5599,31 +5599,31 @@ sdss-basecam = ">=0.5.0"
 
 [[package]]
 name = "sdss-basecam"
-version = "0.7.1b1"
+version = "0.7.1"
 description = "A base library for camera wrapping and actor."
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "sdss_basecam-0.7.1b1-py3-none-any.whl", hash = "sha256:764871fdb83bfab400fb88f801f352ce108f1c29e52a89709d53c39699ab9bc8"},
-    {file = "sdss_basecam-0.7.1b1.tar.gz", hash = "sha256:0770fb3a16727a2539d39d5b71aa3e5ff23bfe85e5cb829210974ff73097e334"},
+    {file = "sdss_basecam-0.7.1-py3-none-any.whl", hash = "sha256:bd69daff2a8f0b0f377de27aa49ec3205ed824ab5ef224c115cb0c26e23c4bc7"},
+    {file = "sdss_basecam-0.7.1.tar.gz", hash = "sha256:a7e06b15a0da0a6cffb2ff1c2733378931f80508c90f33407feb2d3d3f489bba"},
 ]
 
 [package.dependencies]
 astropy = ">=5.2,<6.0"
-sdss-clu = ">=2.0.0b2"
+sdss-clu = ">=2.0.0,<3.0.0"
 sdsstools = ">=0.5.2"
 
 [[package]]
 name = "sdss-clu"
-version = "2.0.0b2"
+version = "2.0.0"
 description = "A new protocol for SDSS actors."
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "sdss_clu-2.0.0b2-py3-none-any.whl", hash = "sha256:00f75b42b9be53ce21dd9f4492df38dedb9d6d030fa4d7092dc5936ad84a072d"},
-    {file = "sdss_clu-2.0.0b2.tar.gz", hash = "sha256:ae0b11ed160fcf03606f378ad370a7036b6b17b8f71f75949bce3373afe487fb"},
+    {file = "sdss_clu-2.0.0-py3-none-any.whl", hash = "sha256:8fd8fbb50c420fb3a8cd0e455a4067adbbc649da7325bbe2b8cedd27384a4f48"},
+    {file = "sdss_clu-2.0.0.tar.gz", hash = "sha256:13c21925d77d4610a5db766bc9fa35a40533bb995385e4e21df06db897520abe"},
 ]
 
 [package.dependencies]
@@ -5633,18 +5633,19 @@ click = ">=8.0,<9.0"
 jsonschema = ">=4.0.1,<5.0.0"
 prompt_toolkit = ">=3.0.6,<4.0.0"
 sdsstools = ">=1.0.0,<2.0.0"
-unclick = ">=0.1.0b3,<0.2.0"
+setuptools = ">=67.6.0,<68.0.0"
+unclick = ">=0.1.0b4,<0.2.0"
 
 [[package]]
 name = "sdss-cluplus"
-version = "0.4.4"
+version = "0.4.8"
 description = "Additional functionality for sdss-clu"
 category = "main"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "sdss_cluplus-0.4.4-py3-none-any.whl", hash = "sha256:128db12e15a50e28aa3260ff17b7c4ee743b1cf99205381f56009db1f4103cb6"},
-    {file = "sdss_cluplus-0.4.4.tar.gz", hash = "sha256:cc3b4c004f9a3d71b71684307c7a73defa5b8d592a85b55afd83b3ef471e51ed"},
+    {file = "sdss_cluplus-0.4.8-py3-none-any.whl", hash = "sha256:a4e819c8acfd02e82efe5773867c3c63fdb304f7cd19b7baa0dad715941e3174"},
+    {file = "sdss_cluplus-0.4.8.tar.gz", hash = "sha256:cdb54895e7a7ae8cda26d56d172ccece1151807340e333d29a61757df235f8aa"},
 ]
 
 [package.dependencies]
@@ -5654,31 +5655,26 @@ daemonocle = ">=1.1.1,<2.0.0"
 expandvars = ">=0.9.0"
 jsonpickle = "1.3"
 sdss-access = ">=0.2.3"
-sdss-clu = ">=1.5.7"
+sdss-clu = ">=2.0.0b2"
 sdss-tree = ">=2.15.2"
 sdsstools = ">=0.4.0"
 
 [[package]]
 name = "sdss-lvmtipo"
-version = "0.0.37"
+version = "0.0.42"
 description = "Additional functionality for sdss-clu"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "sdss_lvmtipo-0.0.37-py3-none-any.whl", hash = "sha256:1fe198ec045d37cf4d7f9d5458ac5d1c41a28fa5b32433a4cb0608465aac35f7"},
-    {file = "sdss_lvmtipo-0.0.37.tar.gz", hash = "sha256:026654d87f41dba68ccdf21c96583bc3dc87f8a5c3ca5a121498acdd08673c7d"},
+    {file = "sdss_lvmtipo-0.0.42-py3-none-any.whl", hash = "sha256:e955f2e487937363ab48abe5d4ff102801e2849d643f27a1af42bec2e9479e54"},
+    {file = "sdss_lvmtipo-0.0.42.tar.gz", hash = "sha256:dc2f9094530711fe88df84115bcfdc395381702c27541a39974e5ba3defcd5ab"},
 ]
 
 [package.dependencies]
 astropy = ">=5.2"
 click-default-group = ">=1.2.2,<2.0.0"
-daemonocle = ">=1.1.1,<2.0.0"
-sdss-access = ">=0.2.3"
-sdss-clu = ">=1.2.0"
 sdss-cluplus = ">=0.1.3"
-sdss-tree = ">=2.15.2"
-sdsstools = ">=0.4.0"
 
 [[package]]
 name = "sdss-skymakercam"
@@ -5821,6 +5817,23 @@ files = [
 
 [package.dependencies]
 numpy = "*"
+
+[[package]]
+name = "setuptools"
+version = "67.6.0"
+description = "Easily download, build, install, upgrade, and uninstall Python packages"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "setuptools-67.6.0-py3-none-any.whl", hash = "sha256:b78aaa36f6b90a074c1fa651168723acbf45d14cb1196b6f02c0fd07f17623b2"},
+    {file = "setuptools-67.6.0.tar.gz", hash = "sha256:2ee892cd5f29f3373097f5a814697e397cf3ce313616df0af11231e2ad118077"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-hoverxref (<2)", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (==0.8.3)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
+testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8 (<5)", "flake8-2020", "ini2toml[lite] (>=0.9)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pip (>=19.1)", "pip-run (>=8.8)", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pytest-perf", "pytest-timeout", "pytest-xdist", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
 name = "shellingham"
@@ -6187,14 +6200,14 @@ files = [
 
 [[package]]
 name = "unclick"
-version = "0.1.0b3"
+version = "0.1.0b4"
 description = "A reverse parser for the click CLI library"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "unclick-0.1.0b3-py3-none-any.whl", hash = "sha256:190c8e15277dfa96ab837bef9dbd7cdb7a70d585c60c9ea19997082092273414"},
-    {file = "unclick-0.1.0b3.tar.gz", hash = "sha256:053dfd39472b6db9a79ce03c1e363b4cef419831ee0dd9fb7049092cca878f37"},
+    {file = "unclick-0.1.0b4-py3-none-any.whl", hash = "sha256:f9cc891e7dcdee16c7cf07c7f744b2071d1b58402e75281a26b8ba3594e14464"},
+    {file = "unclick-0.1.0b4.tar.gz", hash = "sha256:a45cf639a42df6ff5739d16fe7f400d86f42dc39d2dfd9072b827e93c0610e47"},
 ]
 
 [package.dependencies]
@@ -6203,14 +6216,14 @@ makefun = ">=1.15.1,<2.0.0"
 
 [[package]]
 name = "urllib3"
-version = "1.26.14"
+version = "1.26.15"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 files = [
-    {file = "urllib3-1.26.14-py2.py3-none-any.whl", hash = "sha256:75edcdc2f7d85b137124a6c3c9fc3933cdeaa12ecb9a6a959f22797a0feca7e1"},
-    {file = "urllib3-1.26.14.tar.gz", hash = "sha256:076907bf8fd355cde77728471316625a4d2f7e713c125f51953bb5b3eecf4f72"},
+    {file = "urllib3-1.26.15-py2.py3-none-any.whl", hash = "sha256:aa751d169e23c7479ce47a0cb0da579e3ede798f994f5816a74e4f4500dcea42"},
+    {file = "urllib3-1.26.15.tar.gz", hash = "sha256:8a388717b9476f934a21484e8c8e61875ab60644d29b9b39e11e4b9dc1c6b305"},
 ]
 
 [package.extras]
@@ -6349,4 +6362,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "847449a0668ac873e7200420ef9b14eb633a5c890159a0bf48aaac2ef8683120"
+content-hash = "66d6a099241aa6f33503febf02dfeb562492911f7ffc67153b724971bdfa7ee0"
