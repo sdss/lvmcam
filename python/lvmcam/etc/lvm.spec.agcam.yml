@@ -19,6 +19,7 @@ scraper:
   lvm.spec.foc:
     Position: foc_dt
 
+  # Note the following is virtual: there is no km on this bench
   lvm.spec.km:
     Position: km_d
     DeviceEncoder.Position: km_s
@@ -42,6 +43,10 @@ cameras:
 
     # skymakercam
     instpar: lvm_age_cam
+
+  # There is no west camera on this bench.
+  # Early CAD documentation of late 2021 shew the camera
+  # as a 'west', but as build it is 'east'.
 
 actor:
   name: lvm.spec.agcam

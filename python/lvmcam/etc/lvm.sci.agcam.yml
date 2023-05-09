@@ -35,6 +35,7 @@ cameras:
     genicam_params:
       bool:
         ReverseX: True
+        ReverseY: False
 
     # skymakercam
     instpar: lvm_age_cam
