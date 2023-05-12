@@ -57,7 +57,7 @@ class WcsCards(MacroCard):
             None,
             exposure.camera.actor.ambi,
             exposure.scraper_store.get("km_s", 0.0),
-            exposure.camera.name,
+            exposure.camera.actor.bench + " " + exposure.camera.name,
             config_get(
                 exposure.camera.camera_params,
                 "genicam_params.bool.ReverseX",
