@@ -225,6 +225,13 @@ async def expose_one_camera(
     help="Number of images to stack.",
 )
 @click.option(
+    "-n",
+    "--num",
+    type=int,
+    default=None,
+    help="Sequence number for this exposure filename.",
+)
+@click.option(
     "--no-postprocess",
     is_flag=True,
     help="Skip the post-process step, if defined.",
