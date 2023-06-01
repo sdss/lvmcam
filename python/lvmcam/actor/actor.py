@@ -124,11 +124,11 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
         self.site = Site(name=config.get("site", "LCO"))
         self.log.info(f"Site: {config.get('site', 'LCO')}")
 
-        act_cfg = config.get('actor')
+        act_cfg = config.get("actor")
         if act_cfg is None:
-            self.bench = ''
+            self.bench = ""
         else:
-            self.bench = act_cfg['name']
+            self.bench = act_cfg["name"]
 
         # but south-> north at LCO
         if self.site.lat > 40.0:
