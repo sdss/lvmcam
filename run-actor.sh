@@ -10,6 +10,8 @@ PYTHON=/usr/local/bin/python3
 
 LVM_ROOT=$HOME
 
+umask 002
+
 if [ ${LVM_DEBUG} ]; then
   LVM_ACTOR_PATH=$(ls -1 -d ${LVM_ROOT}/lvm/${LVM_ACTOR} ${LVM_ROOT}/${LVM_ACTOR} 2> /dev/null)/python/${LVM_ACTOR}
   export PYTHONPATH=$(ls -1 -d ${LVM_ROOT}/lvm/*/python ${LVM_ROOT}/lvm/basecam ${LVM_ROOT}/lvm/araviscam ${LVM_ROOT}/${LVM_ACTOR}/python 2>/dev/null | tr "\n" ":")
