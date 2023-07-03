@@ -30,6 +30,7 @@ scraper:
 
 cameras:
   east:
+    telescope: skyw
     descr: 'Guider Camera SkyW East'
 
     # araviscam
@@ -44,6 +45,7 @@ cameras:
     # skymakercam
     instpar: lvm_age_cam
   west:
+    telescope: skyw
     descr: 'Guider Camera SkyW West'
 
     # araviscam

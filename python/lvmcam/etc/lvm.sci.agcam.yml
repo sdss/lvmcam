@@ -26,6 +26,7 @@ scraper:
 
 cameras:
   east:
+    telescope: sci
     descr: 'Guider Camera Science East'
 
     # araviscam
@@ -41,6 +42,7 @@ cameras:
     instpar: lvm_age_cam
 
   center:
+    telescope: sci
     descr: 'Guider Camera Science Center'
     # araviscam
     uid: 22126027
@@ -56,6 +58,7 @@ cameras:
     instpar: lvm_agc_cam
 
   west:
+    telescope: sci
     descr: 'Guider Camera Science West'
 
     # araviscam

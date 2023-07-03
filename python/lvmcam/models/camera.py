@@ -12,8 +12,13 @@ from basecam.models import Card, CardGroup
 
 CameraCards = CardGroup(
     [
-        Card("OBSERVAT", "{__camera__.actor.site}", "Observatory", default=""),
-        Card("INSTRUME", "LVM", "SDSS-V Local Volume Mapper"),
+        Card("OBSERVAT", value="LCO", comment="Observatory"),
+        Card(
+            "TELESCOP",
+            value="{__camera__.telescope}",
+            comment="Telescope that took the image",
+        ),
+        Card("INSTRUME", value="LVM", comment="SDSS-V Local Volume Mapper"),
         Card("GAIN", value="{__exposure__.camera.gain}", comment="[ct] Camera gain"),
         Card(
             "BINX",

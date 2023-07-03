@@ -26,6 +26,7 @@ scraper:
 
 cameras:
   east:
+    telescope: skye
     descr: 'Guider Camera Skye East'
 
     # araviscam
@@ -41,6 +42,7 @@ cameras:
     instpar: lvm_age_cam
 
   west:
+    telescope: skye
     descr: 'Guider Camera Skye West'
 
     # araviscam
