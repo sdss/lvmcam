@@ -15,7 +15,7 @@ CameraCards = CardGroup(
         Card("OBSERVAT", value="LCO", comment="Observatory"),
         Card(
             "TELESCOP",
-            value="{__camera__.telescope}",
+            value="{__camera__.camera_params.get('telescope', 'NA')}",
             comment="Telescope that took the image",
         ),
         Card("INSTRUME", value="LVM", comment="SDSS-V Local Volume Mapper"),
