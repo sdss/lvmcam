@@ -170,7 +170,9 @@ class LvmcamActor(BaseCameraActor, AMQPActor):
                 self.log.debug(f"dirname {self.dirname}")
 
                 cam.image_namer = ImageNamer(
-                    basename=self.basename, dirname=self.dirname, camera=cam
+                    basename=self.basename,
+                    dirname=self.dirname,
+                    camera=cam,
                 )
                 cam.fits_model = FITSModel(
                     [

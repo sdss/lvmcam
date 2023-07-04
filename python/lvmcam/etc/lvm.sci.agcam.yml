@@ -1,5 +1,5 @@
 camera_type: araviscam
-basename: lvm.sci.agcam.{camera.name}_{num:08d}.fits
+basename: lvm.sci.agcam.{camera.name}_{num:08d}.fits.gz
 dirname: /data/agcam/{sjd}
 
 camera_params: !include lvm.camera_param.agcam.yml
