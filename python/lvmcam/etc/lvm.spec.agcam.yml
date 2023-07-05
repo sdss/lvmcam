@@ -40,7 +40,7 @@ cameras:
 
     genicam_params:
       bool:
-        ReverseX: False
+        ReverseX: True
         ReverseY: True
 
     # skymakercam
