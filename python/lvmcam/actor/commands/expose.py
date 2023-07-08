@@ -300,7 +300,7 @@ async def expose(
                     )
                 )
             )
-            await asyncio.sleep(0.100)  # dirty 1G fix
+            # await asyncio.sleep(0.1)  # dirty 1G fix
 
         results = await asyncio.gather(*jobs)
         command.actor.listener.remove_callback(report_exposure_state_partial)
