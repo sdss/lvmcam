@@ -41,21 +41,21 @@ cameras:
     # skymakercam
     instpar: lvm_age_cam
 
-  center:
-    telescope: sci
-    descr: 'Guider Camera Science Center'
-    # araviscam
-    uid: 22126027
-    ip: 10.8.38.119
+  # center:
+  #   telescope: sci
+  #   descr: 'Guider Camera Science Center'
+  #   # araviscam
+  #   uid: 22126027
+  #   ip: 10.8.38.119
 
-    pixsize: 4.5
+  #   pixsize: 4.5
 
-    genicam_params:
-      string:
-        PixelFormat: 'BayerGB16'
+  #   genicam_params:
+  #     string:
+  #       PixelFormat: 'BayerGB16'
 
-    # skymakercam
-    instpar: lvm_agc_cam
+  #   # skymakercam
+  #   instpar: lvm_agc_cam
 
   west:
     telescope: sci
