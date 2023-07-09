@@ -2,7 +2,8 @@
 name = "sdss-lvmcam"
 version = "0.3.5"
 description = "The package for lvmcam"
-authors = ["Mingyu Jeon <mgjeon@khu.ac.kr>", "Sumin Lee <lxmark888@khu.ac.kr>"]
+authors = ["Florian Briegel <briegel@mpia.de>"]
+maintainers = ["Florian Briegel <briegel@mpia.de>", "José Sánchez-Gallego <gallegoj@uw.edu>"]
 license = "BSD-3-Clause"
 readme = "README.md"
 homepage = "https://github.com/sdss/lvmcam"

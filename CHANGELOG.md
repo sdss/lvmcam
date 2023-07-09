@@ -1,10 +1,11 @@
 # Changelog
 
-## Next version
+## 0.3.5 - July 9, 2023
 
 ### ✨ Improved
 
-- Use `basecam 0.7.1b1` with `CLU 2.0.0b2`. Adds the `get-command-model` command.
+- Use `basecam 0.7.2` with `CLU 2.1.0`. Adds the `get-command-model` command.
+- Build docker image using `python:3.9-bookworm` base image. This installs a more recent version of the Aravis libraries and seems to solve several camera communication issues.
 
 
 ## 0.3.1 - March 10, 2023
