@@ -6,6 +6,7 @@
 
 - Use `basecam 0.7.2` with `CLU 2.1.0`. Adds the `get-command-model` command.
 - Build docker image using `python:3.9-bookworm` base image. This installs a more recent version of the Aravis libraries and seems to solve several camera communication issues.
+- Fixed East cameras flips.
 
 
 ## 0.3.1 - March 10, 2023
