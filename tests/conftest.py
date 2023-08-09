@@ -12,16 +12,14 @@ more information.
 
 import os
 
-import clu.testing
-
 # import numpy
 import pytest
-from clu.actor import AMQPBaseActor
-
-from sdsstools import merge_config, read_yaml_file
-
 from lvmcam import config
 from lvmcam.actor import LvmcamActor
+
+import clu.testing
+from clu.actor import AMQPBaseActor
+from sdsstools import merge_config, read_yaml_file
 
 
 # import pathlib

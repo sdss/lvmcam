@@ -34,15 +34,11 @@ jobs:
           python -m pip install --upgrade pip wheel setuptools
           pip install .
 
-      - name: Lint with flake8
+      - name: Lint with ruff
         run: |
-          pip install flake8
-          flake8 . --count --show-source --statistics
+          pip install ruff
+          ruff check python/ tests/
 
-      - name: Lint with isort
-        run: |
-          pip install isort
-          isort -c python/
 
       - name: Lint with black
         run: |

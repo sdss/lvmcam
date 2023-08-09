@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from sdsstools import get_config, get_logger, get_package_version
+from sdsstools import get_logger, get_package_version
 
 
 # pip package name

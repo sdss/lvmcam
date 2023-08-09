@@ -10,10 +10,10 @@
 import asyncio
 
 import click
+from cluplus.proxy import Proxy
 
 from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraConnectionError
-from cluplus.proxy import Proxy
 
 from lvmcam.exceptions import LvmcamNotConnected
 

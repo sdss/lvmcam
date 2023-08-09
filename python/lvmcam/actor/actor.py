@@ -12,6 +12,8 @@ from logging import DEBUG
 
 import aio_pika as apika
 from astropy.utils import iers
+from cluplus.configloader import Loader
+from skymakercam import SkymakerCamera, SkymakerCameraSystem
 
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam.actor import BaseCameraActor
@@ -19,13 +21,11 @@ from basecam.exposure import ImageNamer
 from basecam.models import Extension, FITSModel, basic_header_model
 from clu import AMQPActor
 from clu.client import AMQPReply
-from cluplus.configloader import Loader
 from lvmtipo.ambient import Ambient
 from lvmtipo.kmirror import Kmirror
 from lvmtipo.siderostat import Siderostat
 from lvmtipo.site import Site
 from sdsstools.logger import StreamFormatter
-from skymakercam import SkymakerCamera, SkymakerCameraSystem
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser

@@ -9,8 +9,9 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from basecam.models import MacroCard
 from cluplus.proxy import flatten
+
+from basecam.models import MacroCard
 
 
 class ScraperDataStore(object):
@@ -91,8 +92,6 @@ class ScraperParamCards(MacroCard):
 
         logger = get_logger("ScraperParamCards")
         logger.warning(f"########### {exposure.scraper_store}")
-
-        #        logger.warning(f"{config_get(exposure.camera.camera_params,'genicam_params.bool.ReverseX')}")
 
         return [
             (

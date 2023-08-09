@@ -1,5 +1,4 @@
 import pytest
-
 from lvmcam.actor import LvmcamActor
 
 

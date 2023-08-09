@@ -16,9 +16,9 @@ from datetime import datetime as dt
 
 import aio_pika as apika
 import yaml
+from cluplus.proxy import flatten
 
 from clu.client import AMQPClient, AMQPReply
-from cluplus.proxy import flatten
 
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
