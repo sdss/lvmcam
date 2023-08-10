@@ -37,4 +37,4 @@ COPY ./run-actor.sh .
 
 RUN rm -Rf lvmcam araviscam skymakercam
 
-CMD ["/root/run-actor.sh"]
+CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]

@@ -56,6 +56,9 @@ async def actor(ctx):
     """Runs the actor."""
 
     config_file = ctx.obj["config_file"]
+    if not os.path.isabs(config_file):
+        config_file = os.path.join(os.path.dirname(__file__), "etc", config_file)
+
     config = read_yaml_file(config_file)
 
     lvmcam_obj = LVMCamActor.from_config(
@@ -68,5 +71,9 @@ async def actor(ctx):
     await lvmcam_obj.run_forever()
 
 
+def main():
+    lvmcam(auto_envvar_prefix="LVMCAM")
+
+
 if __name__ == "__main__":
-    lvmcam()
+    main()
