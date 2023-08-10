@@ -1,8 +1,7 @@
 camera_type: araviscam
+
 basename: lvm.spec.agcam.{camera.name}_{num:08d}.fits
 dirname: /data/agcam/{sjd}
-
-camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
   lvm.spec.pwi:
@@ -19,15 +18,11 @@ scraper:
   lvm.spec.foc:
     Position: foc_dt
 
-  # Note the following is virtual: there is no km on this bench
+  # This is just to keep the datamodels of the AGs consistent. There is
+  # no K-mirror in the spec telescope.
   lvm.spec.km:
     Position: km_d
     DeviceEncoder.Position: km_s
-
-  lvm.tel:
-    temperature: bentempi
-    temperature_enclosure: bentempo
-    humidity_enclosure: benhumo
 
 cameras:
   east:
@@ -42,13 +37,6 @@ cameras:
       bool:
         ReverseX: False
         ReverseY: True
-
-    # skymakercam
-    instpar: lvm_age_cam
-
-  # There is no west camera on this bench.
-  # Early CAD documentation of late 2021 shew the camera
-  # as a 'west', but as build it is 'east'.
 
 actor:
   name: lvm.spec.agcam

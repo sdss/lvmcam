@@ -4,17 +4,12 @@ site: 'LCO'
 
 # pixel size in um
 pixsize: 9.0
+
 # focal length in millimeter as of SDSS-V_0010
 flen: 1839.8
 
 gain: 5.0
 binning: [1, 1]
-
-# skymakercam
-focus_stage: 'lvm.sci.foc'
-kmirror: 'lvm.sci.km'
-tcs: 'lvm.sci.pwi'
-catalog_path: '/tmp/data/catalog/gaia'
 
 # araviscam
 genicam_params:
@@ -47,4 +42,5 @@ genicam_params:
   string:
     PixelFormat: 'Mono16'
 
+# There is no shutter in these cameras.
 shutter: false

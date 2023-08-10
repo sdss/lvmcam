@@ -123,6 +123,20 @@ six = "*"
 test = ["astroid", "pytest"]
 
 [[package]]
+name = "attrdict"
+version = "2.0.1"
+description = "A dict with attribute-style access"
+optional = false
+python-versions = "*"
+files = [
+    {file = "attrdict-2.0.1-py2.py3-none-any.whl", hash = "sha256:9432e3498c74ff7e1b20b3d93b45d766b71cbffa90923496f82c4ae38b92be34"},
+    {file = "attrdict-2.0.1.tar.gz", hash = "sha256:35c90698b55c683946091177177a9e9c0713a0860f0e049febd72649ccd77b70"},
+]
+
+[package.dependencies]
+six = "*"
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -364,6 +378,21 @@ files = [
 ]
 
 [[package]]
+name = "configparser"
+version = "6.0.0"
+description = "Updated configparser from stdlib for earlier Pythons."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "configparser-6.0.0-py3-none-any.whl", hash = "sha256:900ea2bb01b2540b1a644ad3d5351e9b961a4a012d4732f619375fb8f641ee19"},
+    {file = "configparser-6.0.0.tar.gz", hash = "sha256:ec914ab1e56c672de1f5c3483964e68f71b34e457904b7b76e06b922aec067a8"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff", "types-backports"]
+
+[[package]]
 name = "coverage"
 version = "7.2.7"
 description = "Code coverage measurement for Python"
@@ -522,6 +551,17 @@ files = [
 
 [package.extras]
 tests = ["asttokens", "littleutils", "pytest", "rich"]
+
+[[package]]
+name = "expandvars"
+version = "0.9.0"
+description = "Expand system variables Unix style"
+optional = false
+python-versions = ">=3.4"
+files = [
+    {file = "expandvars-0.9.0-py3-none-any.whl", hash = "sha256:ae90b9c6167e876a0d67892ae18cf2c1ea2e336b2b5542113239d33bf9267497"},
+    {file = "expandvars-0.9.0.tar.gz", hash = "sha256:6a0e7821e55ff1ab44f8ca08b50d2b2d01c076a9bc979da940467cb7f105c565"},
+]
 
 [[package]]
 name = "idna"
@@ -694,6 +734,17 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
+
+[[package]]
+name = "jsonpickle"
+version = "1.3"
+description = "Python library for serializing any arbitrary object graph into JSON"
+optional = false
+python-versions = "*"
+files = [
+    {file = "jsonpickle-1.3-py2.py3-none-any.whl", hash = "sha256:efc6839cb341985f0c24f98650a4c1063a2877c236ffd3d7e1662f0c482bac93"},
+    {file = "jsonpickle-1.3.tar.gz", hash = "sha256:71bca2b80ae28af4e3f86629ef247100af7f97032b5ca8d791c1f8725b411d95"},
+]
 
 [[package]]
 name = "jsonschema"
@@ -1595,6 +1646,28 @@ files = [
 ]
 
 [[package]]
+name = "sdss-access"
+version = "3.0.0"
+description = "Package to dynamically build filepaths and access all SDSS SAS products"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "sdss-access-3.0.0.tar.gz", hash = "sha256:f596eeb5ab15806a0422428babd4b4dc4fc4672aaf794e09358d2a1488087000"},
+    {file = "sdss_access-3.0.0-py2.py3-none-any.whl", hash = "sha256:e1e7ce5006d372d861d1c6af420aafaf1d461ee20cc53effa6529e840c4e997a"},
+]
+
+[package.dependencies]
+requests = ">=2.10.0"
+sdss-tree = ">=4.0.0"
+sdsstools = ">=0.4.5"
+six = ">=1.11"
+tqdm = ">=4.46.0"
+
+[package.extras]
+dev = ["Jinja2 (<=3.0)", "Sphinx (>=2.1.0)", "codecov (>=2.0.2dev5)", "coverage[toml] (>=5.0)", "coveralls (>=1.7)", "doc8 (>=0.8.0)", "flake8 (>=3.7.9)", "importlib-metadata (>=1.6.0)", "invoke (>=1.3.0)", "ipdb (>=0.12.3)", "ipython (>=7.9.0)", "isort (>=4.3.21)", "matplotlib (>=3.1.1)", "pytest (>=5.2.2)", "pytest-cov (>=2.8.1)", "pytest-mock (>=1.13.0)", "pytest-sugar (>=0.9.2)", "recommonmark (>=0.6)", "sdsstools[dev] (>=0.4.0)", "sphinx-bootstrap-theme (>=0.4.12)", "sphinx-issues (>=1.2.0)", "twine (>=3.1.1)", "wheel (>=0.33.6)"]
+docs = ["Jinja2 (<=3.0)", "Sphinx (>=2.1.0)", "importlib-metadata (>=1.6.0)", "recommonmark (>=0.6)", "sphinx-bootstrap-theme (>=0.4.12)", "sphinx-issues (>=1.2.0)"]
+
+[[package]]
 name = "sdss-araviscam"
 version = "0.1.112"
 description = "Blackfly S GigE camera reader for SDSS-V/LVM"
@@ -1648,6 +1721,64 @@ unclick = ">=0.1.0b5,<0.2.0"
 
 [package.extras]
 websocket = ["websockets (>=11.0.3,<12.0.0)"]
+
+[[package]]
+name = "sdss-cluplus"
+version = "0.5.2"
+description = "Additional functionality for sdss-clu"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "sdss_cluplus-0.5.2-py3-none-any.whl", hash = "sha256:1cdf7f1fe99f376ac9092aedf54fd6fab7e45723be084022187aac6d0f26dfd6"},
+    {file = "sdss_cluplus-0.5.2.tar.gz", hash = "sha256:b2c14f3c1ec2150e88e44cc42cb2586e8b6a6f70fe68ce88199eb9496174b8d9"},
+]
+
+[package.dependencies]
+attrdict = ">2.0"
+click-default-group = ">=1.2.2,<2.0.0"
+daemonocle = ">=1.1.1,<2.0.0"
+expandvars = ">=0.9.0"
+jsonpickle = "1.3"
+sdss-access = ">=0.2.3"
+sdss-clu = ">=2.0.0"
+sdss-tree = ">=2.15.2"
+sdsstools = ">=0.4.0"
+
+[[package]]
+name = "sdss-lvmtipo"
+version = "0.2.0"
+description = "Additional functionality for sdss-clu"
+optional = false
+python-versions = ">=3.8,<4"
+files = [
+    {file = "sdss_lvmtipo-0.2.0-py3-none-any.whl", hash = "sha256:8128c8f3feb054f0bb71964fef2a7708baa6bffde4fe5adaf1ef62d0efe1f43a"},
+    {file = "sdss_lvmtipo-0.2.0.tar.gz", hash = "sha256:a792b6a24cd3c372ea3fd7b344eb81cc44ecc92a80f2b36ce3b0bdd9d32fdcf0"},
+]
+
+[package.dependencies]
+astropy = ">=5.2"
+click-default-group = ">=1.2.2,<2.0.0"
+sdss-cluplus = ">=0.1.3"
+
+[[package]]
+name = "sdss-tree"
+version = "4.0.2"
+description = "Control and setup of SDSS tree environment and modules"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "sdss-tree-4.0.2.tar.gz", hash = "sha256:d8ef5718a5ce2d87261de753cfa23e18864c712d19d7c564b1acbfc3d2775344"},
+    {file = "sdss_tree-4.0.2-py2.py3-none-any.whl", hash = "sha256:af7eb0f59fdee4fd4ec56e768725f0f0c36f6dcfaf5bf51dc5b1997c8b3fda10"},
+]
+
+[package.dependencies]
+configparser = ">=3.5.0"
+pygments = ">=2.6"
+sdsstools = ">=0.4.5"
+
+[package.extras]
+dev = ["Sphinx (>=3.0.0)", "codecov (>=2.0.15)", "coverage[toml] (>=5.0)", "coveralls (>=1.7)", "doc8 (>=0.8.0)", "flake8 (>=3.7.9)", "importlib-metadata (>=1.6.0)", "invoke (>=1.3.0)", "ipdb (>=0.12.3)", "ipython (>=7.9.0)", "isort (>=4.3.21)", "jinja2 (<3.1)", "matplotlib (>=3.1.4)", "pytest (>=5.2.2)", "pytest-cov (>=2.8.1)", "pytest-mock (>=1.13.0)", "pytest-sugar (>=0.9.2)", "recommonmark (>=0.6)", "sdsstools[dev] (>=0.4.0)", "six (>=1.14)", "sphinx-argparse (>=0.2.5)", "sphinx-bootstrap-theme (>=0.4.12)", "sphinx-issues (>=1.2.0)", "twine (>=3.1.4)", "wheel (>=0.33.6)"]
+docs = ["Sphinx (>=3.0.0)", "importlib-metadata (>=1.6.0)", "jinja2 (<3.1)", "recommonmark (>=0.6)", "six (>=1.14)", "sphinx-argparse (>=0.2.5)", "sphinx-bootstrap-theme (>=0.4.12)", "sphinx-issues (>=1.2.0)"]
 
 [[package]]
 name = "sdsstools"
@@ -1873,6 +2004,26 @@ files = [
 ]
 
 [[package]]
+name = "tqdm"
+version = "4.66.0"
+description = "Fast, Extensible Progress Meter"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tqdm-4.66.0-py3-none-any.whl", hash = "sha256:39d459c7140b7890174e69d4d68d6291bc774a55b4bc5d93c0b760798ac5a03e"},
+    {file = "tqdm-4.66.0.tar.gz", hash = "sha256:cc6e7e52202d894e66632c5c8a9330bd0e3ff35d2965c93ca832114a3d865362"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["pytest (>=6)", "pytest-cov", "pytest-timeout", "pytest-xdist"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["slack-sdk"]
+telegram = ["requests"]
+
+[[package]]
 name = "traitlets"
 version = "5.9.0"
 description = "Traitlets Python configuration system"
@@ -2046,4 +2197,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "31ebe563b08861ccb7a9a50f5c3e3d71178445e88424431196226723b5cd0271"
+content-hash = "8d71e37f125a3bc0e323b9e8d85fbf2305bd7db52a735d659a8ad85fe64897d7"

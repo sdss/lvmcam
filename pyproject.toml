@@ -62,9 +62,10 @@ fast = true
 line-length = 88
 target-version = 'py311'
 select = ["E", "F", "I"]
+unfixable = ["F401", "F841"]
 
 [tool.ruff.per-file-ignores]
-"__init__.py" = ["F403", "E402"]
+"__init__.py" = ["F403", "F401", "E402"]
 
 [tool.ruff.isort]
 known-first-party = ["ifoo"]

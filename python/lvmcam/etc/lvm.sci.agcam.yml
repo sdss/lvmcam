@@ -1,8 +1,7 @@
 camera_type: araviscam
+
 basename: lvm.sci.agcam.{camera.name}_{num:08d}.fits
 dirname: /data/agcam/{sjd}
-
-camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
   lvm.sci.pwi:
@@ -19,11 +18,6 @@ scraper:
     Position: km_d
     DeviceEncoder.Position: km_s
 
-  lvm.tel:
-    temperature: bentemp
-    humidity: benhum
-    pressure: benpress
-
 cameras:
   east:
     telescope: sci
@@ -38,9 +32,6 @@ cameras:
         ReverseX: False
         ReverseY: True
 
-    # skymakercam
-    instpar: lvm_age_cam
-
   # center:
   #   telescope: sci
   #   descr: 'Guider Camera Science Center'
@@ -54,9 +45,6 @@ cameras:
   #     string:
   #       PixelFormat: 'BayerGB16'
 
-  #   # skymakercam
-  #   instpar: lvm_agc_cam
-
   west:
     telescope: sci
     descr: 'Guider Camera Science West'
@@ -68,9 +56,6 @@ cameras:
     genicam_params:
       bool:
         ReverseY: True
-
-    # skymakercam
-    instpar: lvm_agw_cam
 
 actor:
   name: lvm.sci.agcam

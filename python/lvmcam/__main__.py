@@ -13,18 +13,16 @@ import click
 from click_default_group import DefaultGroup
 
 from clu.tools import cli_coro as cli_coro_lvm
+from sdsstools import read_yaml_file
 from sdsstools.daemonizer import DaemonGroup
 
-from lvmcam.actor.actor import LvmcamActor
+from lvmcam.actor.actor import LVMCamActor
 
 
 @click.group(cls=DefaultGroup, default="actor")
-@click.option(
-    "-c",
-    "--config",
-    "config_file",
-    type=str,
-    help="Path to the user configuration file.",
+@click.argument(
+    "CONFIG_FILE",
+    type=click.Path(exists=True, dir_okay=False),
 )
 @click.option(
     "-r",
@@ -40,21 +38,14 @@ from lvmcam.actor.actor import LvmcamActor
     count=True,
     help="Debug mode. Use additional v for more details.",
 )
-@click.option(
-    "-s",
-    "--simulate",
-    count=True,
-    help="Simulation mode. Overwrite configured camera type with skymakercam.",
-)
 @click.pass_context
-def lvmcam(ctx, config_file, rmq_url, verbose, simulate):
-    """lvm controller"""
+def lvmcam(ctx, config_file: str, rmq_url: str | None = None, verbose: bool = False):
+    """LVM AG camera actor."""
 
     ctx.obj = {
         "verbose": verbose,
         "config_file": config_file,
         "rmq_url": rmq_url,
-        "simulate": simulate,
     }
 
 
@@ -65,11 +56,12 @@ async def actor(ctx):
     """Runs the actor."""
 
     config_file = ctx.obj["config_file"]
-    lvmcam_obj = LvmcamActor.from_config(
-        config_file,
+    config = read_yaml_file(config_file)
+
+    lvmcam_obj = LVMCamActor.from_config(
+        config,
         url=ctx.obj["rmq_url"],
         verbose=ctx.obj["verbose"],
-        simulate=ctx.obj["simulate"],
     )
 
     await lvmcam_obj.start()
