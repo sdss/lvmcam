@@ -10,7 +10,6 @@ import asyncio
 
 import click
 
-from basecam.actor.tools import get_cameras
 from basecam.exceptions import CameraConnectionError
 from clu.parsers.click import CluCommand
 
@@ -27,7 +26,7 @@ async def reconnect(command: LVMCamCommand):
     # This is specific for lvmcam. We know the cameras that the actor should
     # connect to and we can reconnect them directly. This also helps when the
     # actor has been loaded without any cameras presents. Since the cameras are
-    # not autodiscoverable, we have no way to reconnect them othen than restarting
+    # not autodiscoverable, we have no way to reconnect them other than restarting
     # the actor.
 
     # Now connect all cameras.
