@@ -1,11 +1,11 @@
 import pytest
-from lvmcam.actor import LvmcamActor
+from lvmcam.actor import LVMCamActor
 
 
 pytestmark = [pytest.mark.asyncio]
 
 
-async def test_actor(actor: LvmcamActor):
+async def test_actor(actor: LVMCamActor):
     command = await actor.invoke_mock_command("--help")
     await command
     assert command.status.is_done

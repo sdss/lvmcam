@@ -12,14 +12,12 @@ more information.
 
 import os
 
-# import numpy
 import pytest
-from lvmcam import config
-from lvmcam.actor import LvmcamActor
+from lvmcam.actor import LVMCamActor
 
 import clu.testing
 from clu.actor import AMQPBaseActor
-from sdsstools import merge_config, read_yaml_file
+from sdsstools import read_yaml_file
 
 
 # import pathlib
@@ -28,14 +26,14 @@ from sdsstools import merge_config, read_yaml_file
 @pytest.fixture()
 def test_config():
     extra = read_yaml_file(os.path.join(os.path.dirname(__file__), "config.yaml"))
-    yield merge_config(extra, config)
+    yield extra
 
 
 @pytest.fixture()
 async def actor(test_config: dict, mocker):
     mocker.patch.object(AMQPBaseActor, "start")
 
-    _actor = LvmcamActor.from_config(test_config)
+    _actor = LVMCamActor.from_config(test_config)
     await _actor.start()
 
     _actor = await clu.testing.setup_test_actor(_actor)
