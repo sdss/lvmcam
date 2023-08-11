@@ -9,3 +9,7 @@
 from basecam.actor.commands import camera_parser
 
 from .gain import gain
+from .reconnect import reconnect
+
+
+camera_parser.commands["reconnect"] = reconnect

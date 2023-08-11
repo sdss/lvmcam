@@ -17,12 +17,11 @@ from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
 from basecam.exposure import Exposure
 from basecam.models import Extension, FITSModel, basic_header_model
-from clu import AMQPActor
+from clu import AMQPActor, Command
 from clu.client import AMQPReply
 from sdsstools import read_yaml_file
 
 from lvmcam import __version__
-from lvmcam.actor.commands import camera_parser
 from lvmcam.models import CameraCards, GenicamCards, ScraperParamCards, WCSCards
 
 
@@ -88,6 +87,8 @@ class LVMCamActor(BaseCameraActor, AMQPActor):
     """The LVMCam actor."""
 
     def __init__(self, *args, **kwargs):
+        from lvmcam.actor.commands import camera_parser
+
         # Update camera config with default parameters.
         config = kwargs.get("config", {})
 
@@ -162,3 +163,6 @@ class LVMCamActor(BaseCameraActor, AMQPActor):
             if key in body:
                 scraper_key = scraper_defs[reply.sender][key]
                 self.scraper_data[scraper_key] = body[key]
+
+
+LVMCamCommand = Command[LVMCamActor]

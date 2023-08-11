@@ -8,7 +8,8 @@
 
 ### ✨ Improved
 
-- * [#56](https://github.com/sdss/lvmscp/pull/56) Serious rewrite of the codebase with relatively limited changes in behaviour. A lot of code that overrode the default behaviour in `basecam` has been removed.
+- [#56](https://github.com/sdss/lvmscp/pull/56) Serious rewrite of the codebase with relatively limited changes in behaviour. A lot of code that overrode the default behaviour in `basecam` has been removed.
+- Added a custom `reconnect` command that will reconnect both cameras even if they were not present when the actor started.
 
 
 ## 0.3.5 - July 9, 2023
