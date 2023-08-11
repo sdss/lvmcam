@@ -9,18 +9,14 @@
 import asyncio
 import pathlib
 from copy import deepcopy
-from optparse import Values
 
-from typing import Any, Callable, Optional
-
-import numpy
+from typing import Any
 
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
 from basecam.exposure import Exposure
 from basecam.models import Extension, FITSModel, basic_header_model
-from basecam.models.fits import FITSModel
 from clu import AMQPActor
 from clu.client import AMQPReply
 from sdsstools import read_yaml_file
