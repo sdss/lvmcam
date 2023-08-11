@@ -1669,13 +1669,13 @@ docs = ["Jinja2 (<=3.0)", "Sphinx (>=2.1.0)", "importlib-metadata (>=1.6.0)", "r
 
 [[package]]
 name = "sdss-araviscam"
-version = "0.1.112"
+version = "0.2.0"
 description = "Blackfly S GigE camera reader for SDSS-V/LVM"
 optional = false
 python-versions = ">=3.7,<4"
 files = [
-    {file = "sdss_araviscam-0.1.112-py3-none-any.whl", hash = "sha256:59e5c45425ab2def5a29881970e091868df3a309956f171d648f2fd4f251e62b"},
-    {file = "sdss_araviscam-0.1.112.tar.gz", hash = "sha256:c1a4ebaa8cc5124b94fae1027d5dab65215740132f91375e42489f87f52095ec"},
+    {file = "sdss_araviscam-0.2.0-py3-none-any.whl", hash = "sha256:1ed54da99366e6e80afb103081b73313b12f11579d68c235bee6ee66253643f3"},
+    {file = "sdss_araviscam-0.2.0.tar.gz", hash = "sha256:eede1a141bf86e482430e5017bfc842d3f81192951a01e547fd9b0005423cab8"},
 ]
 
 [package.dependencies]
@@ -2197,4 +2197,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.12"
-content-hash = "8d71e37f125a3bc0e323b9e8d85fbf2305bd7db52a735d659a8ad85fe64897d7"
+content-hash = "46948498cc502d03273770921d613c9d6372433d1f7293cc593eca007d54c9f3"
