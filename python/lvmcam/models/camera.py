@@ -12,14 +12,26 @@ from basecam.models import Card, CardGroup
 
 CameraCards = CardGroup(
     [
-        Card("OBSERVAT", value="LCO", comment="Observatory"),
+        Card(
+            "OBSERVAT",
+            value="LCO",
+            comment="Observatory",
+        ),
         Card(
             "TELESCOP",
             value="{__exposure__.camera.telescope}",
             comment="Telescope that took the image",
         ),
-        Card("INSTRUME", value="LVM", comment="SDSS-V Local Volume Mapper"),
-        Card("GAIN", value="{__exposure__.camera.gain}", comment="[ct] Camera gain"),
+        Card(
+            "INSTRUME",
+            value="LVM",
+            comment="SDSS-V Local Volume Mapper",
+        ),
+        Card(
+            "GAIN",
+            value="{__exposure__.camera.gain}",
+            comment="[ct] Camera gain",
+        ),
         Card(
             "BINX",
             value="{__exposure__.camera.binning[0]}",
@@ -30,7 +42,11 @@ CameraCards = CardGroup(
             value="{__exposure__.camera.binning[1]}",
             comment="[pix] Binning along axis 2",
         ),
-        Card("CamType", value="{__exposure__.camera.cam_type}", comment="Camera model"),
+        Card(
+            "CamType",
+            value="{__exposure__.camera.cam_type}",
+            comment="Camera model",
+        ),
         Card(
             "CamTemp",
             value="{__exposure__.camera.temperature}",
@@ -38,7 +54,7 @@ CameraCards = CardGroup(
         ),
         Card(
             "PIXSIZE",
-            "{__exposure__.camera.pixsize}",
+            "{__exposure__.camera.pixsize:.3f}",
             comment="[um] Pixel size",
             default=-999.0,
             type=float,

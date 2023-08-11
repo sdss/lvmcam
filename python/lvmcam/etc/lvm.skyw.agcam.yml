@@ -1,8 +1,7 @@
 camera_type: araviscam
+
 basename: lvm.skyw.agcam.{camera.name}_{num:08d}.fits
 dirname: /data/agcam/{sjd}
-
-camera_params: !include lvm.camera_param.agcam.yml
 
 scraper:
   lvm.skyw.pwi:
@@ -11,10 +10,6 @@ scraper:
     altitude_degs: alt_d
     azimuth_degs: az_d
     field_angle_here_degs: field_angle_d
-    axis0.position_degs: axis0_position_d
-    axis0.position_timestamp: axis0_position_timestamp_s
-    axis1.position_degs: axis1_position_d
-    axis1.position_timestamp: axis1_position_timestamp_s
 
   lvm.skyw.foc:
     Position: foc_dt
@@ -23,10 +18,9 @@ scraper:
     Position: km_d
     DeviceEncoder.Position: km_s
 
-    lvm.tel:
-      temperature: bentempi
-      temperature_enclosure: bentempo
-      humidity_enclosure: benhumo
+  lvm.skye.telemetry:
+    sensor1.temperature: bentempi
+    sensor1.humidity: benhumi
 
 cameras:
   east:
@@ -42,8 +36,6 @@ cameras:
         ReverseX: False
         ReverseY: True
 
-    # skymakercam
-    instpar: lvm_age_cam
   west:
     telescope: skyw
     descr: 'Guider Camera SkyW West'
@@ -55,9 +47,6 @@ cameras:
     genicam_params:
       bool:
         ReverseY: True
-
-    # skymakercam
-    instpar: lvm_agw_cam
 
 actor:
   name: lvm.skyw.agcam

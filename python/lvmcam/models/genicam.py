@@ -10,44 +10,19 @@ from __future__ import annotations
 from basecam.models import MacroCard
 
 
-def config_get(config, key, default=None):
-    """DOESNT work for keys with dots !!!"""
-
-    def g(config, key, d=None):
-        k = key.split(".", maxsplit=1)
-        c = config.get(
-            k[0] if not k[0].isnumeric() else int(k[0])
-        )  # keys can be numeric
-        return (
-            d
-            if c is None
-            else c
-            if len(k) < 2
-            else g(c, k[1], d)
-            if type(c) is dict
-            else d
-        )
-
-    return g(config, key, default)
-
-
 class GenicamCards(MacroCard):
     def macro(self, exposure, context={}):
+        genicam_params = exposure.camera.camera_params.get("genicam_params", {})
+
         return [
             (
                 "GenRevX",
-                config_get(
-                    exposure.camera.camera_params,
-                    "genicam_params.bool.ReverseX",
-                ),
+                genicam_params.get("bool", {}).get("ReverseX", None),
                 "[bool] Flip in X",
             ),
             (
                 "GenRevY",
-                config_get(
-                    exposure.camera.camera_params,
-                    "genicam_params.bool.ReverseY",
-                ),
+                genicam_params.get("bool", {}).get("ReverseY", None),
                 "[bool] Flip in Y",
             ),
         ]

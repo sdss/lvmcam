@@ -24,11 +24,12 @@ async def gain(command, cameras, gain):
     """Controls the camera gain.
 
     If called without a gain value, returns the current value.
+
     """
 
     try:
         cameras = get_cameras(command, cameras=cameras, fail_command=True)
-        if not cameras:  # pragma: no cover
+        if not cameras:
             return
 
         failed = False

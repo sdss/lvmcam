@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9', '3.10', '3.11']
 
     steps:
       - uses: actions/checkout@v3
@@ -34,15 +34,10 @@ jobs:
           python -m pip install --upgrade pip wheel setuptools
           pip install .
 
-      - name: Lint with flake8
+      - name: Lint with ruff
         run: |
-          pip install flake8
-          flake8 . --count --show-source --statistics
-
-      - name: Lint with isort
-        run: |
-          pip install isort
-          isort -c python/
+          pip install ruff
+          ruff check python/ tests/
 
       - name: Lint with black
         run: |
