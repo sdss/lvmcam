@@ -18,6 +18,11 @@ scraper:
     Position: km_d
     DeviceEncoder.Position: km_s
 
+  lvm.skye.telemetry:
+    sensor1.temperature: bentempi
+    sensor1.humidity: benhumi
+    sensor1.pressure: benpressi
+
 cameras:
   east:
     telescope: skye

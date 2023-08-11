@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 #
-# @Author: José Sánchez-Gallego
-# @Date: Dec 1, 2017
-# @Filename: cli.py
-# @License: BSD 3-Clause
-# @Copyright: José Sánchez-Gallego
+# @Author: José Sánchez-Gallego (gallegoj@uw.edu)
+# @Date: 2023-08-10
+# @Filename: __main__.py
+# @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
+
+from __future__ import annotations
 
 import os
 
@@ -22,7 +23,7 @@ from lvmcam.actor.actor import LVMCamActor
 @click.group(cls=DefaultGroup, default="actor")
 @click.argument(
     "CONFIG_FILE",
-    type=click.Path(exists=True, dir_okay=False),
+    type=click.Path(dir_okay=False),
 )
 @click.option(
     "-r",

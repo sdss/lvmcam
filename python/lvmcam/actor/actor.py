@@ -6,18 +6,28 @@
 # @Filename: actor.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
+import asyncio
 import pathlib
+from copy import deepcopy
+from optparse import Values
+
+from typing import Any, Callable, Optional
+
+import numpy
 
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
+from basecam.exposure import Exposure
 from basecam.models import Extension, FITSModel, basic_header_model
+from basecam.models.fits import FITSModel
 from clu import AMQPActor
+from clu.client import AMQPReply
 from sdsstools import read_yaml_file
 
 from lvmcam import __version__
 from lvmcam.actor.commands import camera_parser
-from lvmcam.models import camera
+from lvmcam.models import CameraCards, GenicamCards, ScraperParamCards, WCSCards
 
 
 CWD = pathlib.Path(__file__).parents[1]
@@ -34,16 +44,16 @@ def mergedicts(a, b):
 
 
 def get_camera_class(config: dict):
-    """Returns a caamera class with the correct image namer and fits model."""
+    """Returns a camera class with the correct image namer and fits model."""
 
     dirname = config.get("dirname", ".")
     basename = config.get("basename", "{camera.name}-{num:04d}.fits")
 
     header_model = basic_header_model
-    # header_model.append(CameraCards)
-    # header_model.append(GenicamCards())
-    # header_model.append(ScraperParamCards())
-    # header_model.append(WcsCards())
+    header_model.append(CameraCards)
+    header_model.append(GenicamCards())
+    header_model.append(ScraperParamCards())
+    header_model.append(WCSCards())
 
     raw = Extension(
         data="raw",
@@ -55,6 +65,25 @@ def get_camera_class(config: dict):
     class LVMCamera(BlackflyCamera):
         fits_model = FITSModel([raw])
         image_namer = ImageNamer(basename=basename, dirname=dirname)
+
+        async def expose(self, *args, **kwargs) -> Exposure:
+            """Expose the cameras."""
+
+            # Schedule status commands for the scraper.
+            scraper_commands = []
+            for actor in config["scraper"]:
+                scraper_commands.append(
+                    self.actor.send_command(
+                        actor,
+                        "status",
+                        internal=True,
+                        await_command=False,
+                    )
+                )
+
+            await asyncio.gather(*scraper_commands)
+
+            return await super().expose(*args, **kwargs)
 
     return LVMCamera
 
@@ -71,6 +100,69 @@ class LVMCamActor(BaseCameraActor, AMQPActor):
             config["cameras"][cam] = mergedicts(camera_config, BASE_CAMERA_PARAMS)
 
         camera_class = get_camera_class(config)
-        camera_system = BlackflyCameraSystem(camera_class, config["cameras"])
+        self.camera_system = BlackflyCameraSystem(camera_class, config["cameras"])
 
-        super().__init__(camera_system, *args, **kwargs)
+        super().__init__(
+            self.camera_system,
+            *args,
+            version=__version__,
+            command_parser=camera_parser,
+            **kwargs,
+        )
+
+        if self.model:
+            self.model.schema["additionalProperties"] = True
+
+        # Scraped data from actors.
+        self.scraper_data: dict[str, Any] = {}
+
+        self.add_reply_callback(self.parse_actor_reply)
+
+    async def start(self, **kwargs):
+        """Starts the actor and adds cameras to the camera system."""
+
+        assert isinstance(self.camera_system._config, dict)
+
+        for camera in self.camera_system._config:
+            try:
+                cam = await self.camera_system.add_camera(name=camera, actor=self)
+                self.log.debug(f"Camera {camera} connected")
+
+                cam.fits_model.context.update({"__actor__": self})
+            except Exception as ex:
+                self.log.error(f"Camera {camera} failed connecting: {ex}")
+
+        return await super().start(**kwargs)
+
+    async def parse_actor_reply(self, reply: AMQPReply):
+        """Parses replies from the actor system and updates scraped data."""
+
+        scraper_defs: dict[str, dict[str, str]] = self.config["scraper"]
+        if reply.sender not in scraper_defs or len(reply.body) == 0:
+            return
+
+        # Flatten body of the reply by dot-joining deeper dictionaries.
+        # Do this until there are no more dictionaries.
+        body = deepcopy(reply.body)
+
+        while True:
+            if not any([isinstance(value, dict) for value in body.values()]):
+                break
+
+            new_keys = {}
+            remove_keys: list[str] = []
+            for key, value in body.items():
+                if isinstance(value, dict):
+                    remove_keys.append(key)
+                    for skey, svalue in body[key].items():
+                        new_keys[key + "." + skey] = svalue
+
+            for key in remove_keys:
+                body.pop(key)
+
+            body.update(new_keys)
+
+        for key in scraper_defs[reply.sender]:
+            if key in body:
+                scraper_key = scraper_defs[reply.sender][key]
+                self.scraper_data[scraper_key] = body[key]

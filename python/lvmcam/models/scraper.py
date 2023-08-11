@@ -7,166 +7,114 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from typing import TYPE_CHECKING
 
-from cluplus.proxy import flatten
-
+from araviscam import BlackflyCamera
 from basecam.models import MacroCard
 
 
-class ScraperDataStore(object):
-    def __init__(self, actor, config={}):
-        self.actor_key_maps = config
-        self.data = {}
-
-    def copy(self):
-        o = type(self).__new__(self.__class__)
-        o.actor_key_maps = self.actor_key_maps.copy()
-        o.data = self.data.copy()
-        return o
-
-    def __repr__(self):
-        return self.data.__repr__()
-
-    def keys(self):
-        return self.data.keys()
-
-    def __getitem__(self, key):
-        return self.get(key)
-
-    def __setitem__(self, key, value):
-        return self.set(key, value)
-
-    def actors(self):
-        return list(self.actor_key_maps.keys()) if self.actor_key_maps else []
-
-    def set(self, key, val, timestamp=datetime.utcnow()):
-        self.data[key] = (val, timestamp)
-
-    def get(self, key, default=None):
-        return self.data.get(key, (default, None))[0]
-
-    def update(self, data: dict, timestamp=datetime.utcnow()):
-        self.data.update({k: (v, timestamp) for k, v in data.items()})
-
-    def update_with_actor_key_maps(
-        self, actor, data: dict, timestamp=datetime.utcnow()
-    ):
-        akm = self.actor_key_maps.get(actor, None)
-        self.data.update(
-            {
-                akm[k]: (v, timestamp)
-                for k, v in flatten(data).items()
-                if k in akm.keys()
-            }
-        )
-
-    def items(self):
-        return self.data.items()
-
-
-def config_get(config, key, default=None):
-    """DOESNT work for keys with dots !!!"""
-
-    def g(config, key, d=None):
-        k = key.split(".", maxsplit=1)
-        c = config.get(
-            k[0] if not k[0].isnumeric() else int(k[0])
-        )  # keys can be numeric
-        return (
-            d
-            if c is None
-            else c
-            if len(k) < 2
-            else g(c, k[1], d)
-            if type(c) is dict
-            else d
-        )
-
-    return g(config, key, default)
+if TYPE_CHECKING:
+    from python.lvmcam.actor import LVMCamActor
 
 
 class ScraperParamCards(MacroCard):
     def macro(self, exposure, context={}):
-        from sdsstools.logger import get_logger
+        assert isinstance(exposure.camera, BlackflyCamera)
 
-        logger = get_logger("ScraperParamCards")
-        logger.warning(f"########### {exposure.scraper_store}")
+        actor: LVMCamActor = exposure.camera.actor
+
+        ra_h = actor.scraper_data.get("ra_h", -999.0)
+        ra_d = -999.0 if ra_h < 0 else ra_h * 15
 
         return [
             (
                 "RA",
-                exposure.scraper_store.get("ra_h", 0.0) * 15,
-                "[deg] Right Ascension of the observation",
+                round(ra_d, 6),
+                "[deg] Telescope Right Ascension",
             ),
             (
                 "DEC",
-                exposure.scraper_store.get("dec_d", 90.0),
-                "[deg] Declination of the observation",
+                round(actor.scraper_data.get("dec_d", 90.0), 6),
+                "[deg] Telescope Declination",
             ),
             (
                 "ALT",
-                exposure.scraper_store.get("alt_d", 0.0),
-                "[deg] pointing Altitude telescope",
+                round(actor.scraper_data.get("alt_d", 0.0), 6),
+                "[deg] Telescope Altitude",
             ),
             (
                 "AZ",
-                exposure.scraper_store.get("az_d", 90.0),
-                "[deg] pointing Azimuth telescope",
+                round(actor.scraper_data.get("az_d", 90.0), 6),
+                "[deg] Telescope Azimuth",
             ),
             (
                 "FIELDROT",
-                exposure.scraper_store.get("field_angle_d", -999.9),
+                round(actor.scraper_data.get("field_angle_d", -999.0), 3),
                 "[deg] Cassegrain Field angle from PW",
             ),
-            (
-                "PWA0POS",
-                exposure.scraper_store.get("axis0_position_d", -999.9),
-                "[deg] Axis0 pos angle from PW",
-            ),
-            (
-                "PWA0T",
-                exposure.scraper_store.get("axis0_position_timestamp_s", -999.9),
-                "[] Axis0 pos angle time from PW",
-            ),
-            (
-                "PWA1POS",
-                exposure.scraper_store.get("axis1_position_d", -999.9),
-                "[deg] Axis1 pos angle from PW",
-            ),
-            (
-                "PWA1T",
-                exposure.scraper_store.get("axis1_position_timestamp_s", -999.9),
-                "[] Axis1 pos angle time from PW",
-            ),
+            # (
+            #     "PWA0POS",
+            #     round(actor.scraper_data.get("axis0_position_d", -999.0), 6),
+            #     "[deg] Axis0 pos angle from PW",
+            # ),
+            # (
+            #     "PWA0T",
+            #     actor.scraper_data.get("axis0_position_timestamp_s", -999.0),
+            #     "[] Axis0 pos angle time from PW",
+            # ),
+            # (
+            #     "PWA1POS",
+            #     actor.scraper_data.get("axis1_position_d", -999.0),
+            #     "[deg] Axis1 pos angle from PW",
+            # ),
+            # (
+            #     "PWA1T",
+            #     actor.scraper_data.get("axis1_position_timestamp_s", -999.0),
+            #     "[] Axis1 pos angle time from PW",
+            # ),
             (
                 "KMIRDROT",
-                exposure.scraper_store.get("km_d", -999.9),
-                "[deg] Rotation angle kmirror",
+                round(actor.scraper_data.get("km_d", -999.0), 3),
+                "[deg] K-mirror rotation angle",
             ),
             (
                 "KMIRSTEP",
-                exposure.scraper_store.get("km_s", -999.9),
-                "[steps] position kmirror",
+                round(actor.scraper_data.get("km_s", -999.0), 1),
+                "[steps] K-mirror motor steps",
             ),
             (
                 "FOCUSDT",
-                exposure.scraper_store.get("foc_dt", -999.9),
+                round(actor.scraper_data.get("foc_dt", -999.0), 2),
                 "[dt] Focus stage position",
             ),
             (
                 "BENTEMPI",
-                exposure.scraper_store.get("bentempi", -999.9),
+                round(actor.scraper_data.get("bentempi", -999.0), 1),
                 "[degC] Temperature bench inside",
             ),
             (
-                "BENHUMO",
-                exposure.scraper_store.get("benhumo", -999.9),
-                "[] Humidity bench oustside",
+                "BENHUMI",
+                round(actor.scraper_data.get("benhumi", -999.0), 1),
+                "[%] Humidity bench inside",
+            ),
+            (
+                "BENPRESI",
+                actor.scraper_data.get("benpressi", -999.0),
+                "[hPa] Pressure bench inside",
             ),
             (
                 "BENTEMPO",
-                exposure.scraper_store.get("benpresso", -999.9),
+                round(actor.scraper_data.get("bentempo", -999.0), 1),
+                "[degC] Temperature bench outside",
+            ),
+            (
+                "BENHUMO",
+                round(actor.scraper_data.get("benhumo", -999.0), 1),
+                "[%] Humidity bench oustside",
+            ),
+            (
+                "BENPRESO",
+                actor.scraper_data.get("benpresso", -999.0),
                 "[hPa] Pressure bench oustside",
             ),
         ]

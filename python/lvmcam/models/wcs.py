@@ -7,68 +7,81 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import astropy.coordinates
 import astropy.time
-import astropy.units as u
 from astropy.utils import iers
 
+from araviscam import BlackflyCamera
 from basecam.models import MacroCard
+from lvmtipo.ambient import Ambient
+from lvmtipo.kmirror import Kmirror
+from lvmtipo.siderostat import Siderostat
+from lvmtipo.site import Site
 from lvmtipo.target import Target
+
+
+if TYPE_CHECKING:
+    from python.lvmcam.actor.actor import LVMCamActor
 
 
 iers.conf.auto_download = False
 
 
-def config_get(config, key, default=None):
-    """DOESNT work for keys with dots !!!"""
+class WCSCards(MacroCard):
+    """WCS cards for the header."""
 
-    def g(config, key, d=None):
-        k = key.split(".", maxsplit=1)
-        c = config.get(
-            k[0] if not k[0].isnumeric() else int(k[0])
-        )  # keys can be numeric
-        return (
-            d
-            if c is None
-            else c
-            if len(k) < 2
-            else g(c, k[1], d)
-            if type(c) is dict
-            else d
-        )
+    def __init__(
+        self,
+        name: str | None = None,
+        use_group_title: bool = False,
+        config: dict = {},
+        **kwargs,
+    ):
+        super().__init__(name=name, use_group_title=use_group_title, **kwargs)
 
-    return g(config, key, default)
+        self.site = Site(name=config.get("site", "LCO"))
 
+        if self.site.lat > 40.0:
+            azang = 180  # MPIA
+        else:
+            azang = 0  # LCO, APO, KHU
 
-# https://learn.astropy.org/tutorials/synthetic-images.html
+        medSign = -1
 
+        self.sidereostat = Siderostat(azang=azang, medSign=medSign)
 
-class WcsCards(MacroCard):
+        homeOffset = 135
+        homeIsWest = False
+
+        self.kmirror = Kmirror(home_is_west=homeIsWest, home_offset=homeOffset)
+
+        self.ambient = Ambient()
+
     def macro(self, exposure, context={}):
-        ra_d = exposure.scraper_store.get("ra_h", 0.0) * 15
-        dec_d = exposure.scraper_store.get("dec_d", 90.0)
-        target = Target(
-            astropy.coordinates.SkyCoord(ra=ra_d, dec=dec_d, unit=(u.deg, u.deg))
-        )
+        assert isinstance(exposure.camera, BlackflyCamera)
 
-        wcs = exposure.camera.actor.sid.to_wcs(
-            exposure.camera.actor.site,
+        actor: LVMCamActor = exposure.camera.actor
+
+        genicam_params = exposure.camera.camera_params.get("genicam_params", {})
+        reverse_x = genicam_params.get("bool", {}).get("ReverseX", None)
+        reverse_y = genicam_params.get("bool", {}).get("ReverseY", None)
+
+        ra_d = actor.scraper_data.get("ra_h", 0.0) * 15
+        dec_d = actor.scraper_data.get("dec_d", 90.0)
+        target = Target(astropy.coordinates.SkyCoord(ra=ra_d, dec=dec_d, unit="deg"))
+
+        wcs = self.sidereostat.to_wcs(
+            self.site,
             target,
             None,
-            exposure.camera.actor.ambi,
-            exposure.scraper_store.get("km_s", 0.0),
-            exposure.camera.actor.bench + " " + exposure.camera.name,
-            config_get(
-                exposure.camera.camera_params,
-                "genicam_params.bool.ReverseX",
-                False,
-            ),
-            config_get(
-                exposure.camera.camera_params,
-                "genicam_params.bool.ReverseY",
-                False,
-            ),
-            exposure.camera.actor.kmirror,
+            self.ambient,
+            actor.scraper_data.get("km_s", 0.0),
+            actor.name + " " + exposure.camera.name,
+            reverse_x,
+            reverse_y,
+            self.kmirror,
             pixsize=exposure.camera.pixsize,
             bin=exposure.camera.binning[0],
             wd=exposure.camera.image_area.wd,

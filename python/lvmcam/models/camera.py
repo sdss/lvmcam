@@ -54,7 +54,7 @@ CameraCards = CardGroup(
         ),
         Card(
             "PIXSIZE",
-            "{__exposure__.camera.pixsize}",
+            "{__exposure__.camera.pixsize:.3f}",
             comment="[um] Pixel size",
             default=-999.0,
             type=float,

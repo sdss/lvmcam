@@ -18,6 +18,13 @@ scraper:
     Position: km_d
     DeviceEncoder.Position: km_s
 
+  lvm.sci.telemetry:
+    sensor1.temperature: bentempi
+    sensor1.humidity: benhumi
+    sensor2.temperature: bentempo
+    sensor2.humidity: benhumo
+    sensor2.pressure: benpresso
+
 cameras:
   east:
     telescope: sci
