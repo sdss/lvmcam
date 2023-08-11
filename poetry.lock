@@ -1746,13 +1746,13 @@ sdsstools = ">=0.4.0"
 
 [[package]]
 name = "sdss-lvmtipo"
-version = "0.2.0"
+version = "0.2.1"
 description = "Additional functionality for sdss-clu"
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "sdss_lvmtipo-0.2.0-py3-none-any.whl", hash = "sha256:8128c8f3feb054f0bb71964fef2a7708baa6bffde4fe5adaf1ef62d0efe1f43a"},
-    {file = "sdss_lvmtipo-0.2.0.tar.gz", hash = "sha256:a792b6a24cd3c372ea3fd7b344eb81cc44ecc92a80f2b36ce3b0bdd9d32fdcf0"},
+    {file = "sdss_lvmtipo-0.2.1-py3-none-any.whl", hash = "sha256:9124d09da06c6b2ce5152659c80a6de7e418caf3c651c999429e415e0fb6780f"},
+    {file = "sdss_lvmtipo-0.2.1.tar.gz", hash = "sha256:16cfe1df01e1adc9f5988d24598fc3ca40c4252189f19b42b8d7e6007ba6fe7d"},
 ]
 
 [package.dependencies]
