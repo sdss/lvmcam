@@ -1,5 +1,16 @@
 # Changelog
 
+## Next version
+
+### 🔥 Breaking changes
+
+- This version drops support for `skymakercam`. Use the `0.3.x` tags if necessary.
+
+### ✨ Improved
+
+- * [#56](https://github.com/sdss/lvmscp/pull/56) Serious rewrite of the codebase with relatively limited changes in behaviour. A lot of code that overrode the default behaviour in `basecam` has been removed.
+
+
 ## 0.3.5 - July 9, 2023
 
 ### ✨ Improved
