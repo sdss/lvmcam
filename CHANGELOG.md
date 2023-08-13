@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1 - August 13, 2023
+
+### ✨ Improved
+
+* Upgraded `araviscam` to 0.2.1 with workarounds for exposures with empty buffers.
+
+
 ## 0.4.0 - August 11, 2023
 
 ### 🔥 Breaking changes
