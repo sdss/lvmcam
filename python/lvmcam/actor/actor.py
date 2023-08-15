@@ -61,6 +61,25 @@ def get_camera_class(config: dict):
         fits_model = FITSModel([raw])
         image_namer = ImageNamer(basename=basename, dirname=dirname)
 
+        async def expose(self, *args, **kwargs) -> Exposure:
+            """Expose the cameras."""
+
+            # Schedule status commands for the scraper.
+            scraper_commands = []
+            for actor in config["scraper"]:
+                scraper_commands.append(
+                    self.actor.send_command(
+                        actor,
+                        "status",
+                        internal=True,
+                        await_command=False,
+                    )
+                )
+
+            await asyncio.gather(*scraper_commands)
+
+            return await super().expose(*args, **kwargs)
+
     return LVMCamera
 
 
