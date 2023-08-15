@@ -6,7 +6,6 @@
 # @Filename: actor.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
-import asyncio
 import pathlib
 from copy import deepcopy
 
@@ -15,7 +14,6 @@ from typing import Any
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
-from basecam.exposure import Exposure
 from basecam.models import Extension, FITSModel, basic_header_model
 from clu import AMQPActor, Command
 from clu.client import AMQPReply
