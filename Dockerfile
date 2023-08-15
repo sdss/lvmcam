@@ -1,4 +1,4 @@
-FROM python:3.9-bookworm
+FROM python:3.9-bullseye
 
 ## Get some karma ##
 MAINTAINER Florian Briegel, briegel@mpia.de
