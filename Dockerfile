@@ -24,15 +24,13 @@ RUN cd lvmcam && pip3 install .
 # quite out of date and won't work. We use the main branch.
 
 RUN git clone https://github.com/sdss/araviscam
-RUN git clone https://github.com/sdss/skymakercam
 
 RUN cd araviscam && pip3 install .
-RUN cd skymakercam && pip3 install .
 
 # Need to remove the cloned repos because run-actor imports lvmcam to
 # get its path and if the directory is there it will import it locally
 # instead of using the site-packages one.
 
-RUN rm -Rf lvmcam araviscam skymakercam
+RUN rm -Rf lvmcam araviscam
 
 CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]
