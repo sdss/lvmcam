@@ -6,6 +6,7 @@
 # @Filename: actor.py
 # @License: BSD 3-clause (http://www.opensource.org/licenses/BSD-3-Clause)
 
+import asyncio
 import pathlib
 from copy import deepcopy
 
@@ -14,6 +15,7 @@ from typing import Any
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
+from basecam.exposure import Exposure
 from basecam.models import Extension, FITSModel, basic_header_model
 from clu import AMQPActor, Command
 from clu.client import AMQPReply
@@ -58,6 +60,16 @@ def get_camera_class(config: dict):
     class LVMCamera(BlackflyCamera):
         fits_model = FITSModel([raw])
         image_namer = ImageNamer(basename=basename, dirname=dirname)
+
+        async def expose(self, *args, **kwargs) -> Exposure:
+            ip = self.camera_params["ip"]
+            delay = int(ip[-1]) / 10 * 3
+            await asyncio.sleep(delay)
+
+            if self.name == "west":
+                await asyncio.sleep(0.5)
+
+            return await super().expose(*args, **kwargs)
 
     return LVMCamera
 
@@ -108,7 +120,17 @@ class LVMCamActor(BaseCameraActor, AMQPActor):
             except Exception as ex:
                 self.log.error(f"Camera {camera} failed connecting: {ex}")
 
-        return await super().start(**kwargs)
+        await super().start(**kwargs)
+
+        for actor in self.config["scraper"]:
+            await self.send_command(
+                actor,
+                "status",
+                internal=True,
+                await_command=False,
+            )
+
+        return self
 
     async def parse_actor_reply(self, reply: AMQPReply):
         """Parses replies from the actor system and updates scraped data."""
