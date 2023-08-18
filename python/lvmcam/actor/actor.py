@@ -12,6 +12,9 @@ from copy import deepcopy
 
 from typing import Any
 
+from astropy.coordinates import EarthLocation
+from astropy.utils.iers import conf
+
 from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
@@ -23,6 +26,10 @@ from sdsstools import read_yaml_file
 
 from lvmcam import __version__
 from lvmcam.models import CameraCards, GenicamCards, ScraperParamCards, WCSCards
+
+
+conf.auto_download = False
+conf.iers_degraded_accuracy = "ignore"
 
 
 CWD = pathlib.Path(__file__).parents[1]
@@ -61,14 +68,18 @@ def get_camera_class(config: dict):
         fits_model = FITSModel([raw])
         image_namer = ImageNamer(basename=basename, dirname=dirname)
 
+        # LCO
+        location = EarthLocation.from_geodetic(
+            lon=-70.70166667,
+            lat=-29.00333333,
+            height=2282.0,
+        )
+
+        async def _expose_internal(self, exposure, **kwargs):
+            exposure.obstime.location = self.location
+            return await super()._expose_internal(exposure, **kwargs)
+
         async def expose(self, *args, **kwargs) -> Exposure:
-            ip = self.camera_params["ip"]
-            delay = int(ip[-1]) / 10 * 3
-            await asyncio.sleep(delay)
-
-            if self.name == "west":
-                await asyncio.sleep(0.5)
-
             return await super().expose(*args, **kwargs)
 
     return LVMCamera

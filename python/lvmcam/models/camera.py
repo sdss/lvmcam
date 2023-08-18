@@ -23,6 +23,12 @@ CameraCards = CardGroup(
             comment="Telescope that took the image",
         ),
         Card(
+            "LST",
+            value="round(__exposure__.obstime.sidereal_time('mean').value, 6)",
+            comment="[hr] Mean local sidereal time",
+            evaluate=True,
+        ),
+        Card(
             "INSTRUME",
             value="LVM",
             comment="SDSS-V Local Volume Mapper",
