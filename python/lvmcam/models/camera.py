@@ -23,9 +23,9 @@ CameraCards = CardGroup(
             comment="Telescope that took the image",
         ),
         Card(
-            "LST",
+            "LMST",
             value="round(__exposure__.obstime.sidereal_time('mean').value, 6)",
-            comment="[hr] Mean local sidereal time",
+            comment="[hr] Local mean sidereal time (approximate)",
             evaluate=True,
         ),
         Card(
