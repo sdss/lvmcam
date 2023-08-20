@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.2 - August 20, 2023
+
+### ✨ Improved
+
+* Added local mean sidereal time header keyword ``LMST``. Note that the value is computed without updated ``IERS-B`` tables so it may be slightly off.
+* Reduce the polling of the MoCon.
+
+### ⚙️ Engineering
+
+* Do not add ``skymakercam`` to docker image.
+
+
 ## 0.4.1 - August 13, 2023
 
 ### ✨ Improved
