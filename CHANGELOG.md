@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.3 - August 31, 2023
+
+### ✨ Improved
+
+* Updated `sdss-araviscam` to 0.2.2.
+
+
 ## 0.4.2 - August 20, 2023
 
 ### ✨ Improved
