@@ -4,26 +4,26 @@
 
 ### ✨ Improved
 
-* Updated `sdss-araviscam` to 0.2.2.
+- Updated `sdss-araviscam` to 0.2.2.
 
 
 ## 0.4.2 - August 20, 2023
 
 ### ✨ Improved
 
-* Added local mean sidereal time header keyword ``LMST``. Note that the value is computed without updated ``IERS-B`` tables so it may be slightly off.
-* Reduce the polling of the MoCon.
+- Added local mean sidereal time header keyword ``LMST``. Note that the value is computed without updated ``IERS-B`` tables so it may be slightly off.
+- Reduce the polling of the MoCon.
 
 ### ⚙️ Engineering
 
-* Do not add ``skymakercam`` to docker image.
+- Do not add ``skymakercam`` to docker image.
 
 
 ## 0.4.1 - August 13, 2023
 
 ### ✨ Improved
 
-* Upgraded `araviscam` to 0.2.1 with workarounds for exposures with empty buffers.
+- Upgraded `araviscam` to 0.2.1 with workarounds for exposures with empty buffers.
 
 
 ## 0.4.0 - August 11, 2023
