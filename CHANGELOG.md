@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.4 - September 6, 2023
+
+### ✨ Improved
+
+- Bumped `araviscam` to 0.2.3 with a potential fix for the cameras getting into read-only mode.
+- Use `umask 0002` in Docker image.
+
+
 ## 0.4.3 - August 31, 2023
 
 ### ✨ Improved
