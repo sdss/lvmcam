@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.5 - September 10, 2023
+
+### ✨ Improved
+
+- Bumped `araviscam` to 0.2.4.
+
+
 ## 0.4.4 - September 6, 2023
 
 ### ✨ Improved
