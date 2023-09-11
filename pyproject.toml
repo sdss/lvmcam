@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sdss-lvmcam"
-version = "0.4.5"
+version = "0.4.6a0"
 description = "The package for lvmcam"
 authors = ["Florian Briegel <briegel@mpia.de>"]
 maintainers = ["Florian Briegel <briegel@mpia.de>", "José Sánchez-Gallego <gallegoj@uw.edu>"]
