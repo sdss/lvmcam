@@ -18,13 +18,14 @@ from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
 from basecam.exposure import Exposure
-from basecam.models import Extension, FITSModel, basic_header_model
+from basecam.models import Extension, FITSModel, HeaderModel, basic_header_model
 from clu import AMQPActor, Command
 from clu.client import AMQPReply
 from sdsstools import read_yaml_file
 
 from lvmcam import __version__
 from lvmcam.models import CameraCards, GenicamCards, ScraperParamCards, WCSCards
+from lvmcam.models.proc import ProcCards
 
 
 conf.auto_download = False
@@ -62,9 +63,10 @@ def get_camera_class(config: dict):
         compressed="RICE_1",
         name="RAW",
     )
+    proc = Extension(data="none", header_model=HeaderModel([ProcCards]), name="PROC")
 
     class LVMCamera(BlackflyCamera):
-        fits_model = FITSModel([raw])
+        fits_model = FITSModel([raw, proc])
         image_namer = ImageNamer(basename=basename, dirname=dirname)
 
         # LCO
