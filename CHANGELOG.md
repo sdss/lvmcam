@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.6 - September 12, 2023
+
+### ✨ Improved
+
+- Added stub of `PROC` extension to make data model more consistent.
+
+
 ## 0.4.5 - September 10, 2023
 
 ### ✨ Improved
