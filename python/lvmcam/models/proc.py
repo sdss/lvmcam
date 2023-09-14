@@ -72,6 +72,7 @@ ProcCards = CardGroup(
         Card(
             "WCSMODE",
             value="none",
+            default="none",
             comment="Method for fitting the astrometric solution",
         ),
     ]
