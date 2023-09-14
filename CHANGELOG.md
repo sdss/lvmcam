@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.7 - September 14, 2023
+
+### 🔧 Fixed
+
+- Prevent `PROC` extension header `WCSMODE` default value `none` from being changed to `None`.
+
+
 ## 0.4.6 - September 12, 2023
 
 ### ✨ Improved
