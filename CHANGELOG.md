@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### ✨ Improved
+
+- Added `AIRMASS` header keyword.
+
+
 ## 0.4.7 - September 14, 2023
 
 ### 🔧 Fixed

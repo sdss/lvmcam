@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import numpy
+
 from araviscam import BlackflyCamera
 from basecam.models import MacroCard
 
@@ -25,6 +27,7 @@ class ScraperParamCards(MacroCard):
 
         ra_h = actor.scraper_data.get("ra_h", -999.0)
         ra_d = -999.0 if ra_h < 0 else ra_h * 15
+        alt_d = actor.scraper_data.get("alt_d", 0.0)
 
         return [
             (
@@ -39,7 +42,7 @@ class ScraperParamCards(MacroCard):
             ),
             (
                 "ALT",
-                round(actor.scraper_data.get("alt_d", 0.0), 6),
+                round(alt_d, 6),
                 "[deg] Telescope Altitude",
             ),
             (
@@ -51,6 +54,11 @@ class ScraperParamCards(MacroCard):
                 "FIELDROT",
                 round(actor.scraper_data.get("field_angle_d", -999.0), 3),
                 "[deg] Cassegrain Field angle from PW",
+            ),
+            (
+                "AIRMASS",
+                round(1 / numpy.cos(numpy.radians(90 - alt_d)), 3),
+                "Airmass at the time of observation",
             ),
             # (
             #     "PWA0POS",
