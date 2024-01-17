@@ -5,6 +5,7 @@
 ### ✨ Improved
 
 - Support Python 3.12.
+- Bump `sdss-basecam` to 0.8.0.
 
 
 ## 0.4.8 - November 5, 2023

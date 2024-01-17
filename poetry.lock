@@ -2063,13 +2063,13 @@ sdss-basecam = ">=0.5.0"
 
 [[package]]
 name = "sdss-basecam"
-version = "0.7.2"
+version = "0.8.0"
 description = "A base library for camera wrapping and actor."
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "sdss_basecam-0.7.2-py3-none-any.whl", hash = "sha256:8dca46ef3399f2525cacc1a621277b3feda0679e95af3af25128eac3b8e95f3c"},
-    {file = "sdss_basecam-0.7.2.tar.gz", hash = "sha256:6ecf04843dfbcfe727f2f6897c8879c5dfee28b317d61eb5f4b6ed62158f8fdc"},
+    {file = "sdss_basecam-0.8.0-py3-none-any.whl", hash = "sha256:653232480f503c3578618f8e732fd90e33b3dc5cb33cb2be613a8450b111987c"},
+    {file = "sdss_basecam-0.8.0.tar.gz", hash = "sha256:06533c94e0e311f42094a09c353cecbc7203186bb0c5bf8b897bb3c3c37e38f2"},
 ]
 
 [package.dependencies]
@@ -2636,4 +2636,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.13"
-content-hash = "af231db9fb2d2b200f8a3faaf13eed848f97184eca64a9668e4fb17c3dd0847b"
+content-hash = "2714ce2f6b42eec21fbf8f91563fcd30a23ad7927a78614cd0c71e4f1fcda532"

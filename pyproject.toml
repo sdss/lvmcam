@@ -33,7 +33,7 @@ lvmcam = "lvmcam.__main__:lvmcam"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
-sdss-basecam = "^0.7.1"
+sdss-basecam = "^0.8.0"
 sdss-araviscam = "^0.2.4"
 sdss-lvmtipo = "^0.2.0"
 
