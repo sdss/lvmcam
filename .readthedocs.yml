@@ -6,7 +6,7 @@ build:
     python: '3.11'
   jobs:
     pre_create_environment:
-      - apt-get install libgirepository1.0-dev
+      - sudo apt install libgirepository1.0-dev
 
 python:
   install:
