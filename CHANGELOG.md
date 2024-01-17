@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### ✨ Improved
+
+- Support Python 3.12.
+
+
 ## 0.4.8 - November 5, 2023
 
 ### ✨ Improved
