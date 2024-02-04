@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### ✨ Improved
+
+- Added `ISFSWEEP` header keywords to `PROC` extension.
+
+
 ## 0.4.11 - February 4, 2024
 
 ### ✨ Improved

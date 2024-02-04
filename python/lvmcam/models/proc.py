@@ -80,6 +80,11 @@ ProcCards = CardGroup(
             comment="Reference file for astrometric solution",
         ),
         Card(
+            "ISFSWEEP",
+            value=False,
+            comment="Is the exposure part of a focus sweep?",
+        ),
+        Card(
             "SOLVED",
             value=False,
             comment="Was an astrometric solution found?",
