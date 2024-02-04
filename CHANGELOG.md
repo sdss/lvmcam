@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.11 - February 4, 2024
+
+### ✨ Improved
+
+- Added `RA`, `DEC`, and `FWHM` header keywords to `PROC` extension.
+
+
 ## 0.4.10 - February 4, 2024
 
 ### ✨ Improved

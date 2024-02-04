@@ -40,6 +40,21 @@ ProcCards = CardGroup(
             comment="Sources file",
         ),
         Card(
+            "FWHM",
+            value=None,
+            comment="[arcsec] FWHM from sources",
+        ),
+        Card(
+            "RA",
+            value=None,
+            comment="[deg] RA of central pixel from WCS",
+        ),
+        Card(
+            "DEC",
+            value=None,
+            comment="[deg] Dec of central pixel from WCS",
+        ),
+        Card(
             "PA",
             value=None,
             comment="[deg] Position angle from WCS",
