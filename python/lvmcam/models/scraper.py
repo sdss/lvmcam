@@ -60,26 +60,26 @@ class ScraperParamCards(MacroCard):
                 round(1 / numpy.cos(numpy.radians(90 - alt_d)), 3),
                 "Airmass at the time of observation",
             ),
-            # (
-            #     "PWA0POS",
-            #     round(actor.scraper_data.get("axis0_position_d", -999.0), 6),
-            #     "[deg] Axis0 pos angle from PW",
-            # ),
-            # (
-            #     "PWA0T",
-            #     actor.scraper_data.get("axis0_position_timestamp_s", -999.0),
-            #     "[] Axis0 pos angle time from PW",
-            # ),
-            # (
-            #     "PWA1POS",
-            #     actor.scraper_data.get("axis1_position_d", -999.0),
-            #     "[deg] Axis1 pos angle from PW",
-            # ),
-            # (
-            #     "PWA1T",
-            #     actor.scraper_data.get("axis1_position_timestamp_s", -999.0),
-            #     "[] Axis1 pos angle time from PW",
-            # ),
+            (
+                "PWA0POS",
+                round(actor.scraper_data.get("axis0_position_d", -999.0), 6),
+                "[deg] Axis0 pos angle from PW",
+            ),
+            (
+                "PWA0T",
+                actor.scraper_data.get("axis0_position_timestamp_s", -999.0),
+                "[] Axis0 pos angle time from PW",
+            ),
+            (
+                "PWA1POS",
+                actor.scraper_data.get("axis1_position_d", -999.0),
+                "[deg] Axis1 pos angle from PW",
+            ),
+            (
+                "PWA1T",
+                actor.scraper_data.get("axis1_position_timestamp_s", -999.0),
+                "[] Axis1 pos angle time from PW",
+            ),
             (
                 "KMIRDROT",
                 round(actor.scraper_data.get("km_d", -999.0), 3),
