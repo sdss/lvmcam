@@ -77,7 +77,7 @@ ProcCards = CardGroup(
         Card(
             "REFFILE",
             value=None,
-            comment="Reference file for astrometric solution",
+            comment="Astrom. solution ref. file",
         ),
         Card(
             "ISFSWEEP",

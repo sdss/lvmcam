@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### 🔧 Fixed
+
+- Fix comment for keyword `REFFILE` being too long when the keyword is populated by `lvmguider`.
+
+
 ## 0.4.12 - February 7, 2024
 
 ### ✨ Improved
