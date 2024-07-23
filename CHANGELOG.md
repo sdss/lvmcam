@@ -10,6 +10,10 @@
 
 - Fix comment for keyword `REFFILE` being too long when the keyword is populated by `lvmguider`.
 
+### ⚙️ Engineering
+
+- Format and lint using `ruff`.
+
 
 ## 0.4.12 - February 7, 2024
 
