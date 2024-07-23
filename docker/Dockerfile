@@ -37,6 +37,7 @@ RUN echo "umask 0002" >> /etc/bash.bashrc
 RUN rm -Rf lvmcam araviscam
 
 COPY ./docker-entrypoint.sh /
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]
