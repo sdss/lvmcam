@@ -2,6 +2,10 @@
 
 ## Next version
 
+### ✨ Improved
+
+- [#66](https://github.com/sdss/lvmcam/pull/66) Ensure group write permissions for new files in Docker container.
+
 ### 🔧 Fixed
 
 - Fix comment for keyword `REFFILE` being too long when the keyword is populated by `lvmguider`.
