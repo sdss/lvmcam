@@ -36,5 +36,5 @@ RUN echo "umask 0002" >> /etc/bash.bashrc
 
 RUN rm -Rf lvmcam araviscam
 
-COPY ./docker/docker-entrypoint.sh /
+COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
