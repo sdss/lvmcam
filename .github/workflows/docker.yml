@@ -32,16 +32,17 @@ jobs:
       - name: Show tags
         run: echo ${{ steps.set-tags.outputs.TAGS }}
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           push: true
           tags: ghcr.io/${{ steps.set-tags.outputs.TAGS }}
+          file: docker/Dockerfile
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
