@@ -112,6 +112,7 @@ class LVMCamActor(BaseCameraActor, AMQPActor):
 
         if self.model:
             self.model.schema["additionalProperties"] = True
+            self.model.validator = self.model.VALIDATOR(self.model.schema)
 
         # Scraped data from actors.
         self.scraper_data: dict[str, Any] = {}

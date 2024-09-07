@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### 🔧 Fixed
+
+- Fix `additionalProperties: true` not having effect.
+
+
 ## 0.4.13 - July 23, 2024
 
 ### ✨ Improved
