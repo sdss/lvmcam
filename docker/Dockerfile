@@ -28,7 +28,7 @@ RUN git clone https://github.com/sdss/araviscam
 RUN cd araviscam && pip3 install .
 
 # Set umask so that new files inherit the parent folder permissions.
-RUN echo "umask 0002" >> /etc/bash.bashrc
+RUN echo "umask 0022" >> /etc/bash.bashrc
 
 # Need to remove the cloned repos because run-actor imports lvmcam to
 # get its path and if the directory is there it will import it locally
