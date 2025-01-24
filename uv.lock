@@ -2739,7 +2739,7 @@ wheels = [
 
 [[package]]
 name = "sdss-lvmcam"
-version = "0.5.0"
+version = "0.5.1a0"
 source = { editable = "." }
 dependencies = [
     { name = "sdss-araviscam" },
