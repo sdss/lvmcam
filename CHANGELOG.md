@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 - January 24, 2025
+
+### 🔧 Fixed
+
+- Use umask 0022 in the container image.
+
+### ⚙️ Engineering
+
+- Use `uv` for dependency management and update the workflows.
+
+
 ## 0.4.14 - September 7, 2024
 
 ### 🔧 Fixed
