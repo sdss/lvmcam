@@ -23,8 +23,11 @@ RUN apt install -y build-essential pkg-config libgirepository1.0-dev \
 # Build aravis
 RUN git clone https://github.com/AravisProject/aravis.git
 RUN cd aravis && git checkout 0.8.34
-RUN cd aravis && meson setup build && cd build && meson compile && meson install
+RUN cd aravis && meson setup build && cd build && ninja && ninja install
 
 RUN cd lvmcam && uv sync --frozen --no-cache
+
+ENV GI_TYPELIB_PATH="/usr/local/lib/x86_64-linux-gnu/girepository-1.0"
+ENV LD_LIBRARY_PATH="/usr/local/lib/x86_64-linux-gnu"
 
 CMD ["sh", "-c", "umask 0002 && lvmcam $LVMCAM_CONFIG_FILE start --debug"]
