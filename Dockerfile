@@ -16,14 +16,13 @@ ENV PATH="$PATH:/opt/lvmcam/.venv/bin"
 
 
 RUN apt update -y
-RUN apt install -y pkg-config libgirepository1.0-dev \
-                   libcairo2-dev gobject-introspection python3-gi \
-                   gir1.2-aravis-0.8 aravis-tools aravis-tools-cli \
-                   git
+RUN apt install -y build-essential pkg-config libgirepository1.0-dev \
+                   libcairo2-dev gobject-introspection python3-gi git \
+                   meson zlib libxml2 glib2
 
-RUN pip3 install -U pip setuptools wheel
-
-RUN cd lvmcam && pip3 install .
+# Build aravis
+RUN git clone https://github.com/AravisProject/aravis.git
+RUN cd aravis && meson setup build && meson install build
 
 RUN cd lvmcam && uv sync --frozen --no-cache
 
