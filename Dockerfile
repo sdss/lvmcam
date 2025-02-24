@@ -1,4 +1,4 @@
-FROM python:3.12-bookworm
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 ## Get some karma ##
 LABEL org.opencontainers.image.authors="Florian Briegel, briegel@mpia.de"
