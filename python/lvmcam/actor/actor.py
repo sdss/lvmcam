@@ -14,7 +14,6 @@ from typing import Any
 from astropy.coordinates import EarthLocation
 from astropy.utils.iers import conf
 
-from araviscam import BlackflyCamera, BlackflyCameraSystem
 from basecam import ImageNamer
 from basecam.actor import BaseCameraActor
 from basecam.exposure import Exposure
@@ -24,6 +23,7 @@ from clu.client import AMQPReply
 from sdsstools import read_yaml_file
 
 from lvmcam import __version__
+from lvmcam.camera import BlackflyCamera, BlackflyCameraSystem
 from lvmcam.models import CameraCards, GenicamCards, ScraperParamCards, WCSCards
 from lvmcam.models.proc import ProcCards
 

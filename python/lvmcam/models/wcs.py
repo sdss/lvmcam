@@ -13,13 +13,14 @@ import astropy.coordinates
 import astropy.time
 from astropy.utils import iers
 
-from araviscam import BlackflyCamera
 from basecam.models import MacroCard
 from lvmtipo.ambient import Ambient
 from lvmtipo.kmirror import Kmirror
 from lvmtipo.siderostat import Siderostat
 from lvmtipo.site import Site
 from lvmtipo.target import Target
+
+from lvmcam.camera import BlackflyCamera
 
 
 if TYPE_CHECKING:

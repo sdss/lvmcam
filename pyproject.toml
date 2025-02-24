@@ -2,7 +2,10 @@
 name = "sdss-lvmcam"
 version = "0.5.1a0"
 description = "The package for lvmcam"
-authors = [ { name = "Florian Briegel", email = "briegel@mpia.de" } ]
+authors = [
+    { name = "Florian Briegel", email = "briegel@mpia.de" },
+    { name = "Richard J. Mathar", email = "mathar@mpia.de" }
+]
 maintainers = [
     { name = "Florian Briegel", email = "briegel@mpia.de" },
     { name = "José Sánchez-Gallego", email = "gallegoj@uw.edu" }
@@ -13,9 +16,10 @@ readme = "README.md"
 requires-python = ">=3.8,<4"
 
 dependencies = [
-    "sdss-basecam>=0.8.0",
-    "sdss-araviscam>=0.2.4",
-    "sdss-lvmtipo>=0.2.0"
+    "sdss-basecam>=0.8.1",
+    "sdss-lvmtipo>=0.2.0",
+    "sdss-basecam>=0.5.0",
+    "PyGObject>=3.38.0"
 ]
 
 [project.urls]

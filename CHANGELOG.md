@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### 🔥 Breaking changes
+
+- Removed `araviscam` dependency and move the camera code to `lvmcam`.
+
+
 ## 0.5.0 - January 24, 2025
 
 ### 🔧 Fixed

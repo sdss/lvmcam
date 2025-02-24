@@ -11,8 +11,9 @@ from typing import TYPE_CHECKING
 
 import numpy
 
-from araviscam import BlackflyCamera
 from basecam.models import MacroCard
+
+from lvmcam.camera import BlackflyCamera
 
 
 if TYPE_CHECKING:
