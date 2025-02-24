@@ -1,4 +1,4 @@
-FROM python:3.2-bookworm
+FROM python:3.12-bookworm
 
 ## Get some karma ##
 LABEL org.opencontainers.image.authors="Florian Briegel, briegel@mpia.de"
