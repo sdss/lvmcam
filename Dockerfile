@@ -22,6 +22,7 @@ RUN apt install -y build-essential pkg-config libgirepository1.0-dev \
 
 # Build aravis
 RUN git clone https://github.com/AravisProject/aravis.git
+RUN cd aravis && git checkout 0.8.34
 RUN cd aravis && meson setup build && cd build && meson compile && meson install
 
 RUN cd lvmcam && uv sync --frozen --no-cache
