@@ -13,3 +13,10 @@ Actor
    :undoc-members:
    :show-inheritance:
 
+Camera
+------
+
+.. automodule:: lvmcam.camera
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -6,6 +6,10 @@
 
 - Removed `araviscam` dependency and move the camera code to `lvmcam`.
 
+### 🔧 Fixed
+
+- Add camera module to documentation and fix actor commands.
+
 
 ## 0.5.0 - January 24, 2025
 

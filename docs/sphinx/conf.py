@@ -91,7 +91,7 @@ release = __version__
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -132,7 +132,7 @@ intersphinx_mapping = {
     "clu": ("http://clu.readthedocs.io/en/latest/", None),
 }
 
-autodoc_mock_imports = ["_tkinter"]
+autodoc_mock_imports = ["_tkinter", "gi"]
 autodoc_member_order = "groupwise"
 autodoc_typehints = "description"
 
