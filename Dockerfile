@@ -18,7 +18,7 @@ ENV PATH="$PATH:/opt/lvmcam/.venv/bin"
 RUN apt update -y
 RUN apt install -y build-essential pkg-config libgirepository1.0-dev \
                    libcairo2-dev gobject-introspection python3-gi git \
-                   meson zlib1g libxml2
+                   meson zlib1g libxml2 libxml2-dev
 
 # Build aravis
 RUN git clone https://github.com/AravisProject/aravis.git
