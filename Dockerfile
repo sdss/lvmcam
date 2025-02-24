@@ -26,7 +26,4 @@ RUN cd aravis && meson setup build && meson install build
 
 RUN cd lvmcam && uv sync --frozen --no-cache
 
-# Set umask so that new files inherit the parent folder permissions.
-RUN echo "umask 0022" >> /etc/bash.bashrc
-
-CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]
+CMD ["sh", "-c", "umask 0002 && lvmcam $LVMCAM_CONFIG_FILE start --debug"]
