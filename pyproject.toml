@@ -1,6 +1,6 @@
 [project]
 name = "sdss-lvmcam"
-version = "0.5.1a0"
+version = "1.0.0"
 description = "The package for lvmcam"
 authors = [
     { name = "Florian Briegel", email = "briegel@mpia.de" },
