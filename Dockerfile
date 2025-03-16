@@ -28,6 +28,7 @@ RUN cd aravis && meson setup build && cd build && ninja && ninja install
 
 # Install lvmcam and dependencies
 RUN cd lvmcam && uv sync --frozen --no-cache
+RUN pip install -U astropy-iers-data
 
 # Set environment variables for GI to find the aravis library
 ENV GI_TYPELIB_PATH="/usr/local/lib/x86_64-linux-gnu/girepository-1.0"
