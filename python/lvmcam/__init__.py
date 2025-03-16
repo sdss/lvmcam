@@ -15,3 +15,9 @@ log = get_logger(NAME)
 
 # package name should be pip package name
 __version__ = get_package_version(path=__file__, package_name=NAME)
+
+from astropy.utils.iers import config
+
+# Prevent astropy from downloading data.
+conf.auto_max_age = None
+conf.iers_degraded_accuracy = "ignore"
