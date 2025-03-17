@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+from astropy.utils.iers import conf
+
 from sdsstools import get_logger, get_package_version
 
 
@@ -16,7 +18,6 @@ log = get_logger(NAME)
 # package name should be pip package name
 __version__ = get_package_version(path=__file__, package_name=NAME)
 
-from astropy.utils.iers import conf
 
 # Prevent astropy from downloading data.
 conf.auto_max_age = None
