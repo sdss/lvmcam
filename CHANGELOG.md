@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### 🔧 Fixed
+
+- Avoid errors while saving images if the IERS tables are not up to date.
+
+
 ## 1.0.0 - February 27, 2025
 
 ### 🔥 Breaking changes
