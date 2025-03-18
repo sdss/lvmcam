@@ -13,13 +13,13 @@ maintainers = [
 license = "BSD-3-Clause"
 readme = "README.md"
 
-requires-python = ">=3.8,<4"
+requires-python = ">=3.10,<4"
 
 dependencies = [
     "sdss-basecam>=0.8.1",
     "sdss-lvmtipo>=0.2.0",
     "sdss-basecam>=0.5.0",
-    "PyGObject>=3.38.0"
+    "pygobject==3.50.0"
 ]
 
 [project.urls]
@@ -31,14 +31,8 @@ Documentation = "https://sdss-lvmcam.readthedocs.org"
 lvmcam = "lvmcam.__main__:lvmcam"
 
 [dependency-groups]
-ipython = [
-    {version = ">=8.0.0", python = ">=3.9,<3.10"},
-    {version = "^8.17.2", python = ">=3.10"}
-]
-
 dev = [
-    "ipython>=8.0.0; python_version >= '3.9' and python_version < '3.10'",
-    "ipython>=8.17.2; python_version >= '3.10'",
+    "ipython>=8.0.0",
     "doc8>=0.8.0",
     "pytest>=5.2.2",
     "pytest-asyncio>=0.10.0",
