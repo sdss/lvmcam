@@ -1,6 +1,6 @@
 # Changelog
 
-## Next version
+## 1.1.0 - March 18, 2025
 
 ### 🔥 Breaking changes
 
@@ -13,6 +13,7 @@
 ### 🔧 Fixed
 
 - Avoid errors while saving images if the IERS tables are not up to date.
+- Pin `pygobject==3.50.0` as 3.52 requires `girepository-2.0` which is not provided by Debian Bookworm.
 
 
 ## 1.0.0 - February 27, 2025
