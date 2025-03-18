@@ -10,6 +10,9 @@ WORKDIR /opt
 
 COPY . lvmcam
 
+# Ignore warnings about installing as packages with pip as root.
+ENV PIP_ROOT_USER_ACTION=ignore
+
 # uv environment variables
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy
@@ -28,11 +31,14 @@ RUN cd aravis && meson setup build && cd build && ninja && ninja install
 
 # Install lvmcam and dependencies
 RUN cd lvmcam && uv sync --frozen --no-cache
-RUN pip install -U astropy-iers-data
 
 # Set environment variables for GI to find the aravis library
 ENV GI_TYPELIB_PATH="/usr/local/lib/x86_64-linux-gnu/girepository-1.0"
 ENV LD_LIBRARY_PATH="/usr/local/lib/x86_64-linux-gnu"
 
-# Set umask to 0002 (files are created with rw-rw-r-- permissions) and run the actor.
-CMD ["sh", "-c", "umask 0002 && lvmcam $LVMCAM_CONFIG_FILE start --debug"]
+COPY ./docker-entrypoint.sh /
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+
+# Run the actor.
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]

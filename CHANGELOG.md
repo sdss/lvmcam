@@ -2,6 +2,10 @@
 
 ## Next version
 
+### ✨ Improved
+
+- Update `astropy-iers-data` when the Docker container starts.
+
 ### 🔧 Fixed
 
 - Avoid errors while saving images if the IERS tables are not up to date.
