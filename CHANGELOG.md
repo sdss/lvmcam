@@ -2,6 +2,10 @@
 
 ## Next version
 
+### 🔥 Breaking changes
+
+- Require Python 3.10+.
+
 ### ✨ Improved
 
 - Update `astropy-iers-data` when the Docker container starts.
