@@ -1,5 +1,12 @@
 # Changelog
 
+## Next version
+
+### 🔧 Fixed
+
+- Fix a regression in setting the correct umask for new images.
+
+
 ## 1.1.0 - March 18, 2025
 
 ### 🔥 Breaking changes

@@ -39,6 +39,8 @@ ENV LD_LIBRARY_PATH="/usr/local/lib/x86_64-linux-gnu"
 COPY ./docker-entrypoint.sh /
 RUN ["chmod", "+x", "/docker-entrypoint.sh"]
 
+RUN echo "umask 0002" >> /etc/bash.bashrc
+
 # Run the actor.
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["sh", "-c", "lvmcam $LVMCAM_CONFIG_FILE start --debug"]
