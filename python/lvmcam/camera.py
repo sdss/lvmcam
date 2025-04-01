@@ -168,8 +168,6 @@ class BlackflyCamera(
         self.temperature = -1
         self.camera_state: str = "idle"
 
-        #        self.site = self.camera_params.get('site', "LCO")
-
         self.detector_size = Size(-1, -1)
         self.region_bounds = Size(-1, -1)
         self.image_area = Rect(-1, -1, -1, -1)
@@ -216,7 +214,8 @@ class BlackflyCamera(
             await self.set_binning(1, 1)
 
         self.detector_size = Size(
-            self.cam.get_width_bounds().max, self.cam.get_height_bounds().max
+            self.cam.get_width_bounds().max,
+            self.cam.get_height_bounds().max,
         )
         self.logger.debug(f"{self.detector_size}")
 
@@ -320,10 +319,8 @@ class BlackflyCamera(
         buf = await self.loop.run_in_executor(None, self.cam.acquisition, tout_ms)
         if buf is None:
             raise ExposureError(
-                "Exposing for "
-                + str(exposure.exptime)
-                + " sec failed. Timed out "
-                + str(tout_ms / 1.0e6)
+                f"Exposing for {exposure.exptime} s failed. "
+                f"Timed out {tout_ms / 1.0e6}."
             )
 
         roi = buf.get_image_region()
