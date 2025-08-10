@@ -1,5 +1,12 @@
 # Changelog
 
+## Next release
+
+### ✨ Improved
+
+- Bump `sdss-basecam` to 0.8.2.
+
+
 ## 1.1.1 - April 1, 2025
 
 ### 🔧 Fixed

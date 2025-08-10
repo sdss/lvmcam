@@ -16,7 +16,7 @@ readme = "README.md"
 requires-python = ">=3.10,<4"
 
 dependencies = [
-    "sdss-basecam>=0.8.1",
+    "sdss-basecam>=0.8.2",
     "sdss-lvmtipo>=0.2.0",
     "pygobject==3.50.0"
 ]
