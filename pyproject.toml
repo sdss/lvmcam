@@ -18,7 +18,8 @@ requires-python = ">=3.10,<4"
 dependencies = [
     "sdss-basecam>=0.8.2",
     "sdss-lvmtipo>=0.2.0",
-    "pygobject==3.50.0"
+    "pygobject==3.48.2",
+    "numpy==1.26.4"
 ]
 
 [project.urls]
