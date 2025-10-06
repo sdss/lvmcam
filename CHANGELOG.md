@@ -1,6 +1,6 @@
 # Changelog
 
-## Next release
+## 1.1.3 - October 6, 2025
 
 ### ⚙️ Engineering
 
