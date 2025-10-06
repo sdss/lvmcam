@@ -1,5 +1,13 @@
 # Changelog
 
+## Next release
+
+### ⚙️ Engineering
+
+- Pin `pygobject` to 3.48.2 and `numpy` to 1.26.4.
+- Revert to using `aravis` from apt repository.
+
+
 ## 1.1.2 - August 10, 2025
 
 ### ✨ Improved
