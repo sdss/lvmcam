@@ -1,5 +1,12 @@
 # Changelog
 
+## Next release
+
+### 🔧 Fixed
+
+- Stop acquisition before disconnecting the camera to avoid lockout errors.
+
+
 ## 1.1.3 - October 6, 2025
 
 ### ⚙️ Engineering

@@ -268,6 +268,9 @@ class BlackflyCamera(
     async def _disconnect_internal(self):
         """Close connection to camera."""
 
+        if self.cam is not None:
+            self.cam.stop_acquisition()
+
         self.cam = None
 
     async def _expose_grabFrame(self, exposure, nretries=3):
