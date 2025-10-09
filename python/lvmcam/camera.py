@@ -270,6 +270,7 @@ class BlackflyCamera(
 
         if self.cam is not None:
             self.cam.stop_acquisition()
+            del self.cam
 
         self.cam = None
 
