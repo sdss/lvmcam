@@ -5,6 +5,7 @@
 ### 🔧 Fixed
 
 - Stop acquisition before disconnecting the camera to avoid lockout errors.
+- Bump RTD OS to Ubuntu 24.04.
 
 
 ## 1.1.3 - October 6, 2025
